@@ -3,6 +3,7 @@
 .ssh/
 .vscode/
 .exec/
+.vercel/
 megasena/
 poema/
 proposta/
