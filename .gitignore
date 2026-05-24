@@ -2,7 +2,7 @@
 .out/
 .ssh/
 .vscode/
-.py/
+.exec/
 megasena/
 poema/
 proposta/
