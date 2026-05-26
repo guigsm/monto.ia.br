@@ -27,6 +27,7 @@ import { footerVariants, footerColumnGridVariants } from './footer.variants';
 import Logo from '@/components/ui/marketing/Logo/Logo.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import siteConfig from '@/config/site.config';
+import { getSocialIcon } from '@/utils/icons';
 
 export interface NavItem {
   label: string;
@@ -141,10 +142,6 @@ const socialIcons: Record<string, string> = {
   linkedin: 'linkedin',
 };
 
-// Get icon for social platform
-function getSocialIcon(platform: string): string {
-  return socialIcons[platform] || platform;
-}
 ---
 
 <footer class={footerClasses} {...attrs}>

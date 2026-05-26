@@ -1,22 +1,17 @@
-import tina from '@tinacms/astro/integration';
+import keystatic from '@keystatic/astro';
 import { defineConfig, envField } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
-import icon from 'astro-icon';
 import tailwindcss from '@tailwindcss/vite';
-import vercel from '@astrojs/vercel';
-import netlify from '@astrojs/netlify';
+import cloudflare from '@astrojs/cloudflare';
 import i18nConfig from './src/config/i18n.config.ts';
+import { loadEnv } from 'vite';
 
-const isNetlify = process.env.DEPLOY_TARGET === 'netlify';
+// 🌟 Força o carregamento do arquivo .env antes do Astro inicializar
+const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
+const calculatedSiteUrl = env.SITE_URL || 'https://www.monto.ia.br';
 
-/**
- * Native Astro i18n is only wired up when the user opts in *and* has
- * more than one locale configured. With i18n off (the default) this
- * block is undefined and the build emits the exact same routes as
- * before — no /en/ prefix, no extra pages.
- */
 const i18nEnabled = i18nConfig.enabled === true && i18nConfig.locales.length > 1;
 const astroI18nOptions = i18nEnabled
   ? {
@@ -29,15 +24,20 @@ const astroI18nOptions = i18nEnabled
     }
   : undefined;
 
+// 🌟 DETECÇÃO NATIVA DE COMANDO (Substitui o command === 'build' da função antiga)
+const isBuild = process.argv.includes('build') || process.env.NODE_ENV === 'production';
+
 export default defineConfig({
   output: 'static',
-  adapter: isNetlify ? netlify() : vercel(),
-  site: process.env.SITE_URL || 'https://example.com',
-  ...(astroI18nOptions ? { i18n: astroI18nOptions } : {}),
+  adapter: isBuild ? cloudflare() : undefined,
 
-  build: {
-    inlineStylesheets: 'always',
+  // 🌟 O TRUQUE DE MARKETING: Redireciona o cliente de forma transparente
+  redirects: {
+    '/admin': '/keystatic'
   },
+  
+  site: calculatedSiteUrl,
+  ...(astroI18nOptions ? { i18n: astroI18nOptions } : {}),
 
   env: {
     schema: {
@@ -59,20 +59,25 @@ export default defineConfig({
     layout: 'constrained',
   },
 
+  // 🌟 AGORA O ASTRO VAI LER ESSA LISTA VERDADEIRAMENTE!
   integrations: [
     react(),
     mdx(),
     sitemap(),
-    icon(),
-    tina()
+    keystatic() // 🌟 O Keystatic agora está oficialmente ativo!
   ],
+  
   i18n: {
-    defaultLocale: 'pt-br', // Idioma nativo do seu negócio
-    locales: ['pt-br', 'en'], // Idiomas aceitos e compilados
+    defaultLocale: 'pt-br',
+    locales: ['pt-br', 'en'],
   },
 
   vite: {
     plugins: [tailwindcss()],
+    // 🌟 ENGENHARIA DE INTEROPERABILIDADE (VITE 7 + LEGACY COMMONJS)
+    optimizeDeps: {
+      include: ['lodash/debounce', 'lodash']
+    }
   },
 
   security: {
@@ -85,5 +90,4 @@ export default defineConfig({
       wrap: true,
     },
   },
-
 });

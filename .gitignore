@@ -33,6 +33,3 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
-
-# tina auto-generated files
-tina/__generated__/

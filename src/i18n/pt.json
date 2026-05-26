@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "skipToContent": "Pular para o conteúdo",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu",
+    "selectLanguage": "Selecionar idioma",
+    "currentLanguage": "Idioma atual"
+  },
+  "common": {
+    "readMore": "Ler mais",
+    "loading": "Carregando…",
+    "backToTop": "Voltar ao topo",
+    "search": "Buscar",
+    "submit": "Enviar",
+    "cancel": "Cancelar",
+    "next": "Próximo",
+    "previous": "Anterior"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Últimos artigos e atualizações",
+    "readingTime": "{minutes} min de leitura",
+    "publishedOn": "Publicado em {date}",
+    "updatedOn": "Atualizado em {date}",
+    "writtenBy": "Escrito por {author}",
+    "tagsLabel": "Tags",
+    "featured": "Destaque",
+    "draft": "Rascunho",
+    "noPostsFound": "Nenhum artigo encontrado.",
+    "tableOfContents": "Sumário",
+    "shareThisPost": "Compartilhar este artigo"
+  },
+  "projects": {
+    "title": "Projetos",
+    "description": "Coisas que eu construí",
+    "viewProject": "Ver projeto",
+    "viewSource": "Ver código-fonte",
+    "noProjectsFound": "Nenhum projeto encontrado."
+  },
+  "pagination": {
+    "page": "Página {current} de {total}",
+    "previousPage": "Página anterior",
+    "nextPage": "Próxima página"
+  },
+  "errors": {
+    "pageNotFound": "Página não encontrada",
+    "pageNotFoundMessage": "A página que você está procurando não existe ou foi movida.",
+    "goHome": "Ir para a página inicial"
+  },
+  "newsletter": {
+    "heading": "Assine a nossa newsletter",
+    "description": "Receba os últimos artigos diretamente na sua caixa de entrada.",
+    "emailPlaceholder": "seu@email.com",
+    "subscribe": "Assinar",
+    "subscribing": "Assinando…",
+    "success": "Obrigado! Por favor, verifique sua caixa de entrada para confirmar.",
+    "error": "Algo deu errado. Por favor, tente novamente."
+  },
+  "contact": {
+    "heading": "Entre em contato",
+    "name": "Nome",
+    "email": "E-mail",
+    "subject": "Assunto",
+    "message": "Mensagem",
+    "send": "Enviar mensagem",
+    "sending": "Enviando…",
+    "success": "Obrigado! Sua mensagem foi enviada com sucesso.",
+    "error": "Algo deu errado. Por favor, tente novamente."
+  },
+  "theme": {
+    "selectTheme": "Selecionar tema",
+    "lightMode": "Modo claro",
+    "darkMode": "Modo escuro",
+    "systemMode": "Sistema",
+    "toggleTheme": "Alternar tema"
+  },
+  "footer": {
+    "copyright": "© {year} {name}. Todos os direitos reservados.",
+    "builtWith": "Desenvolvido com Astro Rocket"
+  }
+}

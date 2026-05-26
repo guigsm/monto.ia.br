@@ -6,7 +6,7 @@ import siteConfig from '@/config/site.config';
 export const prerender = true;
 
 export const GET: APIRoute = () => {
-  const letter = siteConfig.name.charAt(0).toUpperCase();
+  const letter = siteConfig.faviconText ?? siteConfig.name.charAt(0).toUpperCase();
   const color  = siteConfig.branding.colors.themeColor;
 
   const svg = `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">

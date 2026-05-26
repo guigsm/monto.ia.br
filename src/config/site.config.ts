@@ -9,6 +9,7 @@ export interface SiteConfig {
   description: string;
   url: string;
   ogImage: string;
+  faviconText?: string;
   author: string;
   email: string;
   phone?: string;
@@ -120,11 +121,9 @@ export interface SiteConfig {
 }
 
 const siteConfig: SiteConfig = {
-  name: 'Astro Rocket',
-  favicon: 'iA',
-  description:
-    'Astro Rocket — A production-ready Astro 6 starter with 12 beautiful themes, 57+ components, built-in i18n, dark mode and a fast, modern foundation to build anything on.',
-  url: SITE_URL || 'https://astrorocket.dev',
+  name: 'Monto IA',
+  description: 'Astro Rocket — A production-ready Astro 6 starter with 12 beautiful themes, 57+ components, built-in i18n, dark mode and a fast, modern foundation to build anything on.',
+  url: SITE_URL || 'https://monto.ia.br',
   ogImage: '/og-default.svg',
   author: 'Hans Martens',
   email: 'hello@hansmartens.dev',
@@ -177,10 +176,11 @@ const siteConfig: SiteConfig = {
       },
     },
   },
+  faviconText: 'iA',
   i18n: i18nConfig,
   branding: {
     logo: {
-      alt: 'Astro Rocket',
+      alt: 'Monto IA',
       imageUrl: '/favicon.svg',
     },
     favicon: {

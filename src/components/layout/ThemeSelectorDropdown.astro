@@ -1,10 +1,10 @@
 ---
 /**
  * ThemeSelectorDropdown
- * A dropdown button for desktop that exposes the colour-theme swatches.
- * The mobile menu still uses the flat ThemeSelector component.
+ * Painel flutuante de desktop que consome a mesma matriz unificada de cores.
  */
 import { cn } from '@/lib/cn';
+import { getThemes } from '@/config/themes.config';
 
 interface Props {
   class?: string;
@@ -12,7 +12,6 @@ interface Props {
 
 const { class: className } = Astro.props;
 
-// 🌟 DETECTOR E DICIONÁRIO DE IDIOMA
 const currentPath = Astro.url.pathname;
 const detectedLocale = Astro.currentLocale || (currentPath.startsWith('/pt') ? 'pt' : 'en');
 const isPt = detectedLocale.startsWith('pt');
@@ -22,21 +21,8 @@ const labels = {
   colourTheme: isPt ? 'Cor do tema' : 'Colour theme'
 };
 
-// All 12 themes in Tailwind color order with dynamic Portuguese naming
-const themes = [
-  { id: 'orange',  name: isPt ? 'Laranja' : 'Orange',  color: 'oklch(62.5% 0.22  38)'  },
-  { id: 'amber',   name: isPt ? 'Âmbar' : 'Amber',   color: 'oklch(68%   0.19  75)'  },
-  { id: 'lime',    name: isPt ? 'Limão' : 'Lime',    color: 'oklch(64%   0.27 130)'  },
-  { id: 'emerald', name: isPt ? 'Esmeralda' : 'Emerald', color: 'oklch(62.5% 0.22 160)'  },
-  { id: 'teal',    name: isPt ? 'Turquesa' : 'Teal',    color: 'oklch(62.5% 0.22 190)'  },
-  { id: 'cyan',    name: isPt ? 'Ciano' : 'Cyan',    color: 'oklch(65%   0.22 200)'  },
-  { id: 'sky',     name: isPt ? 'Céu' : 'Sky',     color: 'oklch(67%   0.21 222)'  },
-  { id: 'blue',    name: isPt ? 'Azul' : 'Blue',    color: 'oklch(62.5% 0.22 255)'  },
-  { id: 'indigo',  name: isPt ? 'Índigo' : 'Indigo',  color: 'oklch(60%   0.24 264)'  },
-  { id: 'violet',  name: isPt ? 'Violeta' : 'Violet',  color: 'oklch(62.5% 0.26 277)'  },
-  { id: 'purple',  name: isPt ? 'Roxo' : 'Purple',  color: 'oklch(62.5% 0.25 303)'  },
-  { id: 'magenta', name: isPt ? 'Magenta' : 'Magenta', color: 'oklch(58%   0.28 330)'  },
-];
+// Puxa os dados estruturados idênticos aos do menu mobile, traduzidos em tempo de execução
+const themes = getThemes(isPt);
 ---
 
 <div class={cn('relative theme-dropdown-wrapper', className)}>
@@ -136,9 +122,8 @@ const themes = [
 
   function setTheme(id: string) {
     document.documentElement.setAttribute('data-theme', id);
-    try { sessionStorage.setItem(STORAGE_KEY, id); } catch { /* private mode */ }
+    try { sessionStorage.setItem(STORAGE_KEY, id); } catch {}
 
-    // Update dropdown swatches
     const ddSwatches = document.querySelectorAll<HTMLButtonElement>('.theme-swatch-dd');
     ddSwatches.forEach((btn) => {
       if (btn.dataset.themeId === id) {
@@ -148,7 +133,6 @@ const themes = [
       }
     });
 
-    // Also sync flat ThemeSelector swatches (mobile menu)
     const flatSwatches = document.querySelectorAll<HTMLButtonElement>('.theme-swatch');
     flatSwatches.forEach((btn) => {
       if (btn.dataset.themeId === id) {
@@ -176,8 +160,8 @@ const themes = [
     trigger.dataset.dropdownInit = 'true';
 
     const active = getActiveTheme();
-
     const activeDdSwatches = document.querySelectorAll<HTMLButtonElement>('.theme-swatch-dd');
+    
     activeDdSwatches.forEach((btn) => {
       if (btn.dataset.themeId === active) {
         btn.setAttribute('data-active', '');
@@ -198,10 +182,6 @@ const themes = [
       e.stopPropagation();
       const willOpen = panel.classList.contains('hidden');
       document.querySelectorAll<HTMLElement>('.ttg-panel').forEach((p) => p.classList.add('hidden'));
-      document.querySelectorAll<HTMLButtonElement>('.ttg-trigger').forEach((t) => {
-        t.setAttribute('aria-expanded', 'false');
-        t.querySelector('.ttg-chevron')?.classList.remove('rotate-180');
-      });
       if (willOpen) {
         panel.classList.remove('hidden');
         trigger.setAttribute('aria-expanded', 'true');

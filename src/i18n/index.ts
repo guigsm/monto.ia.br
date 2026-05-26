@@ -1,17 +1,17 @@
 import en from './en.json';
-import nl from './nl.json';
+import pt from './pt.json'; // 🌟 Conectado diretamente ao seu novo arquivo traduzido!
 import i18nConfig from '../config/i18n.config';
 
 export { i18nConfig };
 export type { I18nConfig } from '../config/i18n.config';
 
 export type Locale = string;
-
 export type Dictionary = typeof en;
 
+// Dicionário purificado: Apenas Brasil e Estados Unidos ativos no core
 const dictionaries: Record<string, Dictionary> = {
+  pt: pt as Dictionary,
   en: en as Dictionary,
-  nl: nl as Dictionary,
 };
 
 export const defaultLocale: Locale = i18nConfig.defaultLocale;
@@ -58,11 +58,6 @@ function interpolate(template: string, vars?: Record<string, string | number>): 
   });
 }
 
-/**
- * Look up a translation by dotted key. Falls back to the default locale's
- * value, then to the key itself, so missing translations are visible but
- * non-fatal. Supports `{name}` placeholders via `vars`.
- */
 export function t(key: string, locale: Locale = defaultLocale, vars?: Record<string, string | number>): string {
   const dict = dictionaries[locale] ?? dictionaries[defaultLocale];
   const fallback = dictionaries[defaultLocale];
@@ -70,11 +65,6 @@ export function t(key: string, locale: Locale = defaultLocale, vars?: Record<str
   return interpolate(value, vars);
 }
 
-/**
- * Build a locale-prefixed URL. The default locale stays at the root
- * (no prefix) when `prefixDefaultLocale` is false, matching Astro's
- * native i18n routing behavior.
- */
 export function localizedPath(path: string, locale: Locale = defaultLocale): string {
   const normalized = path.startsWith('/') ? path : `/${path}`;
   if (!isEnabled()) return normalized;
@@ -82,13 +72,6 @@ export function localizedPath(path: string, locale: Locale = defaultLocale): str
   return `/${locale}${normalized === '/' ? '' : normalized}`;
 }
 
-/**
- * Strip a leading `/<locale>` segment from a path if present. Returns
- * the path unchanged when the first segment is not a configured
- * locale. Always returns a path starting with `/`.
- *
- * `/nl/about` → `/about`, `/en` → `/`, `/about` → `/about`.
- */
 export function stripLocaleFromPath(path: string): string {
   const normalized = path.startsWith('/') ? path : `/${path}`;
   const match = normalized.match(/^\/([^/]+)(\/.*)?$/);
@@ -100,20 +83,11 @@ export function stripLocaleFromPath(path: string): string {
   return normalized;
 }
 
-/**
- * Replace the locale segment of a path with a different locale.
- * Used by the LanguageSwitcher to build "same page, other language"
- * links. When the target is the default locale, no prefix is added.
- */
 export function swapLocaleInPath(path: string, targetLocale: Locale): string {
   const base = stripLocaleFromPath(path);
   return localizedPath(base, targetLocale);
 }
 
-/**
- * Detect the active locale from a path's first segment. Returns the
- * default locale if no recognized locale prefix is present.
- */
 export function getLocaleFromPath(path: string): Locale {
   const normalized = path.startsWith('/') ? path : `/${path}`;
   const first = normalized.split('/').filter(Boolean)[0];

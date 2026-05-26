@@ -34,14 +34,18 @@ const {
 
 const pageTitle = title ? `${title} — ${siteConfig.name}` : siteConfig.name;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+// 🌟 ÂNCORA DE SEGURANÇA MESTRA (VITE 7 / WINDOWS)
+// Evita o erro de Invalid URL garantindo um fallback automático para o origin local ou de produção
+const siteBase = Astro.site || new URL(Astro.url.origin);
+
+const canonicalURL = new URL(Astro.url.pathname, siteBase);
 
 // Process image - fall back to the static default OG image
 let ogImage: string;
 if (image) {
-  ogImage = image.startsWith('http') ? image : new URL(image, Astro.site).toString();
+  ogImage = image.startsWith('http') ? image : new URL(image, siteBase).toString();
 } else {
-  ogImage = new URL(siteConfig.ogImage, Astro.site).toString();
+  ogImage = new URL(siteConfig.ogImage, siteBase).toString();
 }
 
 const robotsContent = [noindex ? 'noindex' : 'index', nofollow ? 'nofollow' : 'follow'].join(', ');
@@ -74,25 +78,23 @@ const i18nOn = i18nIsEnabled();
 const hreflangAlternates = i18nOn
   ? getLocales().map((loc) => ({
       hreflang: loc,
-      href: new URL(swapLocaleInPath(Astro.url.pathname, loc), Astro.site).toString(),
+      href: new URL(swapLocaleInPath(Astro.url.pathname, loc), siteBase).toString(),
     }))
   : [];
+
 const xDefaultHref = i18nOn
-  ? new URL(swapLocaleInPath(Astro.url.pathname, defaultLocale), Astro.site).toString()
+  ? new URL(swapLocaleInPath(Astro.url.pathname, defaultLocale), siteBase).toString()
   : null;
 ---
 
-<!-- Primary Meta Tags -->
 <title>{pageTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonicalURL.toString()} />
 <meta name="robots" content={robotsContent} />
 
-<!-- hreflang alternates (only when i18n is enabled with multiple locales) -->
 {hreflangAlternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
 {xDefaultHref && <link rel="alternate" hreflang="x-default" href={xDefaultHref} />}
 
-<!-- Open Graph -->
 <meta property="og:title" content={pageTitle} />
 <meta property="og:type" content={article ? 'article' : 'website'} />
 <meta property="og:image" content={ogImage} />
@@ -105,13 +107,11 @@ const xDefaultHref = i18nOn
 <meta property="og:image:height" content="630" />
 {ogImageType && <meta property="og:image:type" content={ogImageType} />}
 
-<!-- Article Metadata -->
 {article?.publishedTime && <meta property="article:published_time" content={article.publishedTime.toISOString()} />}
 {article?.modifiedTime && <meta property="article:modified_time" content={article.modifiedTime.toISOString()} />}
 {article?.authors?.map((author) => <meta property="article:author" content={author} />)}
 {article?.tags?.map((tag) => <meta property="article:tag" content={tag} />)}
 
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={pageTitle} />
 <meta name="twitter:description" content={description} />
@@ -119,6 +119,5 @@ const xDefaultHref = i18nOn
 {siteConfig.twitter?.site && <meta name="twitter:site" content={siteConfig.twitter.site} />}
 {siteConfig.twitter?.creator && <meta name="twitter:creator" content={siteConfig.twitter.creator} />}
 
-<!-- Verification -->
 {siteConfig.verification?.google && <meta name="google-site-verification" content={siteConfig.verification.google} />}
 {siteConfig.verification?.bing && <meta name="msvalidate.01" content={siteConfig.verification.bing} />}

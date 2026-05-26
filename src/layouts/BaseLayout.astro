@@ -112,7 +112,7 @@ const locale = getLocaleFromPath(currentPath) || "pt-br";
 
 
     <!-- Dynamic favicon:  favicon and color (brand-500) with active theme -->
-    <script is:inline define:vars={{ _faviconLetter: siteConfig.favicon }}>
+    <script is:inline define:vars={{ _faviconLetter: siteConfig.faviconText ?? siteConfig.name.charAt(0).toUpperCase() }}>
       (function () {
         const LETTER = _faviconLetter;
 

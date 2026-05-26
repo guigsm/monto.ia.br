@@ -2,24 +2,6 @@
 /**
  * Header Component
  * Flexible navigation header with variant-based configuration
- *
- * Variants:
- * - layout: 'default' | 'centered' | 'minimal'
- * - position: 'fixed' | 'sticky' | 'static'
- * - size: 'sm' | 'md' | 'lg'
- * - variant: 'default' | 'solid' | 'transparent'
- * - colorScheme: 'default' | 'invert' (use 'invert' for dark backgrounds)
- * - shape: 'bar' | 'floating' (use 'floating' for capsule header)
- *
- * Features:
- * - Dynamic navigation from nav.config.ts (default) or custom nav prop
- * - Optional CTA button with customization
- * - Mobile menu with Escape key support
- * - Theme toggle
- * - GitHub/action buttons
- * - Full slot support for customization
- * - Inverted color scheme for use on dark/image backgrounds
- * - Floating capsule shape with scroll-reactive bg + color flip
  */
 
 import type { HTMLAttributes } from 'astro/types';
@@ -35,6 +17,9 @@ import ThemeSelectorDropdown from '@/components/layout/ThemeSelectorDropdown.ast
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher.astro';
 import siteConfig from '@/config/site.config';
 import { isEnabled as i18nIsEnabled } from '@/i18n';
+
+// IMPORTAÇÃO DO UTILIÁRIO CENTRALIZADO DE REDES SOCIAIS
+import { getSocialIconData } from '@/utils/icons';
 
 export interface NavItem {
   label: string;
@@ -73,10 +58,6 @@ interface Props extends HTMLAttributes<'header'> {
   scrollProgressPosition?: 'top' | 'bottom';
   autoHide?: boolean;
   invertOnReturn?: boolean;
-  /**
-   * Max width of the inner container (only applies when `shape='bar'`).
-   * Defaults to `'6xl'` (the historical width).
-   */
   maxWidth?: '4xl' | '5xl' | '6xl' | '7xl' | 'full';
 }
 
@@ -96,7 +77,7 @@ const {
   showThemeSelector = true,
   showMobileMenu = true,
   showSocialLinks = false,
-  showLanguageSwitcher = i18nIsEnabled(),
+  showLanguageSwitcher = true, // 🌟 FORÇADO COMO TRUE PARA EVITAR SUMIÇOS
   showActiveState = true,
   showScrollProgress = false,
   scrollProgressPosition = 'bottom',
@@ -119,7 +100,6 @@ const maxWidthClass = {
 }[maxWidth];
 const effectiveShowScrollProgress = showScrollProgress || (isFloating && !autoHide);
 const isInvert = colorScheme === 'invert';
-
 const defaultNav = getNavItems().map((item: NavConfigItem) => ({
   label: item.label,
   href: item.href,
@@ -128,8 +108,6 @@ const navItems: NavItem[] = nav || [...extraNav, ...defaultNav];
 
 const currentPath = Astro.url.pathname;
 
-// 🌟 DETECTOR E DICIONÁRIO DE IDIOMA PARA A INTERFACE (UI)
-// Verifica nativamente o idioma ativo pelo Astro ou analisa o prefixo da URL (/pt, /pt-br, etc.)
 const detectedLocale = Astro.currentLocale || (currentPath.startsWith('/pt') ? 'pt' : 'en');
 const isPt = detectedLocale.startsWith('pt');
 
@@ -142,8 +120,6 @@ const ui = {
   language: isPt ? 'Idioma' : 'Language',
   connect: isPt ? 'Conectar' : 'Connect'
 };
-
-
 const isLandingPage = currentPath === '/';
 const ctaHref = cta.href?.startsWith('#') && !isLandingPage ? `/${cta.href}` : cta.href;
 
@@ -151,29 +127,17 @@ const hasLogoSlot = Astro.slots.has('logo');
 const hasNavSlot = Astro.slots.has('nav');
 const hasActionsSlot = Astro.slots.has('actions');
 const hasMobileMenuSlot = Astro.slots.has('mobile-menu');
-
 const headerClasses = cn(
   headerVariants({ position, variant, shape }),
   isInvert && !isFloating && 'invert-section',
   className
 );
-
 const innerClasses = cn(headerInnerVariants({ size, shape }), !isFloating && maxWidthClass);
 
 function isActive(href: string): boolean {
   if (!showActiveState) return false;
   if (href.startsWith('#')) return false;
   return currentPath === href || currentPath.startsWith(href + '/');
-}
-
-function getSocialIconData(url: string): { icon: string; label: string } {
-  if (url.includes('github.com'))    return { icon: 'github',    label: 'GitHub' };
-  if (url.includes('instagram.com')) return { icon: 'instagram', label: 'Instagram' };
-  if (url.includes('x.com') || url.includes('twitter.com')) return { icon: 'x-twitter', label: 'X' };
-  if (url.includes('linkedin.com'))  return { icon: 'linkedin',  label: 'LinkedIn' };
-  if (url.includes('bsky.app'))      return { icon: 'bluesky',   label: 'Bluesky' };
-  if (url.includes('youtube.com'))   return { icon: 'youtube',   label: 'YouTube' };
-  return { icon: 'link', label: 'Social' };
 }
 
 function getNavIcon(href: string): string {
@@ -191,7 +155,6 @@ const mobileSocialOrder = ['x.com', 'instagram.com', 'bsky.app', 'github.com', '
 const mobileSocialLinks = mobileSocialOrder
   .map((host) => siteConfig.socialLinks.find((u) => u.includes(host)))
   .filter((u): u is string => Boolean(u));
-
 const menuId = `mobile-menu-${Math.random().toString(36).slice(2, 9)}`;
 const buttonId = `${menuId}-button`;
 ---
@@ -235,9 +198,7 @@ const buttonId = `${menuId}-button`;
                   'transition-all duration-(--transition-fast)',
                   isFloating && 'hdr-invert-text',
                   isFloating
-                    ? (isActive(href)
-                        ? 'hdr-nav-active font-semibold'
-                        : 'font-medium')
+                    ? (isActive(href) ? 'hdr-nav-active font-semibold' : 'font-medium')
                     : (isActive(href)
                         ? 'nav-link-active font-semibold text-foreground bg-secondary'
                         : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground hover:bg-secondary/70')
@@ -410,7 +371,6 @@ const buttonId = `${menuId}-button`;
           role="navigation"
           aria-label="Mobile navigation"
         >
-
           <div class={cn(
             'mobile-menu-body py-3',
             isFloating ? 'px-3' : cn('mx-auto px-4', maxWidthClass)
@@ -427,9 +387,7 @@ const buttonId = `${menuId}-button`;
                         href={resolvedHref}
                         class={cn(
                           'mobile-menu-row mobile-menu-stagger group flex items-center gap-3 rounded-xl px-3 py-3 text-base transition-colors',
-                          active
-                            ? 'mobile-menu-row-active'
-                            : 'mobile-menu-row-inactive'
+                          active ? 'mobile-menu-row-active' : 'mobile-menu-row-inactive'
                         )}
                         style={`--stagger-index: ${idx}`}
                         aria-current={active ? 'page' : undefined}
@@ -640,7 +598,6 @@ const buttonId = `${menuId}-button`;
       }
 
       button.addEventListener('click', toggle);
-
       if (backdrop) {
         backdrop.addEventListener('click', close);
       }
@@ -650,7 +607,6 @@ const buttonId = `${menuId}-button`;
           close();
         }
       });
-
       menu.querySelectorAll('a').forEach((link) => {
         link.addEventListener('click', close);
       });
@@ -663,12 +619,6 @@ const buttonId = `${menuId}-button`;
 </script>
 
 <script>
-  // Header scroll behaviour + scroll-progress bar driven by a single rAF.
-  // All layout reads are taken before any DOM writes. `docMaxScrollY` is
-  // cached; the first read is deferred to a rAF so it runs AFTER first
-  // paint instead of forcing a synchronous layout before it. ResizeObserver
-  // handles subsequent changes (font swap, image loads, reveal animations)
-  // without re-introducing a critical-path reflow.
   const SCROLL_THRESHOLD = 60;
   const AUTO_HIDE_THRESHOLD = 150;
   const BAR_SCROLLED_CLASSES = ['bg-background/80', 'backdrop-blur-lg', 'border-b', 'border-border/50'];
@@ -689,12 +639,10 @@ const buttonId = `${menuId}-button`;
 
   function initScrollDriven() {
     initDocMetrics();
-
     const scrollHeaders = document.querySelectorAll<HTMLElement>(
       'header[data-header-shape="floating"], header[data-header-shape="bar"]'
     );
     const progressBar = document.getElementById('scroll-progress-bar');
-
     scrollHeaders.forEach((header) => {
       if (header.dataset.scrollInit) return;
       header.dataset.scrollInit = 'true';
@@ -712,14 +660,12 @@ const buttonId = `${menuId}-button`;
         ticking = true;
 
         requestAnimationFrame(() => {
-          // ── READS (gather everything before touching the DOM) ──
           const currentScrollY = window.scrollY;
           const menuId = header.dataset.menuId;
           const menu = menuId ? document.getElementById(menuId) : null;
           const menuOpen = menu && !menu.classList.contains('hidden');
           const wasHidden = header.hasAttribute('data-header-hidden');
 
-          // ── WRITES ──
           if (currentScrollY > SCROLL_THRESHOLD) {
             header.setAttribute('data-scrolled', '');
             if (isTransparentBar) {
@@ -748,7 +694,7 @@ const buttonId = `${menuId}-button`;
                 if (wasHidden) {
                   lastShownAtY = Math.min(
                     currentScrollY,
-                    Math.max(0, docMaxScrollY - AUTO_HIDE_THRESHOLD),
+                    Math.max(0, docMaxScrollY - AUTO_HIDE_THRESHOLD)
                   );
                   header.setAttribute('data-header-returned', '');
                 }
@@ -761,8 +707,6 @@ const buttonId = `${menuId}-button`;
             }
           }
 
-          // Drive the scroll-progress bar in the same frame, using the
-          // already-read currentScrollY and the cached docMaxScrollY.
           if (progressBar) {
             const pct = docMaxScrollY > 0 ? (currentScrollY / docMaxScrollY) * 100 : 0;
             progressBar.style.width = `${pct}%`;
@@ -774,16 +718,12 @@ const buttonId = `${menuId}-button`;
       }
 
       window.addEventListener('scroll', onScroll, { passive: true });
-      // Defer the first read+write to the next frame so layout reads
-      // happen AFTER the browser has committed initial paint.
       requestAnimationFrame(() => {
         updateDocMaxScrollY();
         onScroll();
       });
     });
 
-    // Edge case: a progress bar exists without a header scroll-watcher.
-    // Drive it with its own minimal rAF so the bar still updates.
     if (progressBar && scrollHeaders.length === 0 && !progressBar.dataset.progressInit) {
       progressBar.dataset.progressInit = 'true';
       let pTicking = false;
@@ -800,7 +740,7 @@ const buttonId = `${menuId}-button`;
             requestAnimationFrame(updateProgress);
           }
         },
-        { passive: true },
+        { passive: true }
       );
       requestAnimationFrame(() => {
         updateDocMaxScrollY();
@@ -932,10 +872,6 @@ const buttonId = `${menuId}-button`;
     box-shadow: 0 4px 32px rgba(255, 255, 255, 0.07), 0 12px 40px -8px rgba(0, 0, 0, 0.6), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
   }
 
-  /* Light-mode floating header at rest: dark-glass capsule, mirroring the
-     dark-mode look so it reads cleanly over the home hero's black→brand
-     gradient. A neutral 18% white hairline sits below the badge and pill
-     borders so the header reads as the quiet frame those chips live in. */
   html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) {
     background: color-mix(in oklch, var(--surface-invert) 70%, transparent);
     border-color: color-mix(in oklch, var(--color-on-invert) 18%, transparent);
@@ -955,7 +891,7 @@ const buttonId = `${menuId}-button`;
     color: oklch(91% 0.008 250);
   }
 
-html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .ttg-wrapper > .ttg-trigger,
+  html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .ttg-wrapper > .ttg-trigger,
   html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .theme-dropdown-wrapper > button,
   html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .lang-switcher-wrapper button {
     border-color: oklch(58% 0.008 250 / 0.6);
@@ -1019,8 +955,6 @@ html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .ttg-wrapper
     }
   }
 
-  /* ===== Returned state: color flip only when header comes back after being hidden ===== */
-
   .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] {
     background: rgba(255, 255, 255, 0.95);
     border-color: rgba(0, 0, 0, 0.06);
@@ -1063,7 +997,6 @@ html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .ttg-wrapper
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  /* ===== Returned state: fix button hover backgrounds ===== */
   .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] button.hdr-invert-text:hover,
   .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .theme-dropdown-wrapper > button:hover,
   .dark [data-header-shape="floating"][data-header-returned][data-header-invert-on-return="true"] .lang-switcher-wrapper button:hover {
@@ -1077,10 +1010,6 @@ html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .ttg-wrapper
     background-color: rgba(255, 255, 255, 0.12);
     color: rgba(255, 255, 255, 1);
   }
-
-  /* ============================================================
-     Mobile dropdown menu — sectioned layout with icons + socials
-     ============================================================ */
 
   .mobile-menu-body {
     display: flex;
@@ -1193,10 +1122,6 @@ html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .ttg-wrapper
     }
   }
 
-  /* End at `transform: none` (not translateY(0)) so each row drops its
-     stacking context after the entry animation. Otherwise the
-     ThemeModeDropdown panel's z-50 is trapped inside its row and the
-     colour-theme swatches in the next row paint through it. */
   @keyframes mobileMenuItemIn {
     from {
       opacity: 0;
@@ -1208,10 +1133,6 @@ html:not(.dark) [data-header-shape="floating"]:not([data-scrolled]) .ttg-wrapper
     }
   }
 
-  /* While the theme-mode dropdown is open, promote its row to a positioned
-     stacking context above sibling rows. The row sits in a non-flex
-     <section>, so a bare `z-index` is inert — `position: relative` is what
-     lets the panel paint above the colour-theme swatches below it. */
   .mobile-menu-stagger:has(.ttg-panel:not(.hidden)) {
     position: relative;
     z-index: 60;

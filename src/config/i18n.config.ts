@@ -1,30 +1,13 @@
-// Configuração principal de i18n
-export const i18nConfig = {
-  enabled: true, // Ativa o seletor no Header
-  defaultLocale: "pt-br", // Idioma raiz do site
-  
-  // 🌟 CORREÇÃO: Voltando a ser uma lista de strings puras para não quebrar o .toUpperCase()
-  locales: ["pt-br", "en"], 
-
-  // Dicionário de traduções internas para componentes globais
-  translations: {
-    "pt-br": {
-      "nav.selectLanguage": "Selecionar idioma",
-      "nav.currentLanguage": "Idioma atual: Português",
-      "nav.theme": "Tema",
-      "nav.blog": "Blog",
-      "nav.projects": "Projetos"
-    },
-    "en": {
-      "nav.selectLanguage": "Select language",
-      "nav.currentLanguage": "Current language: English",
-      "nav.theme": "Theme",
-      "nav.blog": "Blog",
-      "nav.projects": "Projects"
-    }
-  } as Record<string, Record<string, string>>
+// Configuração principal de i18n da Matriz Modular
+const i18nConfig = {
+  enabled: true,               // Ativa o sistema globalmente
+  defaultLocale: 'pt',         // Idioma padrão de carregamento
+  locales: ['pt', 'en'],       // Idiomas aceitos pelo roteador do Astro
+  localeNames: {               // Nomes exibidos nos seletores
+    pt: 'Português',
+    en: 'English'
+  } as Record<string, string>
 };
 
-// Aliases estratégicos para o astro.config.mjs ler sem retornar undefined
-export const i18n = i18nConfig;
+export type I18nConfig = typeof i18nConfig;
 export default i18nConfig;
