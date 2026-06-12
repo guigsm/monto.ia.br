@@ -28,6 +28,10 @@ import Logo from '@/components/ui/marketing/Logo/Logo.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import siteConfig from '@/config/site.config';
 import { getSocialIcon } from '@/utils/icons';
+import { getLocaleFromPath, localizedPath } from '@/i18n';
+
+// 2. CAPTURA DINÂMICA DO IDIOMA DA PÁGINA ATUAL
+const currentLocale = getLocaleFromPath(Astro.url.pathname);
 
 export interface NavItem {
   label: string;
@@ -110,14 +114,16 @@ const maxWidthClass = {
 // header in `nav.config.ts` (see `footerNavItems`).
 const defaultNav: NavItem[] = getFooterNavItems().map((item: NavConfigItem) => ({
   label: item.label,
-  href: item.href,
+  href: localizedPath(item.href, currentLocale), // 🌟 Injeta dinamicamente /en se o usuário mudar de idioma
   external: item.external,
 }));
-const navItems: NavItem[] = nav || defaultNav;
+const navItems: NavItem[] = nav ? nav.map(item => ({ ...item, href: localizedPath(item.href, currentLocale) })) : defaultNav;
 const allNavItems: NavItem[] = navItems;
 
 // Resolved legal links: prop wins, otherwise fall back to nav.config.ts
-const resolvedLegalLinks: LegalLink[] = legalLinks ?? getLegalLinks();
+const resolvedLegalLinks: LegalLink[] = legalLinks 
+  ? legalLinks.map(item => ({ ...item, href: localizedPath(item.href, currentLocale) }))
+  : getLegalLinks().map(item => ({ ...item, href: localizedPath(item.href, currentLocale) }));
 
 // Process copyright text
 const currentYear = new Date().getFullYear();
@@ -155,10 +161,9 @@ const socialIcons: Record<string, string> = {
             {hasLogoSlot ? (
               <slot name="logo" />
             ) : (
-              <a href="/" class="flex items-center gap-2">
+              <a href={localizedPath('/', currentLocale)} class="flex items-center gap-2">
                 <Logo size="md" />
-                <span class="font-display text-base font-bold text-brand-600 dark:text-foreground">
-                </span>
+                <span class="font-display text-base font-bold text-brand-600 dark:text-foreground"></span>
               </a>
             )}
             {(hasTaglineSlot || tagline) && (
@@ -221,11 +226,10 @@ const socialIcons: Record<string, string> = {
               {hasLogoSlot ? (
                 <slot name="logo" />
               ) : (
-                <a href="/" class="flex items-center gap-2">
-                  <Logo size="md" />
-                  <span class="font-display text-base font-bold text-brand-600 dark:text-foreground">
-                  </span>
-                </a>
+                  <a href={localizedPath('/', currentLocale)} class="flex items-center gap-2">
+                    <Logo size="md" />
+                    <span class="font-display text-base font-bold text-brand-600 dark:text-foreground"></span>
+                  </a>
               )}
               {(hasTaglineSlot || tagline) && (
                 <p class="text-sm max-w-xs text-foreground-muted">
@@ -323,10 +327,9 @@ const socialIcons: Record<string, string> = {
           hasLogoSlot ? (
             <slot name="logo" />
           ) : (
-            <a href="/" class="flex items-center gap-2">
+            <a href={localizedPath('/', currentLocale)} class="flex items-center gap-2">
               <Logo size="md" />
-              <span class="font-display text-xl font-bold text-brand-600 dark:text-foreground">
-              </span>
+              <span class="font-display text-xl font-bold text-brand-600 dark:text-foreground"></span>
             </a>
           )
         )}

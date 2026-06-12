@@ -18,6 +18,13 @@ import LanguageSwitcher from '@/components/layout/LanguageSwitcher.astro';
 import siteConfig from '@/config/site.config';
 import { isEnabled as i18nIsEnabled } from '@/i18n';
 
+// 1. IMPORTAÇÃO DOS HELPERS NATIVOS
+import { getLocaleFromPath, localizedPath } from '@/i18n'; 
+
+// 2. CAPTURA DINÂMICA DO IDIOMA DA PÁGINA ATUAL
+const currentLocale = getLocaleFromPath(Astro.url.pathname);
+const rawNavConfigItems = getNavItems();
+
 // IMPORTAÇÃO DO UTILIÁRIO CENTRALIZADO DE REDES SOCIAIS
 import { getSocialIconData } from '@/utils/icons';
 
@@ -102,9 +109,9 @@ const effectiveShowScrollProgress = showScrollProgress || (isFloating && !autoHi
 const isInvert = colorScheme === 'invert';
 const defaultNav = getNavItems().map((item: NavConfigItem) => ({
   label: item.label,
-  href: item.href,
+  href: localizedPath(item.href, currentLocale), // 🌟 Injeta dinamicamente /en se o usuário mudar de idioma
 }));
-const navItems: NavItem[] = nav || [...extraNav, ...defaultNav];
+const navItems: NavItem[] = nav ? nav.map(item => ({ ...item, href: localizedPath(item.href, currentLocale) })) : [...extraNav, ...defaultNav];
 
 const currentPath = Astro.url.pathname;
 
@@ -185,9 +192,26 @@ const buttonId = `${menuId}-button`;
     {
       layout !== 'minimal' &&
         (hasNavSlot ? (
-          <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
-            <slot name="nav" />
-          </nav>
+        <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+          {navItems.map(({ label, href }) => (
+            <a
+              href={href}
+              class={cn(
+                'nav-link relative rounded-md px-3 py-2 text-sm',
+                'transition-all duration-(--transition-fast)',
+                isFloating && 'hdr-invert-text',
+                isFloating
+                  ? (isActive(href) ? 'hdr-nav-active font-semibold' : 'font-medium')
+                  : (isActive(href)
+                      ? 'nav-link-active font-semibold text-foreground bg-secondary'
+                      : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground hover:bg-secondary/70')
+              )}
+              aria-current={isActive(href) ? 'page' : undefined}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
         ) : (
           <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
             {navItems.map(({ label, href }) => (
