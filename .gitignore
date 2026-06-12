@@ -9,6 +9,9 @@ poema/
 proposta/
 rodadavida/
 
+# static files
+www/
+
 # build output
 dist/
 
@@ -33,3 +36,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# apache configuration file
+.htaccess

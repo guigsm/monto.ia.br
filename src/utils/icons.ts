@@ -3,10 +3,9 @@
  * Otimizado para Vite 7 + Astro 6 (Compatível com Cloudflare Prerender Edge)
  */
 
-// 🌟 ARQUITETURA COMPILADA VIA VITE (Elimina completamente o uso de 'fs' e 'path')
-// Usamos o import.meta.glob com eager: true para injetar os arquivos JSON em tempo de compilação.
-// Isso evita que o Worker isolado da Cloudflare tente ler o HD físico durante o build.
-const iconModules = import.meta.glob('../../../node_modules/@iconify-json/*/icons.json', { eager: true });
+// 🌟 ARQUITETURA CORRIGIDA VIA VITE
+// Caminho corrigido para dois níveis (../../) de modo a mapear perfeitamente a raiz local e de produção
+const iconModules = import.meta.glob('../../node_modules/@iconify-json/*/icons.json', { eager: true });
 
 export function getIconSvg(name: string) {
   let prefix = 'lucide';
@@ -20,8 +19,8 @@ export function getIconSvg(name: string) {
     iconName = 'twitter'; 
   }
 
-  // Constrói a chave de busca exatamente no formato mapeado pelo empacotador do Vite
-  const collectionKey = `../../../node_modules/@iconify-json/${prefix}/icons.json`;
+  // Chave de busca perfeitamente alinhada com o escopo do import.meta.glob
+  const collectionKey = `../../node_modules/@iconify-json/${prefix}/icons.json`;
   const collection = (iconModules[collectionKey] as any)?.default;
 
   if (!collection) {
@@ -41,8 +40,7 @@ export function getIconSvg(name: string) {
 }
 
 /**
- * 🌟 RESOLVEDOR CENTRAL DE LINKS DE REDES SOCIAIS (URL)
- * Usado pelo cabeçalho (Header) para varrer links dinâmicos do siteConfig
+ * RESOLVEDOR CENTRAL DE LINKS DE REDES SOCIAIS (URL)
  */
 export function getSocialIconData(url: string): { icon: string; label: string } {
   if (url.includes('github.com'))    return { icon: 'github',    label: 'GitHub' };
@@ -55,8 +53,7 @@ export function getSocialIconData(url: string): { icon: string; label: string } 
 }
 
 /**
- * 🌟 RESOLVEDOR CENTRAL DE PLATAFORMAS (NOME)
- * Usado pelo rodapé (Footer) e componentes internos estruturados
+ * RESOLVEDOR CENTRAL DE PLATAFORMAS (NOME)
  */
 export function getSocialIcon(platform: string): string {
   const p = platform.toLowerCase().trim();

@@ -2,6 +2,10 @@
 const i18nConfig = {
   enabled: true,               // Ativa o sistema globalmente
   defaultLocale: 'pt',         // Idioma padrão de carregamento
+  routing: {
+    prefixDefaultLocale: false, // <-- ISSO OMITE O /pt/ DA URL
+    redirectToDefaultLocale: true
+  },
   locales: ['pt', 'en'],       // Idiomas aceitos pelo roteador do Astro
   localeNames: {               // Nomes exibidos nos seletores
     pt: 'Português',
