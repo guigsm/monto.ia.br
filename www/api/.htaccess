@@ -1,0 +1,23 @@
+# Monto API — Apache Configuration
+# Redireciona todas as requisições para index.php
+
+Options -Indexes
+ServerSignature Off
+
+RewriteEngine On
+
+# Bloqueia acesso direto a arquivos sensíveis
+RewriteRule ^(\.env|composer\.(json|lock)|\.gitignore)$ - [F,L]
+
+# Permite acesso a vendor/ apenas para autoload (não para browser)
+RewriteRule ^vendor/ - [F,L]
+
+# Redireciona tudo para index.php (exceto arquivos que existem)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Headers de segurança
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "DENY"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"

@@ -1,0 +1,568 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "Monto API",
+    "description": "Coleção oficial da Monto API.\n\n**Base URL:** `{{base_url}}`\n\n## Configuração rápida\n1. Substitua `{{api_token}}` pelo token gerado via CLI.\n2. Substitua `{{base_origin}}` pelo domínio do site que consumirá a API (padrão: `https://monto.ia.br`).\n3. Todos os requests já usam `{{base_url}}`, `{{api_token}}` e `{{base_origin}}` automaticamente.\n\n## Por que o header Origin é necessário no Postman web?\nO Postman web app roda no browser e pode enviar um `Origin` automático (`https://web.postman.co`) que não corresponde aos domínios autorizados no token. A variável `{{base_origin}}` sobrescreve esse comportamento, simulando corretamente uma requisição vinda do seu domínio.\n\n## Endpoints\n- `GET  /health`   — Status da API (sem autenticação)\n- `POST /formail`  — Envio de formulário de contato",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://api.monto.ia.br",
+      "type": "string",
+      "description": "URL base da API. Altere para http://localhost/www/api em desenvolvimento local."
+    },
+    {
+      "key": "api_token",
+      "value": "mt_SEU_TOKEN_AQUI",
+      "type": "string",
+      "description": "Token gerado via: php cli/token.php create ..."
+    },
+    {
+      "key": "base_origin",
+      "value": "https://monto.ia.br",
+      "type": "string",
+      "description": "Domínio de origem autorizado no token. Necessário no Postman web, pois o browser envia Origin automaticamente. Altere para o domínio do cliente ao testar tokens de terceiros."
+    }
+  ],
+
+  "item": [
+
+    {
+      "name": "🟢 Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        },
+        "description": "Verifica se a API está operacional. Não requer autenticação."
+      },
+      "response": [
+        {
+          "name": "200 — API operacional",
+          "status": "OK",
+          "code": 200,
+          "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+          "body": "{\n  \"success\": true,\n  \"message\": \"API operacional\",\n  \"data\": {\n    \"version\": \"1.0.0\",\n    \"env\": \"production\"\n  }\n}"
+        }
+      ],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "pm.test('success: true', () => {",
+              "  const json = pm.response.json();",
+              "  pm.expect(json.success).to.be.true;",
+              "  pm.expect(json.data).to.have.property('version');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📬 Formail",
+      "description": "Envio de formulários de contato via email.\n\nO token deve ser enviado no header `X-API-Token`. O header `Origin` deve corresponder a um domínio autorizado no token.",
+      "item": [
+
+        {
+          "name": "✅ Mínimo — email + message",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-API-Token", "value": "{{api_token}}" },
+              { "key": "Origin", "value": "{{base_origin}}", "description": "Obrigatório no Postman web — simula origem autorizada do token." }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@exemplo.com\",\n  \"message\": \"Olá, gostaria de mais informações sobre os serviços.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/formail",
+              "host": ["{{base_url}}"],
+              "path": ["formail"]
+            },
+            "description": "Campos mínimos obrigatórios: `email` e `message`.\n\nO email será enviado ao endereço configurado no token, sem bloco de identidade (apenas o email do remetente)."
+          },
+          "response": [
+            {
+              "name": "200 — Enviado com sucesso",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Mensagem enviada com sucesso.\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('success: true', () => {",
+                  "  pm.expect(pm.response.json().success).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "✅ Com nome e empresa (destaque no email)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-API-Token", "value": "{{api_token}}" },
+              { "key": "Origin", "value": "{{base_origin}}", "description": "Obrigatório no Postman web — simula origem autorizada do token." }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@acme.com\",\n  \"message\": \"Preciso de um orçamento para nosso time.\",\n  \"name\": \"João Silva\",\n  \"company\": \"Acme Corp\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/formail",
+              "host": ["{{base_url}}"],
+              "path": ["formail"]
+            },
+            "description": "Com `name` e `company`, o email exibe um bloco de identidade destacado (fundo azul, label colorido) antes da mensagem.\n\nO Reply-To é configurado com o nome do remetente."
+          },
+          "response": [
+            {
+              "name": "200 — Enviado com sucesso",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Mensagem enviada com sucesso.\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('success: true', () => {",
+                  "  pm.expect(pm.response.json().success).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "✅ Completo — subject + extras tabulados",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-API-Token", "value": "{{api_token}}" },
+              { "key": "Origin", "value": "{{base_origin}}", "description": "Obrigatório no Postman web — simula origem autorizada do token." }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@acme.com\",\n  \"message\": \"Preciso de um orçamento para 50 usuários com suporte prioritário.\",\n  \"name\": \"João Silva\",\n  \"company\": \"Acme Corp\",\n  \"subject\": \"Solicitação de Orçamento Enterprise\",\n  \"telefone\": \"11 9999-9999\",\n  \"cidade\": \"São Paulo\",\n  \"cargo\": \"Diretor de TI\",\n  \"como_conheceu\": \"Google\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/formail",
+              "host": ["{{base_url}}"],
+              "path": ["formail"]
+            },
+            "description": "Demonstra todos os recursos simultâneos:\n\n- `subject` → concatenado no assunto: `Formulário de Contato — Solicitação de Orçamento Enterprise`\n- `name` + `company` → bloco de identidade destacado\n- `telefone`, `cidade`, `cargo`, `como_conheceu` → tabela de dados adicionais no rodapé do email"
+          },
+          "response": [
+            {
+              "name": "200 — Enviado com sucesso",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Mensagem enviada com sucesso.\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('success: true', () => {",
+                  "  pm.expect(pm.response.json().success).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "✅ Token no corpo (_token) — fallback",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{base_origin}}", "description": "Obrigatório no Postman web — simula origem autorizada do token." }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"_token\": \"{{api_token}}\",\n  \"email\": \"joao@exemplo.com\",\n  \"message\": \"Envio via _token no corpo (fallback para ambientes sem controle de headers).\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/formail",
+              "host": ["{{base_url}}"],
+              "path": ["formail"]
+            },
+            "description": "Alternativa ao header `X-API-Token`: envia o token como campo `_token` no corpo JSON.\n\nÚtil para ambientes onde não é possível definir headers customizados (ex.: formulários HTML nativos com `fetch` limitado). O campo `_token` é removido antes do processamento e não aparece no email."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('success: true', () => {",
+                  "  pm.expect(pm.response.json().success).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "❌ Erro — token inválido",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-API-Token", "value": "mt_token_invalido_000000" },
+              { "key": "Origin", "value": "{{base_origin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@exemplo.com\",\n  \"message\": \"Esta requisição deve ser rejeitada.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/formail",
+              "host": ["{{base_url}}"],
+              "path": ["formail"]
+            },
+            "description": "Token inválido → API retorna 401.\n\nO mesmo erro ocorre se o token estiver com status `inactive` ou `revoked`, ou se a origem da requisição não estiver na lista de domínios autorizados do token."
+          },
+          "response": [
+            {
+              "name": "401 — Token inválido",
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Token inválido, inativo ou origem não autorizada.\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('success: false', () => {",
+                  "  pm.expect(pm.response.json().success).to.be.false;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "❌ Erro — email ausente (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-API-Token", "value": "{{api_token}}" },
+              { "key": "Origin", "value": "{{base_origin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Esqueci de incluir o email nesta requisição.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/formail",
+              "host": ["{{base_url}}"],
+              "path": ["formail"]
+            },
+            "description": "Campo `email` ausente → 422 Unprocessable Entity."
+          },
+          "response": [
+            {
+              "name": "422 — Validação",
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+              "body": "{\n  \"success\": false,\n  \"message\": \"O campo \\\"email\\\" é obrigatório.\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 422', () => pm.response.to.have.status(422));",
+                  "pm.test('success: false', () => {",
+                  "  pm.expect(pm.response.json().success).to.be.false;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "❌ Erro — email inválido (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-API-Token", "value": "{{api_token}}" },
+              { "key": "Origin", "value": "{{base_origin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"isso-nao-e-um-email\",\n  \"message\": \"Testando validação de formato de email.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/formail",
+              "host": ["{{base_url}}"],
+              "path": ["formail"]
+            },
+            "description": "Email com formato inválido → 422."
+          },
+          "response": [
+            {
+              "name": "422 — Email inválido",
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+              "body": "{\n  \"success\": false,\n  \"message\": \"O campo \\\"email\\\" não é um endereço válido.\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 422', () => pm.response.to.have.status(422));",
+                  "pm.test('success: false com mensagem de email', () => {",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.success).to.be.false;",
+                  "  pm.expect(json.message).to.include('email');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "❌ Erro — message ausente (422)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "X-API-Token", "value": "{{api_token}}" },
+              { "key": "Origin", "value": "{{base_origin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@exemplo.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/formail",
+              "host": ["{{base_url}}"],
+              "path": ["formail"]
+            },
+            "description": "Campo `message` ausente → 422."
+          },
+          "response": [
+            {
+              "name": "422 — Message ausente",
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+              "body": "{\n  \"success\": false,\n  \"message\": \"O campo \\\"message\\\" é obrigatório.\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 422', () => pm.response.to.have.status(422));",
+                  "pm.test('success: false', () => {",
+                  "  pm.expect(pm.response.json().success).to.be.false;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+
+        {
+          "name": "❌ Erro — sem token (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Origin", "value": "{{base_origin}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"joao@exemplo.com\",\n  \"message\": \"Requisição sem nenhum token.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/formail",
+              "host": ["{{base_url}}"],
+              "path": ["formail"]
+            },
+            "description": "Nenhum token enviado (nem header nem corpo) → 401."
+          },
+          "response": [
+            {
+              "name": "401 — Sem token",
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Token inválido, inativo ou origem não autorizada.\"\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));",
+                  "pm.test('success: false', () => {",
+                  "  pm.expect(pm.response.json().success).to.be.false;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+
+      ]
+    },
+
+    {
+      "name": "🔁 CORS Preflight (OPTIONS)",
+      "request": {
+        "method": "OPTIONS",
+        "header": [
+          { "key": "Origin", "value": "{{base_origin}}", "description": "Usa a variável base_origin para simular o domínio do cliente." },
+          { "key": "Access-Control-Request-Method", "value": "POST" },
+          { "key": "Access-Control-Request-Headers", "value": "Content-Type, X-API-Token" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/formail",
+          "host": ["{{base_url}}"],
+          "path": ["formail"]
+        },
+        "description": "Simula o preflight CORS que o navegador envia automaticamente antes do POST.\n\nA API responde 204 se o `Origin` pertencer a algum token ativo. Altere `{{base_origin}}` nas variáveis de coleção para testar diferentes domínios de cliente."
+      },
+      "response": [
+        {
+          "name": "204 — Preflight aceito",
+          "status": "No Content",
+          "code": 204,
+          "header": [
+            { "key": "Access-Control-Allow-Origin", "value": "{{base_origin}}" },
+            { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
+            { "key": "Access-Control-Allow-Headers", "value": "Content-Type, X-API-Token" }
+          ],
+          "body": ""
+        }
+      ],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 204', () => pm.response.to.have.status(204));",
+              "pm.test('Header CORS presente', () => {",
+              "  pm.expect(pm.response.headers.get('Access-Control-Allow-Origin')).to.not.be.null;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "❌ Endpoint inexistente (404)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/rota-que-nao-existe",
+          "host": ["{{base_url}}"],
+          "path": ["rota-que-nao-existe"]
+        },
+        "description": "Qualquer rota não mapeada retorna 404."
+      },
+      "response": [
+        {
+          "name": "404 — Not Found",
+          "status": "Not Found",
+          "code": 404,
+          "header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+          "body": "{\n  \"success\": false,\n  \"message\": \"Endpoint não encontrado\"\n}"
+        }
+      ],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 404', () => pm.response.to.have.status(404));",
+              "pm.test('success: false', () => {",
+              "  pm.expect(pm.response.json().success).to.be.false;",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+
+  ]
+}

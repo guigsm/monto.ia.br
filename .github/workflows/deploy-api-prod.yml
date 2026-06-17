@@ -1,0 +1,39 @@
+name: Deploy API — Produção
+
+on:
+  push:
+    branches: [main]
+    paths: ['www/api/**']
+
+jobs:
+  deploy:
+    name: Deploy para api.monto.ia.br
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configura SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.KINGHOST_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H web2f02.uni5.net >> ~/.ssh/known_hosts
+
+      - name: Garante que a pasta de destino existe
+        run: |
+          ssh monto@web2f02.uni5.net "mkdir -p /home/monto/www/api"
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz --delete \
+            --exclude='.env' \
+            --exclude='vendor/' \
+            --exclude='data/tokens.json' \
+            www/api/ \
+            monto@web2f02.uni5.net:/home/monto/www/api/
+
+      - name: Instala dependências PHP
+        run: |
+          ssh monto@web2f02.uni5.net \
+            "cd /home/monto/www/api && composer install --no-dev --optimize-autoloader"
