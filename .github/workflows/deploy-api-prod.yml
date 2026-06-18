@@ -25,7 +25,7 @@ jobs:
       - name: Instala lftp
         run: sudo apt-get install -y lftp
 
-      - name: Deploy via FTPS
+      - name: Deploy via FTP
         env:
           FTP_HOST: ${{ secrets.KINGHOST_FTP_HOST }}
           FTP_USER: ${{ secrets.KINGHOST_FTP_USER }}
@@ -33,10 +33,9 @@ jobs:
         run: |
           lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" -e "
             set ssl:verify-certificate no;
-            set ftp:ssl-force true;
+            set ftp:ssl-allow false;
             set ftp:passive-mode true;
-            mkdir -fp /www/api;
-            mirror -R --delete --parallel=4 \
+            mirror -R --continue --parallel=4 \
               --exclude='^\.env$' \
               --exclude='^data/tokens\.json$' \
               --exclude='^data/\.token$' \
