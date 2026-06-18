@@ -26,7 +26,7 @@ jobs:
           password: ${{ secrets.KINGHOST_FTP_PASS }}
           protocol: ftps
           local-dir: ./www/api/
-          server-dir: /api-homo/
+          server-dir: /www/api-homo/
           exclude: |
             **/.env
             **/data/tokens.json
