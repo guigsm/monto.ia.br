@@ -35,11 +35,12 @@ jobs:
             set ssl:verify-certificate no;
             set ftp:ssl-force true;
             set ftp:passive-mode true;
+            mkdir -fp /www/api-homo;
             mirror -R --delete --parallel=4 \
               --exclude='^\.env$' \
               --exclude='^data/tokens\.json$' \
               --exclude='^data/\.token$' \
               --exclude='^\.gitignore$' \
-              ./www/api/ /api-homo/;
+              ./www/api/ /www/api-homo/;
             bye
           "
