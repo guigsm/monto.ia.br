@@ -31,11 +31,10 @@ jobs:
           FTP_USER: ${{ secrets.KINGHOST_FTP_USER }}
           FTP_PASS: ${{ secrets.KINGHOST_FTP_PASS }}
         run: |
-          lftp -c "
+          lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" -e "
             set ssl:verify-certificate no;
             set ftp:ssl-force true;
             set ftp:passive-mode true;
-            open -u '$FTP_USER','$FTP_PASS' \$FTP_HOST;
             mirror -R --delete --parallel=4 \
               --exclude='^\.env$' \
               --exclude='^data/tokens\.json$' \
