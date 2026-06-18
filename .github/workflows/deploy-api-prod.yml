@@ -13,28 +13,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configura SSH
+      - name: Instala dependências PHP (no runner)
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.KINGHOST_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          printf "Host web2f02.uni5.net\n  StrictHostKeyChecking=no\n  UserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
-          chmod 600 ~/.ssh/config
+          cd www/api
+          composer install --no-dev --optimize-autoloader
 
-      - name: Garante que a pasta de destino existe
-        run: |
-          ssh monto@web2f02.uni5.net "mkdir -p /home/monto/www/api"
-
-      - name: Deploy via rsync
-        run: |
-          rsync -avz --delete \
-            --exclude='.env' \
-            --exclude='vendor/' \
-            --exclude='data/tokens.json' \
-            www/api/ \
-            monto@web2f02.uni5.net:/home/monto/www/api/
-
-      - name: Instala dependências PHP
-        run: |
-          ssh monto@web2f02.uni5.net \
-            "cd /home/monto/www/api && composer install --no-dev --optimize-autoloader"
+      - name: Deploy via SFTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.KINGHOST_FTP_HOST }}
+          username: ${{ secrets.KINGHOST_FTP_USER }}
+          password: ${{ secrets.KINGHOST_FTP_PASS }}
+          protocol: ftps
+          local-dir: ./www/api/
+          server-dir: /api/
+          exclude: |
+            **/.env
+            **/data/tokens.json
+            **/data/.token
+            **/.gitignore
