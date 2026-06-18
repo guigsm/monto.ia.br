@@ -40,6 +40,6 @@ jobs:
               --exclude='^data/tokens\.json$' \
               --exclude='^data/\.token$' \
               --exclude='^\.gitignore$' \
-              ./www/api/ /www/api/;
+              ./www/api/ /api/;
             bye
           "
