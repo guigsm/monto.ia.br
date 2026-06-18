@@ -13,22 +13,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Instala dependências PHP (no runner)
-        run: |
-          cd www/api
-          composer install --no-dev --optimize-autoloader
-
-      - name: Deploy via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Instala PHP e Composer
+        uses: shivammathur/setup-php@v2
         with:
-          server: ${{ secrets.KINGHOST_FTP_HOST }}
-          username: ${{ secrets.KINGHOST_FTP_USER }}
-          password: ${{ secrets.KINGHOST_FTP_PASS }}
-          protocol: ftps
-          local-dir: ./www/api/
-          server-dir: /www/api/
-          exclude: |
-            **/.env
-            **/data/tokens.json
-            **/data/.token
-            **/.gitignore
+          php-version: '8.2'
+          tools: composer
+
+      - name: Instala dependências PHP
+        run: composer install --no-dev --optimize-autoloader --working-dir=www/api
+
+      - name: Instala lftp
+        run: sudo apt-get install -y lftp
+
+      - name: Deploy via FTPS
+        env:
+          FTP_HOST: ${{ secrets.KINGHOST_FTP_HOST }}
+          FTP_USER: ${{ secrets.KINGHOST_FTP_USER }}
+          FTP_PASS: ${{ secrets.KINGHOST_FTP_PASS }}
+        run: |
+          lftp -c "
+            set ssl:verify-certificate no;
+            set ftp:ssl-force true;
+            set ftp:passive-mode true;
+            open -u '$FTP_USER','$FTP_PASS' \$FTP_HOST;
+            mirror -R --delete --parallel=4 \
+              --exclude='^\.env$' \
+              --exclude='^data/tokens\.json$' \
+              --exclude='^data/\.token$' \
+              --exclude='^\.gitignore$' \
+              ./www/api/ /api/;
+            bye
+          "
