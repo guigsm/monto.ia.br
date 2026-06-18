@@ -18,7 +18,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.KINGHOST_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H web2f02.uni5.net >> ~/.ssh/known_hosts
+          printf "Host web2f02.uni5.net\n  StrictHostKeyChecking=no\n  UserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
+          chmod 600 ~/.ssh/config
 
       - name: Garante que a pasta de destino existe
         run: |
