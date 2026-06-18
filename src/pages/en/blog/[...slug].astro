@@ -1,0 +1,52 @@
+---
+/**
+ * Individual blog post — English (`/en/blog/<slug>`).
+ *
+ * Only generates real pages when `i18nConfig.blog.translated === true`
+ * (see `src/config/i18n.config.ts`). Otherwise `getStaticPaths` returns an
+ * empty array — deep links to `/en/blog/**` fall through to
+ * `src/pages/en/404.astro`, which shows an informational "blog available in
+ * Portuguese" message with a Google Translate link.
+ */
+import BlogLayout from '@/layouts/BlogLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { isBlogTranslated } from '@/i18n';
+
+export async function getStaticPaths() {
+  if (!isBlogTranslated()) return [];
+
+  // 1. Busca a coleção e filtra apenas os posts do locale 'en'.
+  // Também mantém a regra do template de ignorar rascunhos (drafts) em produção.
+  const posts = await getCollection('blog', ({ data }) => {
+    return String(data.locale) === 'en' && (import.meta.env.PROD ? data.draft !== true : true);
+  });
+
+  // 2. Mapeia as rotas removendo o prefixo 'en/' do ID (se houver) para gerar a URL limpa
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(/^en\//, '') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<BlogLayout
+  title={post.data.title}
+  description={post.data.description}
+  publishedAt={post.data.publishedAt}
+  updatedAt={post.data.updatedAt}
+  author={post.data.author}
+  image={post.data.image}
+  imageAlt={post.data.imageAlt}
+  svgSlug={post.data.svgSlug}
+  tags={post.data.tags}
+  slug={post.id}
+  headings={headings}
+  toc={post.data.toc}
+  comments={post.data.comments}
+  locale="en"
+>
+  <Content />
+</BlogLayout>

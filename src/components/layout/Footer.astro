@@ -21,6 +21,7 @@ import { cn } from '@/lib/cn';
 import {
   getFooterNavItems,
   getLegalLinks,
+  HOME_PATH,
   type NavItem as NavConfigItem,
 } from '@/config/nav.config';
 import { footerVariants, footerColumnGridVariants } from './footer.variants';
@@ -93,7 +94,7 @@ const {
   socialLinks = [],
   showSocial = true,
   showCopyright = true,
-  copyright = '© {year} {siteName}. Designed by <a href="https://hansmartens.dev" class="underline hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">Hans Martens</a>.',
+  copyright = '© {year} {siteName}. Inspired by <a href="https://hansmartens.dev" class="underline hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">Hans Martens</a>.',
   legalLinks,
   hideLogo = false,
   tagline,
@@ -112,7 +113,7 @@ const maxWidthClass = {
 
 // Get navigation items — footer nav is configured independently from the
 // header in `nav.config.ts` (see `footerNavItems`).
-const defaultNav: NavItem[] = getFooterNavItems().map((item: NavConfigItem) => ({
+const defaultNav: NavItem[] = getFooterNavItems(currentLocale).map((item: NavConfigItem) => ({
   label: item.label,
   href: localizedPath(item.href, currentLocale), // 🌟 Injeta dinamicamente /en se o usuário mudar de idioma
   external: item.external,
@@ -161,7 +162,7 @@ const socialIcons: Record<string, string> = {
             {hasLogoSlot ? (
               <slot name="logo" />
             ) : (
-              <a href={localizedPath('/', currentLocale)} class="flex items-center gap-2">
+              <a href={localizedPath(HOME_PATH, currentLocale) /* TEMP-HOME-OVERRIDE: ver nav.config.ts */} class="flex items-center gap-2">
                 <Logo size="md" />
                 <span class="font-display text-base font-bold text-brand-600 dark:text-foreground"></span>
               </a>
@@ -226,7 +227,7 @@ const socialIcons: Record<string, string> = {
               {hasLogoSlot ? (
                 <slot name="logo" />
               ) : (
-                  <a href={localizedPath('/', currentLocale)} class="flex items-center gap-2">
+                  <a href={localizedPath(HOME_PATH, currentLocale) /* TEMP-HOME-OVERRIDE: ver nav.config.ts */} class="flex items-center gap-2">
                     <Logo size="md" />
                     <span class="font-display text-base font-bold text-brand-600 dark:text-foreground"></span>
                   </a>
@@ -327,7 +328,7 @@ const socialIcons: Record<string, string> = {
           hasLogoSlot ? (
             <slot name="logo" />
           ) : (
-            <a href={localizedPath('/', currentLocale)} class="flex items-center gap-2">
+            <a href={localizedPath(HOME_PATH, currentLocale) /* TEMP-HOME-OVERRIDE: ver nav.config.ts */} class="flex items-center gap-2">
               <Logo size="md" />
               <span class="font-display text-xl font-bold text-brand-600 dark:text-foreground"></span>
             </a>

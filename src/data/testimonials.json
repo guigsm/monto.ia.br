@@ -1,0 +1,112 @@
+{
+  "_meta": {
+    "source": "Google Business Profile — Audição Paulista (projeto Monto IA)",
+    "summary": {
+      "count": 111,
+      "rating": 5.0,
+      "writeAReviewUri": "https://www.google.com/maps/place//data=!4m3!3m2!1s0x94ce59b78ddadddd:0xa3d99cc2e912f62f!12e1"
+    },
+    "note": "Este arquivo é gerado via API e substituído automaticamente. Não edite manualmente."
+  },
+  "reviews": [
+    {
+      "id": "1299b976-62f1-4692-84d7-9578582160e6",
+      "platform": "gbp",
+      "author": {
+        "name": "Yasmin Silva Azevedo",
+        "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocKgeZdmesUYUwBsikRTQtV0mpwLNc0TxVb8sL-sYiUeS5qjiQ=s64-c-rp-mo-br100"
+      },
+      "text": "Dra Diane excelente profissional!! Dedicada, transparente, carinhosa, perfeita no que faz. Ficamos muito contentes com a aquisição do aparelho da minha vó — nos explicou preços, como funcionava — hoje minha vó voltou a escutar e está muito contente. Indico mil vezes!!!",
+      "rating": 5,
+      "publishedAt": "2026-01-29T15:44:37.000Z"
+    },
+    {
+      "id": "4895840b-704e-41f2-b84a-7a779ced117b",
+      "platform": "gbp",
+      "author": {
+        "name": "Clau Goes",
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjWKRQMnnGlBfDxCjrwQljq9Ws6x0WGbM3a6sLHkhYiydDRNfGrwlg=s64-c-rp-mo-ba2-br100"
+      },
+      "text": "Excelente atendimento. A fonoaudióloga Diane é super competente, muito dedicada, nos transmite muita segurança. Trabalho muito transparente. Fui em outros lugares e o atendimento dela faz toda diferença. Sem contar que é um amor de pessoa. Super indico para quem precisa de aparelho auditivo.",
+      "rating": 5,
+      "publishedAt": "2025-12-16T18:45:55.000Z"
+    },
+    {
+      "id": "383a02b6-d4b7-4aea-ad65-9f178923a8cb",
+      "platform": "gbp",
+      "author": {
+        "name": "Gustavo Silva",
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjVLzbDlL56O8rYZ_hUMheHIgIk2pOftwobsgOUaeLVm7kjAs7z8lg=s64-c-rp-mo-br100"
+      },
+      "text": "O atendimento da Diane é excelente. Cheguei com muitas dúvidas e anseios após ter descoberto minha perda auditiva e a Diane desde o primeiro contato me acolheu super bem, me explicando todo o processo. O teste e adaptação do aparelho também foram incríveis — sempre à disposição para ajustes. Indico muito!",
+      "rating": 5,
+      "publishedAt": "2025-12-15T18:32:01.000Z"
+    },
+    {
+      "id": "35e725fc-7d47-4232-be21-d6e1ffeca24b",
+      "platform": "gbp",
+      "author": {
+        "name": "Yoná Oliveira",
+        "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocJVPEnepbHh-M--nb8KyVzAWsh7u5VIyECgEaUHkWo2ZtMtIg=s64-c-rp-mo-br100"
+      },
+      "text": "Desde a compra do meu AASI há 4 meses só tenho a agradecer — não é apenas comprar, tem todo o acompanhamento que tem sido ótimo. Diane e Matheus são profissionais incríveis! Tenho certeza que fiz a escolha certa. Gratidão por tudo! 🥰",
+      "rating": 5,
+      "publishedAt": "2025-08-18T14:58:20.000Z"
+    },
+    {
+      "id": "c6672bae-7d6f-4c52-b384-1efae67a4981",
+      "platform": "gbp",
+      "author": {
+        "name": "Telma Marconi",
+        "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocJvtr6pu-GvfYvtbJxljI3kouyvJipX8XsGPMudlDw2Yw5tdXY=s64-c-rp-mo-br100"
+      },
+      "text": "Só tenho gratidão e elogios. Atendimento 100% humanizado, com muita ética e profissionalismo. Me passaram muita segurança quando comprei meu aparelho auditivo, e o acompanhamento pós-compra continua maravilhoso. Dra Diane é muito atenciosa, dedicada, comprometida com a qualidade e focada no bem-estar dos pacientes.",
+      "rating": 5,
+      "publishedAt": "2025-07-25T16:01:08.000Z"
+    },
+    {
+      "id": "b52d4af3-e5cd-4528-985a-15ec6568adf1",
+      "platform": "gbp",
+      "author": {
+        "name": "Fatima Palermo",
+        "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocI_EmqQlzyNNvN5v4TOxeHanwG6zIyUVjxSPTI1zCHVOOVTTm0g=s64-c-rp-mo-br100"
+      },
+      "text": "Após muitas pesquisas esse foi o melhor resultado: ótimo atendimento, rapidez, melhor preço e mais benefícios. Diane, a fonoaudióloga, é muito competente — explicou tudo sobre os aparelhos e as diferenças entre cada tipo. Ótimo custo-benefício!",
+      "rating": 5,
+      "publishedAt": "2025-07-12T19:20:11.000Z"
+    },
+    {
+      "id": "39191aa0-bb02-41b7-bafc-192dba9d8f57",
+      "platform": "gbp",
+      "author": {
+        "name": "Karina Kalil",
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjXFWvZ5uULhoDLr4XeB5oE7nXirgwUSzWQDULcs-F89p52yG6Q=s64-c-rp-mo-ba2-br100"
+      },
+      "text": "Atendimento excelente! Recomendo a todos, tanto para revisão de aparelhos (consertei dois e ficaram ótimos) como para aquisição de novos. A localização também é muito boa, na Paulista, muito próximo ao metrô Brigadeiro.",
+      "rating": 5,
+      "publishedAt": "2025-06-16T19:02:59.000Z"
+    },
+    {
+      "id": "14a816c5-ff23-42e6-a915-674648679857",
+      "platform": "gbp",
+      "author": {
+        "name": "Anderson Garcia",
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjWQmAlbCk-yXR01tO48M8GyTYugt1ZhglJYFZuyrR4G_Su6-DsPvw=s64-c-rp-mo-ba5-br100"
+      },
+      "text": "A experiência de adquirir um aparelho auditivo foi muito positiva. Diane e Matheus são uma equipe altamente qualificada e me auxiliaram em todas as etapas — desde a tentativa de conserto do meu aparelho até a adaptação. Agradeço pela paciência e profissionalismo.",
+      "rating": 5,
+      "publishedAt": "2024-12-17T00:00:38.000Z"
+    },
+    {
+      "id": "e7939c46-e226-44a4-aa30-91a93f328846",
+      "platform": "gbp",
+      "author": {
+        "name": "Milena Telles Longhi",
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjW5dpcVCdGRSSW-vXAuxg3ZaaxiGRPTzChDvWBYJmAAk9oEzPW1Qg=s64-c-rp-mo-br100"
+      },
+      "text": "Tenho otosclerose. Só passei a ter qualidade na minha audição quando virei cliente deles. Me acolheram com os aparelhos antigos e o vínculo de confiança foi tão incrível que fiz um novo — com acompanhamento personalizado. Consegui promoção no trabalho, diminuí remédios de depressão e sou muito mais feliz. Indico com coração!",
+      "rating": 5,
+      "publishedAt": "2023-09-06T16:43:11.000Z"
+    }
+  ]
+}

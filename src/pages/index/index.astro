@@ -1,0 +1,15 @@
+---
+/**
+ * 🧪 TEMP-HOME-OVERRIDE — rota /index (SOMENTE PARA TESTES)
+ *
+ * Espelha o conteúdo da home (src/pages/index.astro) nesta rota /index,
+ * pois o domínio de produção tem um redirecionamento configurado na raiz
+ * ("/") que impede visualizar a home durante os testes.
+ *
+ * PARA REMOVER: apague esta pasta inteira (src/pages/index/) e ajuste
+ * HOME_PATH em src/config/nav.config.ts de volta para '/'.
+ */
+import HomePage from '../index.astro';
+---
+
+<HomePage />

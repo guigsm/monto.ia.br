@@ -22,24 +22,10 @@ jobs:
       - name: Instala dependências PHP
         run: composer install --no-dev --optimize-autoloader --working-dir=www/api
 
-      - name: Instala lftp
-        run: sudo apt-get install -y lftp
-
-      - name: Deploy via FTP
+      - name: Deploy via FTP (Python)
         env:
           FTP_HOST: ${{ secrets.KINGHOST_FTP_HOST }}
           FTP_USER: ${{ secrets.KINGHOST_FTP_USER }}
           FTP_PASS: ${{ secrets.KINGHOST_FTP_PASS }}
-        run: |
-          lftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" -e "
-            set ssl:verify-certificate no;
-            set ftp:ssl-allow false;
-            set ftp:passive-mode true;
-            mirror -R --continue --parallel=4 \
-              --exclude='^\.env$' \
-              --exclude='^data/tokens\.json$' \
-              --exclude='^data/\.token$' \
-              --exclude='^\.gitignore$' \
-              ./www/api/ /api/;
-            bye
-          "
+          DEPLOY_ENV: prod
+        run: python .exec/deploy_ftp.py --env prod

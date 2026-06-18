@@ -1,0 +1,211 @@
+---
+/**
+ * Search Component
+ * Botão + modal que carrega a UI do Pagefind (gerada no build, em /pagefind/).
+ *
+ * 🌟 Ilha mínima: nenhum JS é enviado até o usuário clicar no botão de busca.
+ * O bundle do pagefind-ui (~JS + CSS) só é buscado on-demand, sob demanda.
+ *
+ * Idioma: o Pagefind segmenta o índice automaticamente por <html lang>
+ * (ver BaseLayout.astro). A PagefindUI detecta esse atributo em runtime e
+ * restringe os resultados ao idioma da página atual — pt-br não mistura
+ * com en e vice-versa, sem configuração adicional.
+ */
+import { cn } from '@/lib/cn';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+import { t, getLocaleFromPath } from '@/i18n';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+
+const locale = getLocaleFromPath(Astro.url.pathname);
+const dialogId = `search-dialog-${Math.random().toString(36).slice(2, 9)}`;
+
+const translations = {
+  placeholder: t('search.placeholder', locale),
+  zero_results: t('search.zeroResults', locale),
+  many_results: t('search.manyResults', locale),
+  one_result: t('search.oneResult', locale),
+  alt_search: t('search.alttext', locale),
+  searching: t('search.searching', locale),
+};
+---
+
+<button
+  type="button"
+  data-search-trigger={dialogId}
+  aria-label={t('search.open', locale)}
+  class={cn(
+    'inline-flex items-center justify-center rounded-md p-2',
+    'text-foreground-muted hover:text-foreground hover:bg-secondary/70',
+    'transition-colors duration-(--transition-fast)',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+    className
+  )}
+>
+  <Icon name="search" size="md" />
+  <span class="sr-only">{t('search.open', locale)}</span>
+</button>
+
+<dialog id={dialogId} class="search-dialog" aria-label={t('search.title', locale)}>
+  <div class="search-dialog-inner">
+    <div class="search-dialog-header">
+      <span class="search-dialog-title">{t('search.title', locale)}</span>
+      <button type="button" data-search-close aria-label={t('search.close', locale)} class="search-dialog-close">
+        <Icon name="x" size="md" />
+      </button>
+    </div>
+    <div id={`pagefind-${dialogId}`} class="pagefind-mount" data-pagefind-translations={JSON.stringify(translations)}>
+      <p class="search-loading">{t('search.loading', locale)}</p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  // Carrega a UI do Pagefind apenas quando o usuário abre a busca.
+  // /pagefind/pagefind-ui.js e .css só existem após `pnpm build` (gerados
+  // pelo pagefind a partir de dist/client). Em `astro dev` o fetch falha
+  // silenciosamente e mostramos uma mensagem amigável.
+  let pagefindCssLoaded = false;
+
+  function loadPagefindCss() {
+    if (pagefindCssLoaded) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '/pagefind/pagefind-ui.css';
+    document.head.appendChild(link);
+    pagefindCssLoaded = true;
+  }
+
+  async function initPagefind(mount: HTMLElement) {
+    if (mount.dataset.pagefindInit) return;
+    mount.dataset.pagefindInit = 'true';
+
+    try {
+      loadPagefindCss();
+      // @ts-expect-error -- gerado em build-time, não existe durante `astro check`
+      // Caminho montado em runtime (não como literal) para que o Vite não
+      // tente resolver/analisar este import em dev — o arquivo só existe
+      // após `pnpm build` rodar o pagefind.
+      const pagefindUrl = '/pagefind' + '/pagefind-ui.js';
+      const { PagefindUI } = await import(/* @vite-ignore */ pagefindUrl);
+      const translations = JSON.parse(mount.dataset.pagefindTranslations || '{}');
+      mount.innerHTML = '';
+      new PagefindUI({
+        element: mount,
+        showSubResults: true,
+        showImages: false,
+        excerptLength: 18,
+        translations,
+      });
+    } catch {
+      mount.innerHTML =
+        '<p class="search-loading">Índice de busca indisponível (rode `pnpm build` para gerá-lo).</p>';
+    }
+  }
+
+  function initSearch() {
+    document.querySelectorAll<HTMLButtonElement>('[data-search-trigger]').forEach((trigger) => {
+      if (trigger.dataset.searchInit) return;
+      trigger.dataset.searchInit = 'true';
+
+      const dialogId = trigger.dataset.searchTrigger!;
+      const dialog = document.getElementById(dialogId) as HTMLDialogElement | null;
+      if (!dialog) return;
+
+      const mount = document.getElementById(`pagefind-${dialogId}`);
+      const closeBtn = dialog.querySelector('[data-search-close]');
+
+      trigger.addEventListener('click', () => {
+        dialog.showModal();
+        if (mount) initPagefind(mount);
+        const input = dialog.querySelector<HTMLInputElement>('.pagefind-ui__search-input');
+        requestAnimationFrame(() => input?.focus());
+      });
+
+      closeBtn?.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) dialog.close();
+      });
+    });
+  }
+
+  initSearch();
+  document.addEventListener('astro:page-load', initSearch);
+</script>
+
+<style>
+  .search-dialog {
+    width: min(90vw, 40rem);
+    max-height: min(80vh, 36rem);
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl, 1rem);
+    background: var(--color-background);
+    color: var(--color-foreground);
+    box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.35);
+  }
+
+  .search-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+  }
+
+  .search-dialog-inner {
+    display: flex;
+    flex-direction: column;
+    max-height: min(80vh, 36rem);
+  }
+
+  .search-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .search-dialog-title {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  .search-dialog-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem;
+    border-radius: 0.5rem;
+    color: var(--color-foreground-muted);
+  }
+  .search-dialog-close:hover {
+    color: var(--color-foreground);
+    background: var(--color-secondary);
+  }
+
+  .pagefind-mount {
+    padding: 0.75rem 1rem 1rem;
+    overflow-y: auto;
+  }
+
+  .search-loading {
+    padding: 1.5rem 0;
+    text-align: center;
+    color: var(--color-foreground-muted);
+    font-size: 0.875rem;
+  }
+
+  /* Alinha a paleta do Pagefind UI ao tema do site */
+  .pagefind-mount {
+    --pagefind-ui-primary: var(--color-brand-600);
+    --pagefind-ui-text: var(--color-foreground);
+    --pagefind-ui-background: var(--color-background);
+    --pagefind-ui-border: var(--color-border);
+    --pagefind-ui-tag: var(--color-secondary);
+    --pagefind-ui-font: inherit;
+    --pagefind-ui-border-radius: 0.5rem;
+  }
+</style>

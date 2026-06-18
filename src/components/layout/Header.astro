@@ -6,7 +6,7 @@
 
 import type { HTMLAttributes } from 'astro/types';
 import { cn } from '@/lib/cn';
-import { getNavItems, type NavItem as NavConfigItem } from '@/config/nav.config';
+import { getNavItems, HOME_PATH, type NavItem as NavConfigItem } from '@/config/nav.config';
 import { headerVariants, headerInnerVariants } from './header.variants';
 import Button from '@/components/ui/form/Button/Button.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
@@ -15,6 +15,7 @@ import ThemeModeDropdown from '@/components/layout/ThemeModeDropdown.astro';
 import ThemeSelector from '@/components/layout/ThemeSelector.astro';
 import ThemeSelectorDropdown from '@/components/layout/ThemeSelectorDropdown.astro';
 import LanguageSwitcher from '@/components/layout/LanguageSwitcher.astro';
+import Search from '@/components/layout/Search.astro';
 import siteConfig from '@/config/site.config';
 import { isEnabled as i18nIsEnabled } from '@/i18n';
 
@@ -23,7 +24,10 @@ import { getLocaleFromPath, localizedPath } from '@/i18n';
 
 // 2. CAPTURA DINÂMICA DO IDIOMA DA PÁGINA ATUAL
 const currentLocale = getLocaleFromPath(Astro.url.pathname);
-const rawNavConfigItems = getNavItems();
+const rawNavConfigItems = getNavItems(currentLocale);
+
+// TEMP-HOME-OVERRIDE: ver comentário em src/config/nav.config.ts
+const homeHref = localizedPath(HOME_PATH, currentLocale);
 
 // IMPORTAÇÃO DO UTILIÁRIO CENTRALIZADO DE REDES SOCIAIS
 import { getSocialIconData } from '@/utils/icons';
@@ -78,7 +82,7 @@ const {
   nav,
   extraNav = [],
   showCta = false,
-  cta = { label: 'Start a project', href: '/contact' },
+  cta = { label: 'Start a project', href: '/contato' },
   actions = [],
   showThemeToggle = true,
   showThemeSelector = true,
@@ -107,7 +111,7 @@ const maxWidthClass = {
 }[maxWidth];
 const effectiveShowScrollProgress = showScrollProgress || (isFloating && !autoHide);
 const isInvert = colorScheme === 'invert';
-const defaultNav = getNavItems().map((item: NavConfigItem) => ({
+const defaultNav = getNavItems(currentLocale).map((item: NavConfigItem) => ({
   label: item.label,
   href: localizedPath(item.href, currentLocale), // 🌟 Injeta dinamicamente /en se o usuário mudar de idioma
 }));
@@ -128,7 +132,11 @@ const ui = {
   connect: isPt ? 'Conectar' : 'Connect'
 };
 const isLandingPage = currentPath === '/';
-const ctaHref = cta.href?.startsWith('#') && !isLandingPage ? `/${cta.href}` : cta.href;
+const ctaHref = cta.href?.startsWith('#') && !isLandingPage
+  ? `/${cta.href}`
+  : cta.href?.startsWith('#') || cta.href?.startsWith('http')
+    ? cta.href
+    : localizedPath(cta.href, currentLocale);
 
 const hasLogoSlot = Astro.slots.has('logo');
 const hasNavSlot = Astro.slots.has('nav');
@@ -149,12 +157,14 @@ function isActive(href: string): boolean {
 
 function getNavIcon(href: string): string {
   if (href === '/' || href === '') return 'home';
-  if (href.startsWith('/blog'))     return 'pen-line';
-  if (href.startsWith('/projects')) return 'layers';
-  if (href.startsWith('/about'))    return 'user';
-  if (href.startsWith('/contact'))  return 'mail';
-  if (href.startsWith('#'))         return 'hash';
-  if (href.startsWith('http'))      return 'arrow-up-right';
+  if (href.startsWith('/blog'))                        return 'pen-line';
+  if (href.includes('/projects') || href.includes('/portfolio')) return 'layers';
+  if (href.includes('/about') || href.includes('/sobre'))        return 'user';
+  if (href.includes('/contact') || href.includes('/contato'))    return 'mail';
+  if (href.includes('#servicos') || href.includes('#services'))     return 'workflow';
+  if (href.includes('#depoimentos') || href.includes('#testimonials')) return 'star';
+  if (href.startsWith('#') || href.includes('/#'))     return 'hash';
+  if (href.startsWith('http'))                         return 'arrow-up-right';
   return 'chevron-right';
 }
 
@@ -183,7 +193,7 @@ const buttonId = `${menuId}-button`;
         (hasLogoSlot ? (
           <slot name="logo" />
         ) : (
-          <a href="/" class="flex items-center gap-2 hdr-logo-text">
+          <a href={homeHref} class="flex items-center gap-2 hdr-logo-text">
             <Logo size={size === 'sm' ? 'md' : 'lg'} forceDark={isInvert} />
           </a>
         ))
@@ -317,6 +327,8 @@ const buttonId = `${menuId}-button`;
           </>
         )
       }
+
+      <Search class={isFloating ? 'hdr-invert-text' : undefined} />
 
       {
         showMobileMenu && layout !== 'minimal' && (

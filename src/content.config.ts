@@ -18,7 +18,9 @@ const blog = defineCollection({
       svgSlug: z.string().optional(),
       draft: z.boolean().default(false),
       featured: z.boolean().default(false),
-      locale: z.enum(['en', 'es', 'fr']).default('en'),
+      // 🌟 'pt-br' é o locale padrão do projeto (ver src/config/i18n.config.ts).
+      // Mantemos 'en'/'es'/'fr' no enum para posts traduzidos no futuro.
+      locale: z.enum(['pt-br', 'en', 'es', 'fr']).default('pt-br'),
       /** Per-post override: hide table of contents on this post */
       toc: z.boolean().optional(),
       /** Per-post override: hide comments on this post */

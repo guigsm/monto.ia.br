@@ -1,0 +1,249 @@
+---
+/**
+ * Blog index — English
+ *
+ * Whether this route generates real content or a "not translated yet"
+ * fallback depends on `i18nConfig.blog.translated`
+ * (see `src/config/i18n.config.ts`):
+ *
+ * - `true`  → renders the blog index for `locale: 'en'` posts, exactly
+ *             like `src/pages/blog/index.astro` does for `pt-br`.
+ * - `false` (default) → renders a small informational page explaining the
+ *             blog only exists in Portuguese, with a link back to `/blog`
+ *             and an "Open in Google Translate" shortcut. Marked `noindex`
+ *             to avoid thin/duplicate content in search engines.
+ */
+import PageLayout from '@/layouts/PageLayout.astro';
+import BlogCard from '@/components/blog/BlogCard.astro';
+import Pagination from '@/components/blog/Pagination.astro';
+import TagList from '@/components/blog/TagList.astro';
+import Badge from '@/components/ui/data-display/Badge/Badge.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+import Button from '@/components/ui/form/Button/Button.astro';
+import CTA from '@/components/ui/marketing/CTA/CTA.astro';
+import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
+import { Hero } from '@/components/hero';
+import siteConfig from '@/config/site.config';
+import { resolveSocialLinks } from '@/lib/utils';
+import { isBlogTranslated, getGoogleTranslateUrl, getLocaleName, t } from '@/i18n';
+import {
+  BLOG_POSTS_PER_PAGE,
+  collectTopTags,
+  getPostUrl,
+  getPublishedPosts,
+} from '@/lib/blog';
+
+const translated = isBlogTranslated();
+
+/** How many of the most-used tags to surface in the cloud. */
+const TAG_CLOUD_LIMIT = 10;
+
+const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
+
+// 🌟 Translate fallback: link to the Portuguese blog via Google Translate.
+const ptBlogUrl = `${siteConfig.url.replace(/\/$/, '')}/blog`;
+const googleTranslateUrl = getGoogleTranslateUrl(ptBlogUrl, 'pt-br', 'en');
+
+// Only fetch English posts when the blog is actually translated — avoids
+// an empty query running on every build when it isn't needed.
+const posts = translated ? await getPublishedPosts('en') : [];
+const featuredPosts = posts.filter((post) => post.data.featured);
+const nonFeaturedPosts = posts.filter((post) => !post.data.featured);
+const regularPostsAll = nonFeaturedPosts.length > 0 ? nonFeaturedPosts : posts;
+const totalPages = Math.max(1, Math.ceil(regularPostsAll.length / BLOG_POSTS_PER_PAGE));
+const regularPosts = regularPostsAll.slice(0, BLOG_POSTS_PER_PAGE);
+const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
+---
+
+{translated ? (
+  <PageLayout title={`${t('blog.title', 'en')} — ${siteConfig.name}`} description={t('blog.heroDescription', 'en')} showScrollProgress eagerReveal>
+    <Hero layout="centered" size="sm">
+      <Badge slot="badge" variant="brand" pill>
+        <Icon name="book" size="sm" />
+        {t('blog.allPosts', 'en')}
+      </Badge>
+
+      <h1 slot="title">{t('blog.title', 'en')}</h1>
+
+      <p slot="description">{t('blog.heroDescription', 'en')}</p>
+    </Hero>
+
+    <!-- Featured Posts Section -->
+    {
+      featuredPosts.length > 0 && (
+        <section id="featured-section" class="bg-background-secondary py-[var(--space-section-md)] border-t border-border">
+          <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+            <h2 class="font-display text-foreground text-3xl md:text-4xl font-bold text-center" data-reveal>
+              {t('blog.featured', 'en')}
+            </h2>
+
+            <div class="grid gap-6 md:grid-cols-2">
+              {featuredPosts.map((post) => (
+                <BlogCard
+                  title={post.data.title}
+                  description={post.data.description}
+                  href={getPostUrl(post.id, 'en')}
+                  publishedAt={post.data.publishedAt}
+                  tags={post.data.tags}
+                  author={post.data.author}
+                  image={post.data.image}
+                  svgSlug={post.data.svgSlug}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <!-- All Posts Section -->
+    <section class:list={[featuredPosts.length > 0 ? 'bg-background' : 'bg-background-secondary', 'py-[var(--space-section-md)] border-t border-border']}>
+      <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+        <div class="flex flex-col items-center gap-4" data-reveal>
+          {
+            featuredPosts.length > 0 && nonFeaturedPosts.length > 0 && (
+              <h2 class="font-display text-foreground text-3xl md:text-4xl font-bold text-center">{t('blog.allPosts', 'en')}</h2>
+            )
+          }
+
+          {topTags.length > 0 && (
+            <TagList tags={topTags} class="justify-center" />
+          )}
+        </div>
+
+        {
+          regularPosts.length > 0 ? (
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {regularPosts.map((post) => (
+                <BlogCard
+                  title={post.data.title}
+                  description={post.data.description}
+                  href={getPostUrl(post.id, 'en')}
+                  publishedAt={post.data.publishedAt}
+                  tags={post.data.tags}
+                  author={post.data.author}
+                  image={post.data.image}
+                  svgSlug={post.data.svgSlug}
+                />
+              ))}
+            </div>
+          ) : (
+            <div class="py-16 text-center">
+              <div class="bg-background mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+                <Icon name="file-text" size="lg" class="text-foreground-muted" />
+              </div>
+              <p class="text-foreground-muted text-lg">{t('blog.noPostsFound', 'en')}</p>
+            </div>
+          )
+        }
+
+        <Pagination
+          currentPage={1}
+          totalPages={totalPages}
+          href={(page) => (page === 1 ? '/en/blog' : `/en/blog/page/${page}`)}
+        />
+      </div>
+    </section>
+
+    <!-- Follow CTA Section -->
+    <CTA variant="default" size="md" maxWidth="lg" glow={false} data-reveal class:list={['glitch:hidden', featuredPosts.length > 0 && '!bg-background-secondary']}>
+      <h2 slot="heading" class="!text-4xl">{t('blog.followAlong', 'en')}</h2>
+      <p slot="description" class="!text-lg text-balance">{t('blog.followAlongDescription', 'en')}</p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <a
+          href="/rss.xml"
+          class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
+        >
+          <Icon name="rss" size="sm" />
+          {t('blog.rssFeed', 'en')}
+        </a>
+        {socialLinks.map((link) => (
+          <a
+            href={link.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
+          >
+            <Icon name={link.icon} size="sm" />
+            {link.label}
+          </a>
+        ))}
+        <a
+          href={`mailto:${siteConfig.email}`}
+          class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
+        >
+          <Icon name="mail" size="sm" />
+          {t('contact.email', 'en')}
+        </a>
+      </div>
+    </CTA>
+
+    <section class:list={['hidden glitch:block relative z-10 py-[var(--space-section-md)]', featuredPosts.length > 0 ? 'bg-background-secondary' : 'bg-background']}>
+      <LetterGlitchBand>
+        <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">{t('blog.followAlong', 'en')}</h2>
+        <p class="text-lg text-foreground-muted mb-8 text-balance">{t('blog.followAlongDescription', 'en')}</p>
+
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="/rss.xml"
+            class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-400 hover:bg-brand-500/20 hover:text-foreground"
+          >
+            <Icon name="rss" size="sm" />
+            {t('blog.rssFeed', 'en')}
+          </a>
+          {socialLinks.map((link) => (
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-400 hover:bg-brand-500/20 hover:text-foreground"
+            >
+              <Icon name={link.icon} size="sm" />
+              {link.label}
+            </a>
+          ))}
+          <a
+            href={`mailto:${siteConfig.email}`}
+            class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-400 hover:bg-brand-500/20 hover:text-foreground"
+          >
+            <Icon name="mail" size="sm" />
+            {t('contact.email', 'en')}
+          </a>
+        </div>
+      </LetterGlitchBand>
+    </section>
+  </PageLayout>
+) : (
+  <PageLayout
+    title={`${t('blog.notTranslated.title', 'en')} — ${siteConfig.name}`}
+    description={t('blog.notTranslated.description', 'en', { language: getLocaleName('en') })}
+    noindex
+    eagerReveal
+  >
+    <Hero layout="centered" size="sm">
+      <Badge slot="badge" variant="brand" pill>
+        <Icon name="languages" size="sm" />
+        {t('blog.title', 'en')}
+      </Badge>
+
+      <h1 slot="title">{t('blog.notTranslated.title', 'en')}</h1>
+
+      <p slot="description">
+        {t('blog.notTranslated.description', 'en', { language: getLocaleName('en') })}
+      </p>
+
+      <div slot="actions" class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <Button href="/blog" size="lg">
+          <Icon name="arrow-left" size="sm" />
+          {t('blog.notTranslated.backToBlog', 'en')}
+        </Button>
+        <Button href={googleTranslateUrl} target="_blank" rel="noopener noreferrer" variant="outline" size="lg">
+          <Icon name="languages" size="sm" />
+          {t('blog.notTranslated.openInGoogleTranslate', 'en')}
+          <Icon name="external-link" size="sm" />
+        </Button>
+      </div>
+    </Hero>
+  </PageLayout>
+)}

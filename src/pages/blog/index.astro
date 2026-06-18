@@ -10,6 +10,7 @@ import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
 import { Hero } from '@/components/hero';
 import siteConfig from '@/config/site.config';
 import { resolveSocialLinks } from '@/lib/utils';
+import { t } from '@/i18n';
 import {
   BLOG_POSTS_PER_PAGE,
   collectTopTags,
@@ -22,7 +23,7 @@ const TAG_CLOUD_LIMIT = 10;
 
 const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
 
-const posts = await getPublishedPosts('en');
+const posts = await getPublishedPosts('pt-br');
 
 // Featured posts always appear on page 1; the "All posts" grid paginates
 // the non-featured set so the first impression stays curated.
@@ -37,16 +38,16 @@ const regularPosts = regularPostsAll.slice(0, BLOG_POSTS_PER_PAGE);
 const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
 ---
 
-<PageLayout title="Blog — Astro Rocket" description="Articles on web design, development, and the web by Astro Rocket." showScrollProgress eagerReveal>
+<PageLayout title={`${t('blog.title', 'pt-br')} — ${siteConfig.name}`} description={t('blog.heroDescription', 'pt-br')} showScrollProgress eagerReveal>
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>
       <Icon name="book" size="sm" />
-      All posts
+      {t('blog.allPosts', 'pt-br')}
     </Badge>
 
-    <h1 slot="title">Blog</h1>
+    <h1 slot="title">{t('blog.title', 'pt-br')}</h1>
 
-    <p slot="description">Articles on Astro, web performance, design systems, and building with Astro Rocket.</p>
+    <p slot="description">{t('blog.heroDescription', 'pt-br')}</p>
   </Hero>
 
   <!-- Featured Posts Section -->
@@ -55,7 +56,7 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
       <section id="featured-section" class="bg-background-secondary py-[var(--space-section-md)] border-t border-border">
         <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
           <h2 class="font-display text-foreground text-3xl md:text-4xl font-bold text-center" data-reveal>
-            Featured
+            {t('blog.featured', 'pt-br')}
           </h2>
 
           <div class="grid gap-6 md:grid-cols-2">
@@ -83,7 +84,7 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
       <div class="flex flex-col items-center gap-4" data-reveal>
         {
           featuredPosts.length > 0 && nonFeaturedPosts.length > 0 && (
-            <h2 class="font-display text-foreground text-3xl md:text-4xl font-bold text-center">All posts</h2>
+            <h2 class="font-display text-foreground text-3xl md:text-4xl font-bold text-center">{t('blog.allPosts', 'pt-br')}</h2>
           )
         }
 
@@ -113,7 +114,7 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
             <div class="bg-background mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
               <Icon name="file-text" size="lg" class="text-foreground-muted" />
             </div>
-            <p class="text-foreground-muted text-lg">No posts found</p>
+            <p class="text-foreground-muted text-lg">{t('blog.noPostsFound', 'pt-br')}</p>
           </div>
         )
       }
@@ -129,8 +130,8 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
   <!-- Follow CTA Section -->
   <!-- Mobile: standard CTA, no LetterGlitch -->
   <CTA variant="default" size="md" maxWidth="lg" glow={false} data-reveal class:list={['glitch:hidden', featuredPosts.length > 0 && '!bg-background-secondary']}>
-    <h2 slot="heading" class="!text-4xl">Follow along</h2>
-    <p slot="description" class="!text-lg text-balance">Stay in the loop — new articles, thoughts, and updates.</p>
+    <h2 slot="heading" class="!text-4xl">{t('blog.followAlong', 'pt-br')}</h2>
+    <p slot="description" class="!text-lg text-balance">{t('blog.followAlongDescription', 'pt-br')}</p>
 
     <div class="flex flex-wrap items-center justify-center gap-3">
       <a
@@ -138,7 +139,7 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
         class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
       >
         <Icon name="rss" size="sm" />
-        RSS Feed
+        {t('blog.rssFeed', 'pt-br')}
       </a>
       {socialLinks.map((link) => (
         <a
@@ -156,7 +157,7 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
         class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
       >
         <Icon name="mail" size="sm" />
-        Email
+        {t('contact.email', 'pt-br')}
       </a>
     </div>
   </CTA>
@@ -164,8 +165,8 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
   <!-- Desktop: contained LetterGlitch band with glass card -->
   <section class:list={['hidden glitch:block relative z-10 py-[var(--space-section-md)]', featuredPosts.length > 0 ? 'bg-background-secondary' : 'bg-background']}>
     <LetterGlitchBand>
-      <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">Follow along</h2>
-      <p class="text-lg text-foreground-muted mb-8 text-balance">Stay in the loop — new articles, thoughts, and updates.</p>
+      <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">{t('blog.followAlong', 'pt-br')}</h2>
+      <p class="text-lg text-foreground-muted mb-8 text-balance">{t('blog.followAlongDescription', 'pt-br')}</p>
 
       <div class="flex flex-wrap items-center justify-center gap-3">
         <a
@@ -173,7 +174,7 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
           class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-400 hover:bg-brand-500/20 hover:text-foreground"
         >
           <Icon name="rss" size="sm" />
-          RSS Feed
+          {t('blog.rssFeed', 'pt-br')}
         </a>
         {socialLinks.map((link) => (
           <a
@@ -191,7 +192,7 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
           class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-400 hover:bg-brand-500/20 hover:text-foreground"
         >
           <Icon name="mail" size="sm" />
-          Email
+          {t('contact.email', 'pt-br')}
         </a>
       </div>
     </LetterGlitchBand>

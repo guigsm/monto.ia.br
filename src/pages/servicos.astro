@@ -1,0 +1,331 @@
+---
+/**
+ * Serviços page
+ * URL: /servicos
+ *
+ * Página completa de serviços com subseções âncoras:
+ *   /servicos#sites-profissionais
+ *   /servicos#seo-ads-performance
+ *   /servicos#blog-com-ia
+ *   /servicos#automacoes-ia
+ *
+ * A section de destaque (variant="home") é importada na home via
+ * scroll-spy — não use /#servicos, sempre /servicos.
+ */
+import PageLayout from '@/layouts/PageLayout.astro';
+import { Hero } from '@/components/hero';
+import Button from '@/components/ui/form/Button/Button.astro';
+import Badge from '@/components/ui/data-display/Badge/Badge.astro';
+import Card from '@/components/ui/data-display/Card/Card.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
+---
+
+<PageLayout
+  title="Serviços — Sites, SEO, Ads, Blog com IA e Automações | Monto IA"
+  description="Desenvolvemos sites profissionais com SEO técnico, campanhas de Ads, blog com produção por IA e automações com N8N e IA conversacional. Tudo integrado, na medida do seu negócio."
+>
+  <!-- Hero -->
+  <Hero layout="centered" size="sm">
+    <Badge slot="badge" variant="brand" pill>O que fazemos</Badge>
+    <h1 slot="title">
+      Tudo o que um negócio digital precisa,
+      <span class="text-brand-500"> integrado.</span>
+    </h1>
+    <p slot="description">
+      O site é o ponto de partida — o resto é o que faz ele gerar resultado de verdade. SEO, Ads, conteúdo e automação trabalhando juntos, não em silos.
+    </p>
+    <Fragment slot="actions">
+      <Button size="lg" href="/contato">
+        Falar sobre meu projeto
+        <Icon name="arrow-right" size="sm" />
+      </Button>
+      <Button size="lg" variant="outline" href="/portfolio">
+        <Icon name="layers" size="sm" />
+        Ver portfólio
+      </Button>
+    </Fragment>
+  </Hero>
+
+  <!-- Índice de serviços -->
+  <section class="relative z-10 py-10 bg-background-secondary border-t border-border">
+    <div class="mx-auto max-w-6xl px-6">
+      <nav aria-label="Navegação por serviço" class="flex flex-wrap justify-center gap-3">
+        <a href="#sites-profissionais" class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-brand-500 transition-colors">
+          <Icon name="layout" size="sm" />
+          Sites profissionais
+        </a>
+        <a href="#seo-ads-performance" class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-brand-500 transition-colors">
+          <Icon name="search" size="sm" />
+          SEO, Ads e Performance
+        </a>
+        <a href="#blog-com-ia" class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-brand-500 transition-colors">
+          <Icon name="pen-tool" size="sm" />
+          Blog com IA
+        </a>
+        <a href="#automacoes-ia" class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground-muted hover:text-foreground hover:border-brand-500 transition-colors">
+          <Icon name="workflow" size="sm" />
+          Automações & IA
+        </a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────
+       Sites profissionais
+  ───────────────────────────────────────────────── -->
+  <section id="sites-profissionais" class="relative z-10 py-[var(--space-section-md)] bg-background border-t border-border scroll-mt-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-16 lg:grid-cols-2 lg:items-center">
+        <div data-reveal="right">
+          <div class="flex flex-col gap-5 mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
+              <Icon name="layout" size="md" />
+            </div>
+            <Badge variant="brand" pill class="self-start">Sites profissionais</Badge>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+              Design moderno e base técnica sólida desde o primeiro dia
+            </h2>
+          </div>
+          <p class="text-lg text-foreground-muted leading-relaxed mb-4">
+            Desenvolvemos em <strong class="text-foreground">Astro</strong> — framework que entrega HTML puro para o browser, sem JavaScript desnecessário. O resultado é um site com Lighthouse próximo de 100/100 desde o lançamento, não só no relatório de venda.
+          </p>
+          <p class="text-lg text-foreground-muted leading-relaxed mb-8">
+            Identidade visual aplicada com consistência, tipografia variável, imagens otimizadas em WebP/AVIF, dark mode e responsivo de verdade — em todos os dispositivos, não só no preview do Figma.
+          </p>
+          <Button href="/contato" variant="outline">
+            Quero um site profissional
+            <Icon name="arrow-right" size="sm" />
+          </Button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4" data-reveal="left" data-reveal-delay="1">
+          <Card padding="lg" class="flex flex-col items-center text-center gap-3">
+            <Icon name="gauge" class="w-8 h-8 text-brand-500" />
+            <p class="text-sm font-semibold text-foreground">Lighthouse 100</p>
+            <p class="text-xs text-foreground-muted">Performance, Acessibilidade, SEO e Boas Práticas</p>
+          </Card>
+          <Card padding="lg" class="flex flex-col items-center text-center gap-3">
+            <Icon name="smartphone" class="w-8 h-8 text-brand-500" />
+            <p class="text-sm font-semibold text-foreground">Mobile-first</p>
+            <p class="text-xs text-foreground-muted">Responsivo em todos os tamanhos de tela</p>
+          </Card>
+          <Card padding="lg" class="flex flex-col items-center text-center gap-3">
+            <Icon name="moon" class="w-8 h-8 text-brand-500" />
+            <p class="text-sm font-semibold text-foreground">Dark mode</p>
+            <p class="text-xs text-foreground-muted">Tema claro e escuro com transição suave</p>
+          </Card>
+          <Card padding="lg" class="flex flex-col items-center text-center gap-3">
+            <Icon name="shield" class="w-8 h-8 text-brand-500" />
+            <p class="text-sm font-semibold text-foreground">Seguro e rápido</p>
+            <p class="text-xs text-foreground-muted">Deploy no Cloudflare Pages, CDN global</p>
+          </Card>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────
+       SEO, Ads e Performance
+  ───────────────────────────────────────────────── -->
+  <section id="seo-ads-performance" class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border scroll-mt-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-16 lg:grid-cols-2 lg:items-center">
+        <div class="order-2 lg:order-1 grid gap-4" data-reveal="right" data-reveal-delay="1">
+          <Card variant="elevated" padding="lg" data-reveal>
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="search" size="sm" />
+              </div>
+              <div>
+                <h3 class="text-base font-semibold text-foreground mb-1">SEO técnico</h3>
+                <p class="text-sm text-foreground-muted leading-relaxed">Meta tags, schema.org, sitemap, robots.txt, canonical, Open Graph — tudo configurado corretamente para o Google indexar e entender seu conteúdo.</p>
+              </div>
+            </div>
+          </Card>
+          <Card variant="elevated" padding="lg" data-reveal data-reveal-delay="1">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="target" size="sm" />
+              </div>
+              <div>
+                <h3 class="text-base font-semibold text-foreground mb-1">Campanhas de Ads</h3>
+                <p class="text-sm text-foreground-muted leading-relaxed">Google Ads e Meta Ads configurados com rastreamento correto — conversões, remarketing e análise de funil para saber o que está gerando resultado.</p>
+              </div>
+            </div>
+          </Card>
+          <Card variant="elevated" padding="lg" data-reveal data-reveal-delay="2">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="bar-chart-2" size="sm" />
+              </div>
+              <div>
+                <h3 class="text-base font-semibold text-foreground mb-1">Analytics e rastreamento</h3>
+                <p class="text-sm text-foreground-muted leading-relaxed">Google Analytics 4, Tag Manager e heatmaps configurados para você entender como os visitantes interagem com o site.</p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <div class="order-1 lg:order-2" data-reveal="left">
+          <div class="flex flex-col gap-5 mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
+              <Icon name="search" size="md" />
+            </div>
+            <Badge variant="brand" pill class="self-start">SEO, Ads e Performance</Badge>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+              Para o site aparecer e converter, não só existir
+            </h2>
+          </div>
+          <p class="text-lg text-foreground-muted leading-relaxed mb-4">
+            Um site bonito que ninguém encontra não gera resultado. SEO técnico correto + bom conteúdo + campanhas de Ads bem configuradas — esse é o conjunto que faz diferença.
+          </p>
+          <p class="text-lg text-foreground-muted leading-relaxed mb-8">
+            Não vendemos "posição número 1 garantida". Vendemos configuração correta, conteúdo relevante e acompanhamento — que é o que realmente funciona a médio e longo prazo.
+          </p>
+          <Button href="/contato" variant="outline">
+            Quero melhorar meu SEO e Ads
+            <Icon name="arrow-right" size="sm" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────
+       Blog com IA
+  ───────────────────────────────────────────────── -->
+  <section id="blog-com-ia" class="relative z-10 py-[var(--space-section-md)] bg-background border-t border-border scroll-mt-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-16 lg:grid-cols-2 lg:items-center">
+        <div data-reveal="right">
+          <div class="flex flex-col gap-5 mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
+              <Icon name="pen-tool" size="md" />
+            </div>
+            <Badge variant="brand" pill class="self-start">Blog com produção por IA</Badge>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+              Conteúdo novo no ar com frequência, sem virar trabalho extra
+            </h2>
+          </div>
+          <p class="text-lg text-foreground-muted leading-relaxed mb-4">
+            Blog alimentado por IA na produção e revisão humana na curadoria — o melhor dos dois mundos. Conteúdo relevante publicado com regularidade, sem você precisar escrever uma linha.
+          </p>
+          <p class="text-lg text-foreground-muted leading-relaxed mb-8">
+            Cada post é otimizado para SEO desde a estrutura (H1, H2, meta description, schema.org) até a densidade de palavras-chave — sem keyword stuffing, com linguagem natural que o Google e os leitores preferem.
+          </p>
+          <Button href="/contato" variant="outline">
+            Quero blog com produção por IA
+            <Icon name="arrow-right" size="sm" />
+          </Button>
+        </div>
+
+        <div class="flex flex-col gap-4" data-reveal="left" data-reveal-delay="1">
+          <Card variant="elevated" padding="lg">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-2xl">✍️</span>
+              <h3 class="font-semibold text-foreground">Produção assistida por IA</h3>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed">Rascunhos gerados por IA com base no nicho do cliente, revisados e ajustados por humanos antes de publicar.</p>
+          </Card>
+          <Card variant="elevated" padding="lg">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-2xl">📅</span>
+              <h3 class="font-semibold text-foreground">Calendário editorial</h3>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed">Pauta definida com base em pesquisa de palavras-chave e intenção de busca — não só temas genéricos.</p>
+          </Card>
+          <Card variant="elevated" padding="lg">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-2xl">🔗</span>
+              <h3 class="font-semibold text-foreground">Linkagem estratégica</h3>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed">Posts conectados entre si e com as páginas de serviço — construindo autoridade de domínio de forma consistente.</p>
+          </Card>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────
+       Automações & IA conversacional
+  ───────────────────────────────────────────────── -->
+  <section id="automacoes-ia" class="relative z-10 py-[var(--space-section-md)] bg-background-secondary border-t border-border scroll-mt-20">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-16 lg:grid-cols-2 lg:items-center">
+        <div class="order-2 lg:order-1 flex flex-col gap-5" data-reveal="right" data-reveal-delay="1">
+          <div class="rounded-2xl bg-background border border-border p-6 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-brand-500/10 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="workflow" size="sm" />
+              </div>
+              <span class="text-sm font-semibold text-foreground">Automação com N8N</span>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed">Fluxos de trabalho automáticos conectando formulários, CRM, WhatsApp, planilhas e APIs. Sem código, sem custo de manutenção em desenvolvedor.</p>
+          </div>
+          <div class="rounded-2xl bg-background border border-border p-6 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-brand-500/10 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="message-circle" size="sm" />
+              </div>
+              <span class="text-sm font-semibold text-foreground">IA conversacional</span>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed">Assistente no WhatsApp ou no site que responde dúvidas, qualifica leads e agenda reuniões — disponível 24h, sem substituir o atendimento humano para o que importa.</p>
+          </div>
+          <div class="rounded-2xl bg-background border border-border p-6 flex flex-col gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-brand-500/10 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="zap" size="sm" />
+              </div>
+              <span class="text-sm font-semibold text-foreground">Integrações sob medida</span>
+            </div>
+            <p class="text-sm text-foreground-muted leading-relaxed">Conexão entre sistemas que não se falam nativamente — ERP, CRM, plataformas de e-commerce, ferramentas de gestão.</p>
+          </div>
+        </div>
+
+        <div class="order-1 lg:order-2" data-reveal="left">
+          <div class="flex flex-col gap-5 mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
+              <Icon name="workflow" size="md" />
+            </div>
+            <Badge variant="brand" pill class="self-start">Automações & IA conversacional</Badge>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+              IA na medida do seu negócio,
+              <span class="text-brand-500"> não por modismo</span>
+            </h2>
+          </div>
+          <p class="text-lg text-foreground-muted leading-relaxed mb-4">
+            Automação e IA conversacional entram num projeto quando resolvem um problema concreto — não porque estão em alta. Antes de propor qualquer recurso, entendemos o fluxo de trabalho do cliente.
+          </p>
+          <p class="text-lg text-foreground-muted leading-relaxed mb-8">
+            N8N para automações (sem lock-in em plataformas SaaS caras), e modelos de linguagem integrados via API quando a conversa com o cliente justifica — WhatsApp, chat no site ou processamento de documentos.
+          </p>
+          <Button href="/contato" variant="outline">
+            Quero automação e IA no meu negócio
+            <Icon name="arrow-right" size="sm" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <LetterGlitchBand>
+    <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
+      Qual serviço faz sentido para o seu momento?
+    </h2>
+    <p class="text-lg text-foreground-muted mb-8 text-balance">
+      Uma conversa rápida já define se é site novo, SEO, Ads, automação — ou um conjunto deles.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <Button size="lg" href="/contato" class="hero-btn-brand">
+        Falar com a Monto IA
+        <Icon name="arrow-right" size="sm" />
+      </Button>
+      <Button size="lg" variant="outline" href="/portfolio">
+        Ver projetos entregues
+        <Icon name="layers" size="sm" />
+      </Button>
+    </div>
+  </LetterGlitchBand>
+</PageLayout>

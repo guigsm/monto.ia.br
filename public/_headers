@@ -1,0 +1,42 @@
+# Cloudflare Pages — headers customizados
+# https://developers.cloudflare.com/pages/configuration/headers/
+# Regras mais específicas (mais abaixo) sobrescrevem as gerais (mais acima)
+# para o MESMO arquivo. CSP fica em astro.config.mjs (security.csp) —
+# aqui só headers que o Astro não gera.
+
+# -----------------------------------------------------------------------
+# Segurança — aplicado a todo o site, incluindo /keystatic
+# -----------------------------------------------------------------------
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  Cross-Origin-Opener-Policy: same-origin
+
+# -----------------------------------------------------------------------
+# Cache longo + imutável para assets com hash no nome (gerados pelo Vite)
+# -----------------------------------------------------------------------
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# -----------------------------------------------------------------------
+# Fontes self-hosted (Fontsource / WOFF2 locais) — também imutáveis
+# -----------------------------------------------------------------------
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# -----------------------------------------------------------------------
+# Frames da animação da Hero (scroll-driven) — ver item 4 do plano.
+# Cache agressivo é essencial: são dezenas/centenas de imagens reaproveitadas
+# em toda navegação dentro do mesmo idioma.
+# -----------------------------------------------------------------------
+/frames/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# -----------------------------------------------------------------------
+# Índice do Pagefind — pode mudar a cada build, cache moderado
+# -----------------------------------------------------------------------
+/pagefind/*
+  Cache-Control: public, max-age=3600, must-revalidate

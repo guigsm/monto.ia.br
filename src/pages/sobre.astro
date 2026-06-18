@@ -1,0 +1,401 @@
+---
+/**
+ * About page
+ * URL: /sobre
+ */
+import PageLayout from '@/layouts/PageLayout.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+import Badge from '@/components/ui/data-display/Badge/Badge.astro';
+import Card from '@/components/ui/data-display/Card/Card.astro';
+import Button from '@/components/ui/form/Button/Button.astro';
+import { Hero } from '@/components/hero';
+import TypingEffect from '@/components/ui/TypingEffect.astro';
+import TechStack from '@/components/landing/TechStack.astro';
+import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
+---
+<PageLayout
+  title="Sobre a Monto IA — Sites, SEO, Ads e Automações com IA na medida"
+  description="Conheça a Monto IA: desenvolvimento de sites como produto principal, com SEO, Ads, blog com produção por IA e automações com IA conversacional como diferenciais — na medida do seu negócio."
+>
+  <Hero layout="centered" size="sm">
+    <Badge slot="badge" variant="brand" pill>
+      <Icon name="building-2" size="sm" />
+      Sobre a Monto IA
+    </Badge>
+    <h1 slot="title">
+      <span class="text-foreground [-webkit-text-fill-color:currentColor]">Monto IA —</span><br />
+      <span class="text-brand-500 [-webkit-text-fill-color:var(--color-brand-500)]">
+        <TypingEffect words={["sites que vendem", "SEO que funciona", "blog com produção por IA", "automação com N8N", "IA na medida certa"]} />
+      </span>
+    </h1>
+
+    <p slot="description">
+      Desenvolvemos sites profissionais e cuidamos do que vem depois: SEO, Ads, blog com produção por IA, boas práticas (Lighthouse) e automações — cada peça entra no projeto pelo motivo certo.
+    </p>
+  </Hero>
+
+  <!-- Como pensamos o seu projeto -->
+  <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="grid gap-12 lg:grid-cols-2">
+        <!-- Left: text -->
+        <div class="flex flex-col gap-4" data-reveal="right">
+          <div class="flex flex-col gap-6">
+            <Badge variant="brand" pill class="self-start">Nossa abordagem</Badge>
+            <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+              Site é a base.<br /> Integração é o diferencial.
+            </h2>
+          </div>
+          <p class="text-lg text-foreground-muted leading-relaxed">
+            A Monto IA nasceu para resolver um problema simples: a maioria dos sites fica pronta e para por aí — sem SEO de verdade, sem conteúdo novo, sem automação, sem dados. Nosso produto principal é o desenvolvimento de sites, mas entregamos um site pensado para crescer, não só para existir.
+          </p>
+          <p class="text-lg text-foreground-muted leading-relaxed">
+            Automação, integrações com N8N e IA conversacional entram no projeto como diferenciais — quando fazem sentido para o seu negócio. IA na medida, não por ter.
+          </p>
+        </div>
+        <!-- Right: two stacked cards -->
+        <div class="flex flex-col gap-4 h-full" data-reveal="left" data-reveal-delay="1">
+          <Card variant="elevated" hover class="flex-1 flex flex-col justify-center">
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="layout" size="md" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold tracking-wide text-foreground-muted mb-1">Produto principal</p>
+                <h3 class="text-base font-semibold text-foreground">Sites & Performance</h3>
+                <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
+                  Design, desenvolvimento, SEO técnico, Ads e boas práticas de performance (Lighthouse) — a base de todo projeto.
+                </p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                  <Badge size="sm" variant="brand">SEO</Badge>
+                  <Badge size="sm" variant="brand">Performance</Badge>
+                  <Badge size="sm" variant="brand">Ads</Badge>
+                </div>
+              </div>
+            </div>
+          </Card>
+          <Card variant="elevated" hover class="flex-1 flex flex-col justify-center">
+            <div class="flex items-start gap-4">
+              <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+                <Icon name="workflow" size="md" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold tracking-wide text-foreground-muted mb-1">Diferencial sob medida</p>
+                <h3 class="text-base font-semibold text-foreground">Automação & IA</h3>
+                <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
+                  Integrações com N8N, blog com produção por IA e IA conversacional no WhatsApp ou no site — quando isso resolve um problema real.
+                </p>
+                <div class="flex flex-wrap gap-1.5 mt-3">
+                  <Badge size="sm" variant="brand">N8N</Badge>
+                  <Badge size="sm" variant="brand">IA conversacional</Badge>
+                  <Badge size="sm" variant="brand">Blog com IA</Badge>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Princípios -->
+  <section class="py-[var(--space-section-md)] bg-background border-t border-border">
+    <div class="mx-auto max-w-6xl px-6">
+      <div class="mb-8 text-center flex flex-col items-center gap-4" data-reveal>
+        <div class="flex flex-col items-center gap-6">
+          <Badge variant="brand" pill>Princípios</Badge>
+          <h2 class="font-display text-4xl font-bold text-foreground">
+            O que guia cada projeto
+          </h2>
+        </div>
+        <p class="text-lg text-foreground-muted max-w-2xl mx-auto text-balance">
+          Não são aspirações — são os critérios que aplicamos do briefing à entrega.
+        </p>
+      </div>
+      <div class="grid gap-8 md:grid-cols-3">
+        <Card hover data-reveal>
+          <div class="flex items-start gap-4">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="zap" size="md" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-semibold text-foreground">Performance em primeiro lugar</h3>
+              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
+                Sites rápidos rankeiam melhor, convertem mais e passam nas métricas do Lighthouse — performance é parte do design, não um ajuste de última hora.
+              </p>
+            </div>
+          </div>
+        </Card>
+        <Card hover data-reveal data-reveal-delay="1">
+          <div class="flex items-start gap-4">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="sparkles" size="md" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-semibold text-foreground">IA na medida, não por modismo</h3>
+              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
+                Automação e IA conversacional entram no projeto quando resolvem um problema real do seu negócio — nunca só para ter "IA" no site.
+              </p>
+            </div>
+          </div>
+        </Card>
+        <Card hover data-reveal data-reveal-delay="2">
+          <div class="flex items-start gap-4">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="layers" size="md" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-semibold text-foreground">Tudo conectado</h3>
+              <p class="text-sm text-foreground-muted leading-relaxed mt-1.5">
+                Site, SEO, Ads, blog e automação trabalhando juntos. Cada peça alimenta as outras, em vez de funcionar isolada.
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stack -->
+  <TechStack
+    badge="Tecnologia"
+    title="Nossa stack"
+    description="As ferramentas que usamos para construir sites rápidos, modernos e fáceis de manter — a base técnica que sustenta SEO, performance e tudo o que vem depois."
+    background="secondary"
+  />
+
+  <!-- FAQ -->
+  <section class="py-[var(--space-section-md)] bg-background border-t border-border">
+    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+      <div class="flex flex-col items-center gap-4 text-center" data-reveal>
+        <div class="flex flex-col items-center gap-6">
+          <Badge variant="brand" pill>Bom saber</Badge>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+            Perguntas frequentes
+          </h2>
+        </div>
+        <p class="text-lg text-foreground-muted max-w-2xl mx-auto text-balance">
+          Algumas das perguntas que mais recebemos.
+        </p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <!-- Card 1: Sobre os sites -->
+        <Card variant="elevated" padding="lg" data-reveal data-reveal-delay="1">
+          <div class="flex items-center gap-3 pb-4 border-b border-border">
+            <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="rocket" size="md" />
+            </div>
+            <h3 class="font-display text-base font-semibold text-foreground">Sobre os sites</h3>
+          </div>
+          <div class="w-full">
+            <details class="border-b border-border" name="faq-site">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                Por que vocês constroem os sites em Astro?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Porque ele entrega sites extremamente rápidos, com pouco ou nenhum JavaScript desnecessário — o que ajuda diretamente no SEO e nas métricas do Lighthouse. É a base técnica que sustenta o resto da estratégia.
+              </div>
+            </details>
+            <details class="border-b border-border" name="faq-site">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                O site já vem com SEO?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Sim. SEO técnico — estrutura, performance, dados estruturados, sitemap — faz parte do projeto desde o início, não é um serviço separado vendido depois.
+              </div>
+            </details>
+            <details class="border-b border-border" name="faq-site">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                Vocês também cuidam de campanhas de Ads?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Sim. Quando faz sentido para o negócio, configuramos e acompanhamos campanhas de Ads alinhadas ao site e ao funil — para o investimento em mídia não ser desperdiçado em uma página que não converte.
+              </div>
+            </details>
+            <details class="border-b border-border" name="faq-site">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                O blog do site é atualizado com frequência?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Sim. Produzimos conteúdo com apoio de IA e revisão humana, para o blog ficar ativo e alimentar o SEO — sem virar trabalho extra para você.
+              </div>
+            </details>
+            <details class="border-b border-border last:border-0" name="faq-site">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                O site funciona bem no celular?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Sim. Todo projeto é responsivo e testado em diferentes tamanhos de tela, com foco especial em performance mobile — onde a maioria dos visitantes chega.
+              </div>
+            </details>
+          </div>
+        </Card>
+
+        <!-- Card 2: Sobre a Monto IA -->
+        <Card variant="elevated" padding="lg" data-reveal data-reveal-delay="2">
+          <div class="flex items-center gap-3 pb-4 border-b border-border">
+            <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
+              <Icon name="building-2" size="md" />
+            </div>
+            <h3 class="font-display text-base font-semibold text-foreground">Sobre a Monto IA</h3>
+          </div>
+          <div class="w-full">
+            <details class="border-b border-border" name="faq-empresa">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                Vocês usam IA para criar os sites?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Usamos IA como ferramenta de apoio — na produção de conteúdo do blog, por exemplo — mas as decisões de design, estrutura e estratégia são definidas pela nossa equipe.
+              </div>
+            </details>
+            <details class="border-b border-border" name="faq-empresa">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                A Monto IA é uma agência ou empresa?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Somos a Monto IA, uma empresa. Desenvolvimento de sites é o nosso produto principal; automação, integrações com N8N e IA conversacional são diferenciais que agregamos quando fazem sentido para o cliente.
+              </div>
+            </details>
+            <details class="border-b border-border" name="faq-empresa">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                O que significa "IA na medida"?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Significa que só implementamos atendimento automatizado — WhatsApp, chat no site, etc. — quando isso resolve um problema real do seu negócio. Não adicionamos IA só para constar.
+              </div>
+            </details>
+            <details class="border-b border-border" name="faq-empresa">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                Vocês oferecem suporte depois que o site vai ao ar?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Sim. Pequenos ajustes, atualizações de conteúdo ou evoluções maiores — combinamos o formato de suporte de acordo com o seu projeto.
+              </div>
+            </details>
+            <details class="border-b border-border last:border-0" name="faq-empresa">
+              <summary class="flex w-full items-center justify-between text-sm py-4 text-left font-medium text-foreground transition-colors hover:text-foreground-secondary cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                Atendem empresas de qualquer lugar do Brasil?
+                <Icon name="chevron-down" size="sm" class="faq-icon shrink-0 text-foreground-muted transition-transform duration-200" />
+              </summary>
+              <div class="pb-4 text-sm text-foreground-muted leading-relaxed">
+                Sim. Estamos em São Paulo/SP e atendemos clientes remotamente em todo o Brasil.
+              </div>
+            </details>
+          </div>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Como entregamos um projeto -->
+  <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
+    <div class="mx-auto max-w-6xl px-6 flex flex-col gap-8">
+      <div class="flex flex-col items-center gap-4 text-center" data-reveal>
+        <div class="flex flex-col items-center gap-6">
+          <Badge variant="brand" pill>Como funciona</Badge>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
+            Da ideia ao site no ar
+          </h2>
+        </div>
+        <p class="text-lg text-foreground-muted max-w-2xl mx-auto text-balance">
+          Um processo direto, sem etapas desnecessárias.
+        </p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4" data-reveal-children>
+        <Card hover class="h-full">
+          <div class="flex flex-col gap-3">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 font-display font-bold">
+              1
+            </div>
+            <h3 class="text-base font-semibold text-foreground">Descoberta</h3>
+            <p class="text-sm text-foreground-muted leading-relaxed">
+              Entendemos seu negócio, objetivos e o que já existe — site, redes, dados — para mapear o que realmente importa.
+            </p>
+          </div>
+        </Card>
+        <Card hover class="h-full">
+          <div class="flex flex-col gap-3">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 font-display font-bold">
+              2
+            </div>
+            <h3 class="text-base font-semibold text-foreground">Design & Desenvolvimento</h3>
+            <p class="text-sm text-foreground-muted leading-relaxed">
+              Construímos o site em Astro com foco em performance, SEO técnico e boas práticas desde a primeira página.
+            </p>
+          </div>
+        </Card>
+        <Card hover class="h-full">
+          <div class="flex flex-col gap-3">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 font-display font-bold">
+              3
+            </div>
+            <h3 class="text-base font-semibold text-foreground">SEO, Ads & Blog com IA</h3>
+            <p class="text-sm text-foreground-muted leading-relaxed">
+              Configuramos SEO, campanhas de Ads — quando fizer sentido — e o fluxo de produção de conteúdo do blog.
+            </p>
+          </div>
+        </Card>
+        <Card hover class="h-full">
+          <div class="flex flex-col gap-3">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 font-display font-bold">
+              4
+            </div>
+            <h3 class="text-base font-semibold text-foreground">Automação & IA, se fizer sentido</h3>
+            <p class="text-sm text-foreground-muted leading-relaxed">
+              Se o negócio precisar, integramos automações com N8N e IA conversacional — sempre na medida certa.
+            </p>
+          </div>
+        </Card>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="relative z-10 py-[var(--space-section-md)] bg-background border-t border-border">
+    <!-- Mobile: flat section, no card -->
+    <div class="glitch:hidden mx-auto max-w-2xl px-6 text-center" data-reveal>
+      <Badge variant="brand" pill class="mb-6">Vamos conversar</Badge>
+      <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
+        Pronto para colocar tudo isso no seu site?
+      </h2>
+      <p class="text-lg text-foreground-muted mb-8 text-balance">
+        Conte um pouco sobre o seu negócio e o que você precisa — a gente te ajuda a entender por onde começar.
+      </p>
+      <Button size="lg" href="/contato" class="cta-btn-brand">
+        Falar com a Monto IA
+        <Icon name="arrow-right" size="sm" />
+      </Button>
+    </div>
+
+    <!-- Desktop: contained LetterGlitch band with glass card -->
+    <LetterGlitchBand>
+      <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
+        Pronto para colocar tudo isso no seu site?
+      </h2>
+      <p class="text-lg text-foreground-muted mb-8 text-balance">
+        Conte um pouco sobre o seu negócio e o que você precisa — a gente te ajuda a entender por onde começar.
+      </p>
+      <Button size="lg" href="/contato" class="hero-btn-brand">
+        Falar com a Monto IA
+        <Icon name="arrow-right" size="sm" />
+      </Button>
+    </LetterGlitchBand>
+  </section>
+</PageLayout>
+
+<style>
+  details[open] > summary .faq-icon {
+    transform: rotate(180deg);
+  }
+</style>

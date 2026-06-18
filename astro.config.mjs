@@ -67,10 +67,10 @@ export default defineConfig({
     keystatic() // 🌟 O Keystatic agora está oficialmente ativo!
   ],
   
-  i18n: {
-    defaultLocale: 'pt-br',
-    locales: ['pt-br', 'en'],
-  },
+  // 🌟 i18n removido daqui: já é calculado dinamicamente em `astroI18nOptions`
+  // (linhas 16-25) a partir de `src/config/i18n.config.ts`, a fonte única
+  // de verdade. O bloco fixo que existia aqui (`pt-br`/`en`) duplicava e
+  // mascarava esse cálculo — ver memória "i18n-config-conflict".
 
   vite: {
     plugins: [tailwindcss()],
@@ -82,6 +82,32 @@ export default defineConfig({
 
   security: {
     checkOrigin: true,
+    // 🌟 CSP nativo do Astro: gera hashes automaticamente para os scripts
+    // is:inline estáticos (ex: Analytics.astro) e libera os domínios do
+    // GTM/GA4 necessários para o Tag Manager funcionar.
+    // ⚠️ Restrito ao build (produção): em `astro dev` o painel do Keystatic
+    // (/keystatic) renderizava 100% em branco porque o editor MDX do
+    // Keystatic precisa de `'unsafe-eval'` em script-src, que o CSP nativo
+    // do Astro não inclui — sem `'unsafe-eval'`, o React do painel falha
+    // antes de montar qualquer coisa. Em produção, `/keystatic` é uma rota
+    // SSR (prerender: false) e vai sofrer o mesmo problema: mover essa
+    // política para `public/_headers` com exceção de `/keystatic/*` (ver
+    // memória "csp-security-headers-gap") antes de publicar.
+    csp: isBuild
+      ? {
+          directives: [
+            "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.googletagmanager.com",
+            "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
+          ],
+          scriptDirective: {
+            resources: [
+              'https://*.googletagmanager.com',
+              'https://*.google-analytics.com',
+              'https://analytics.google.com',
+            ],
+          },
+        }
+      : false,
   },
 
   markdown: {

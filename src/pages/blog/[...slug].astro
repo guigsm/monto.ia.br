@@ -3,15 +3,15 @@ import BlogLayout from '@/layouts/BlogLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  // 1. Busca a coleção e filtra apenas os posts que são em português ('pt')
-  // Também mantém a regra do template de ignorar rascunhos (drafts) em produção
+  // 1. Busca a coleção e filtra apenas os posts do locale padrão ('pt-br').
+  // Também mantém a regra do template de ignorar rascunhos (drafts) em produção.
   const posts = await getCollection('blog', ({ data }) => {
-    return String(data.locale) === 'pt' && (import.meta.env.PROD ? data.draft !== true : true);
+    return String(data.locale) === 'pt-br' && (import.meta.env.PROD ? data.draft !== true : true);
   });
 
-  // 2. Mapeia as rotas removendo o prefixo 'pt/' do ID para gerar a URL limpa
+  // 2. Mapeia as rotas removendo o prefixo 'pt-br/' do ID (se houver) para gerar a URL limpa
   return posts.map((post) => ({
-    params: { slug: post.id.replace('pt/', '') },
+    params: { slug: post.id.replace(/^pt-br\//, '') },
     props: { post },
   }));
 }
@@ -34,6 +34,7 @@ const { Content, headings } = await render(post);
   headings={headings}
   toc={post.data.toc}
   comments={post.data.comments}
+  locale="pt-br"
 >
   <Content />
 </BlogLayout>

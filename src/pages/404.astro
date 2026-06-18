@@ -8,13 +8,14 @@ import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
 import Button from '@/components/ui/form/Button/Button.astro';
 import { Hero } from '@/components/hero';
+import { HOME_PATH } from '@/config/nav.config'; // TEMP-HOME-OVERRIDE: ver nav.config.ts
 
 const recoveryLinks = [
   {
     icon: 'layers',
     title: 'Projects',
     description: 'Selected work and case studies.',
-    href: '/projects',
+    href: '/portfolio',
   },
   {
     icon: 'book',
@@ -26,7 +27,7 @@ const recoveryLinks = [
     icon: 'mail',
     title: 'Contact',
     description: 'Start a conversation about your project.',
-    href: '/contact',
+    href: '/contato',
   },
 ];
 ---
@@ -52,7 +53,7 @@ const recoveryLinks = [
     </p>
 
     <div slot="actions" class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <Button href="/" size="lg">
+      <Button href={HOME_PATH} size="lg">
         <Icon name="arrow-left" size="sm" />
         Back to home
       </Button>

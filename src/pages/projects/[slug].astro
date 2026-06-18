@@ -1,6 +1,9 @@
 ---
-import ProjectLayout from '@/layouts/ProjectLayout.astro';
-import { getCollection, render } from 'astro:content';
+/**
+ * Legacy URL — redirects to the localized page.
+ * URL: /projects/[slug] -> /portfolio/[slug]
+ */
+import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
   const allProjects = await getCollection('projects', ({ data }) => {
@@ -10,37 +13,9 @@ export async function getStaticPaths() {
 
   return allProjects.map((project) => ({
     params: { slug: project.id.replace(/\.mdx?$/, '') },
-    props: {
-      project,
-      related: allProjects
-        .filter((p) => p.id !== project.id)
-        .slice(0, 3),
-    },
   }));
 }
 
-const { project, related } = Astro.props;
-const { Content, headings } = await render(project);
+const { slug } = Astro.params;
+return Astro.redirect(`/portfolio/${slug}`, 301);
 ---
-
-<ProjectLayout
-  title={project.data.title}
-  description={project.data.description}
-  year={project.data.year}
-  client={project.data.client}
-  role={project.data.role}
-  services={project.data.services}
-  meta={project.data.meta}
-  url={project.data.url}
-  repo={project.data.repo}
-  tags={project.data.tags}
-  image={project.data.image}
-  imageAlt={project.data.imageAlt}
-  gallery={project.data.gallery}
-  slug={project.id.replace(/\.mdx?$/, '')}
-  related={related}
-  headings={headings}
-  toc={project.data.toc}
->
-  <Content />
-</ProjectLayout>

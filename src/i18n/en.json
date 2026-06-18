@@ -14,11 +14,14 @@
     "submit": "Submit",
     "cancel": "Cancel",
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "home": "Home"
   },
   "blog": {
     "title": "Blog",
     "description": "Latest articles and updates",
+    "heroDescription": "Articles about websites, SEO, performance, and automation for your business.",
+    "allPosts": "All posts",
     "readingTime": "{minutes} min read",
     "publishedOn": "Published on {date}",
     "updatedOn": "Updated on {date}",
@@ -27,8 +30,26 @@
     "featured": "Featured",
     "draft": "Draft",
     "noPostsFound": "No posts found.",
+    "noPostsForTag": "No posts found for this tag.",
+    "tagBadge": "Tag",
+    "tagDescription": "Posts tagged \"{tag}\".",
+    "postsTagged": "{count} post{plural} tagged \"{tag}\"",
+    "backToAllPosts": "Back to all posts",
+    "backToBlog": "Back to Blog",
+    "newestPosts": "Newest posts",
+    "pageTitle": "Blog — Page {page}",
+    "pageDescription": "Page {page} of {total} — articles about websites, SEO, performance, and automation.",
+    "followAlong": "Follow along",
+    "followAlongDescription": "Stay in the loop — new articles, thoughts, and updates.",
+    "rssFeed": "RSS Feed",
     "tableOfContents": "Table of contents",
-    "shareThisPost": "Share this post"
+    "shareThisPost": "Share this post",
+    "notTranslated": {
+      "title": "Blog available in Portuguese",
+      "description": "Our blog doesn't have posts naturally translated into this language yet. You can read it in Portuguese, or use Google Translate to view it in {language} right now.",
+      "backToBlog": "Go to the blog in Portuguese",
+      "openInGoogleTranslate": "Open in Google Translate"
+    }
   },
   "projects": {
     "title": "Projects",
@@ -77,5 +98,17 @@
   "footer": {
     "copyright": "© {year} {name}. All rights reserved.",
     "builtWith": "Built with Astro Rocket"
+  },
+  "search": {
+    "open": "Search",
+    "title": "Search",
+    "placeholder": "Search this site…",
+    "close": "Close search",
+    "zeroResults": "No results found for {term}",
+    "manyResults": "{count} results found for {term}",
+    "oneResult": "1 result found for {term}",
+    "alttext": "{result} for {term}",
+    "searching": "Searching for {term}…",
+    "loading": "Loading…"
   }
 }

@@ -14,11 +14,14 @@
     "submit": "Enviar",
     "cancel": "Cancelar",
     "next": "Próximo",
-    "previous": "Anterior"
+    "previous": "Anterior",
+    "home": "Início"
   },
   "blog": {
     "title": "Blog",
     "description": "Últimos artigos e atualizações",
+    "heroDescription": "Artigos sobre sites, SEO, performance e automação para o seu negócio.",
+    "allPosts": "Todos os posts",
     "readingTime": "{minutes} min de leitura",
     "publishedOn": "Publicado em {date}",
     "updatedOn": "Atualizado em {date}",
@@ -27,8 +30,26 @@
     "featured": "Destaque",
     "draft": "Rascunho",
     "noPostsFound": "Nenhum artigo encontrado.",
+    "noPostsForTag": "Nenhum post encontrado para esta tag.",
+    "tagBadge": "Tag",
+    "tagDescription": "Artigos com a tag \"{tag}\".",
+    "postsTagged": "{count} post{plural} com a tag \"{tag}\"",
+    "backToAllPosts": "Voltar para todos os posts",
+    "backToBlog": "Voltar para o blog",
+    "newestPosts": "Posts mais recentes",
+    "pageTitle": "Blog — Página {page}",
+    "pageDescription": "Página {page} de {total} — artigos sobre sites, SEO, performance e automação.",
+    "followAlong": "Acompanhe",
+    "followAlongDescription": "Fique por dentro — novos artigos, ideias e novidades.",
+    "rssFeed": "Feed RSS",
     "tableOfContents": "Sumário",
-    "shareThisPost": "Compartilhar este artigo"
+    "shareThisPost": "Compartilhar este artigo",
+    "notTranslated": {
+      "title": "Blog disponível em português",
+      "description": "Nosso blog ainda não possui postagens traduzidas naturalmente para este idioma. Você pode ler em português, ou usar o Google Tradutor para ver em {language} agora mesmo.",
+      "backToBlog": "Ir para o blog em português",
+      "openInGoogleTranslate": "Abrir no Google Tradutor"
+    }
   },
   "projects": {
     "title": "Projetos",
@@ -73,6 +94,18 @@
     "darkMode": "Modo escuro",
     "systemMode": "Sistema",
     "toggleTheme": "Alternar tema"
+  },
+  "search": {
+    "open": "Buscar",
+    "title": "Buscar",
+    "placeholder": "Buscar no site…",
+    "close": "Fechar busca",
+    "zeroResults": "Nenhum resultado encontrado para {term}",
+    "manyResults": "{count} resultados encontrados para {term}",
+    "oneResult": "1 resultado encontrado para {term}",
+    "alttext": "{result} para {term}",
+    "searching": "Buscando por {term}…",
+    "loading": "Carregando…"
   },
   "footer": {
     "copyright": "© {year} {name}. Todos os direitos reservados.",

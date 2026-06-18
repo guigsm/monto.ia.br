@@ -122,33 +122,25 @@ export interface SiteConfig {
 
 const siteConfig: SiteConfig = {
   name: 'Monto IA',
-  description: 'Astro Rocket — A production-ready Astro 6 starter with 12 beautiful themes, 57+ components, built-in i18n, dark mode and a fast, modern foundation to build anything on.',
+  description: 'A Monto IA cria sites profissionais com bom SEO, Ads, blog com produção por IA, boas práticas (Lighthouse) e IA conversacional na medida — automações e integrações com N8N para o seu negócio crescer.',
   url: SITE_URL || 'https://monto.ia.br',
   ogImage: '/og-default.svg',
-  author: 'Hans Martens',
-  email: 'hello@hansmartens.dev',
+  author: 'Monto IA',
+  email: 'contato@monto.ia.br',
   address: {
     street: '',
-    city: 'Veghel',
-    state: '',
+    city: 'São Paulo',
+    state: 'SP',
     zip: '',
-    country: 'the Netherlands',
+    country: 'Brasil',
   },
   socialLinks: [
-    'https://github.com/hansmartensdev',
-    'https://x.com/hansmartens_dev',
-    'https://www.linkedin.com',
-    'https://bsky.app/profile/hansmartensdev.bsky.social',
+    'https://www.instagram.com/monto.ia.br',
   ],
-  twitter: {
-    site: 'https://x.com/hansmartens_dev',
-    creator: '@hansmartens_dev',
-  },
   verification: {
     google: GOOGLE_SITE_VERIFICATION,
     bing: BING_SITE_VERIFICATION,
   },
-  authorImage: '/avatar.svg',
   blogImageOverlay: true,
   articleFeatures: {
     toc: {

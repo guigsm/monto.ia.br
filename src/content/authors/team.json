@@ -1,9 +1,4 @@
 {
-  "name": "Astro Rocket",
-  "bio": "Astro Rocket is a free, open-source Astro 6 starter theme. Built for speed, accessibility, and developer experience — clone it and start shipping.",
-  "social": {
-    "github": "https://github.com",
-    "linkedin": "https://linkedin.com",
-    "twitter": "https://x.com"
-  }
+  "name": "Monto IA",
+  "bio": "A Monto IA desenvolve sites profissionais com SEO, Ads, blog com produção por IA, boas práticas de performance (Lighthouse) e automações com IA conversacional — tudo integrado e na medida de cada negócio."
 }

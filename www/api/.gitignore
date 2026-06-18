@@ -1,4 +1,5 @@
 /vendor/
 /.env
 /data/tokens.json
+/data/.token
 /data/*.log
