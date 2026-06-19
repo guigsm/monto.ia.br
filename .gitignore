@@ -6,9 +6,8 @@
 .vercel/
 .wrangler/
 .claude/
+.docs/
 CLAUDE.md
-ARQUITETURA.md
-DEPLOY.md
 
 # logs
 .log/

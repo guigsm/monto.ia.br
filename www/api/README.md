@@ -50,10 +50,11 @@ www/api/
 ├── cli/                ← Scripts de administração (bloqueado via web)
 │   └── token.php           CLI para gerenciar tokens
 │
-└── docs/               ← Esta documentação (bloqueado via web)
-    ├── README.md
-    ├── API.md
-    └── TOKENS.md
+├── docs/               ← Artefatos técnicos (bloqueado via web)
+│   └── Monto-API.postman_collection.json
+│
+├── README.md           ← Este arquivo (GitHub / quick start)
+└── API.md              ← Briefing completo do projeto (contexto de IA)
 ```
 
 ## Instalação
@@ -97,7 +98,7 @@ Adicione o token como variável de ambiente secreta no CF Pages (`PUBLIC_API_TOK
 
 ```javascript
 // src/lib/contact.js
-const API_URL = 'https://monto.ia.br/www/api/formail';
+const API_URL = 'https://api.monto.ia.br/formail';
 
 export async function sendContact(formData) {
   const res = await fetch(API_URL, {
