@@ -1,31 +1,34 @@
-name: Deploy API — Produção
+name: Validar API PHP — Produção
+
+# Deploy automático via CI removido.
+# A Kinghost bloqueia porta 22 (SSH/SFTP) de IPs externos do GitHub Actions.
+# Deploy é feito localmente com SFTP:
+#   pip install paramiko
+#   python .exec/deploy_sftp.py --env prod
 
 on:
-  push:
-    branches: [main]
-    paths: ['www/api/**']
+  workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Deploy para api.monto.ia.br
+  validate:
+    name: Valida sintaxe PHP
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Instala PHP e Composer
+      - name: Instala PHP 8.3
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           tools: composer
 
-      - name: Instala dependências PHP
+      - name: Instala dependências
         run: composer install --no-dev --optimize-autoloader --working-dir=www/api
 
-      - name: Deploy via FTP (Python)
-        env:
-          FTP_HOST: ${{ secrets.KINGHOST_FTP_HOST }}
-          FTP_USER: ${{ secrets.KINGHOST_FTP_USER }}
-          FTP_PASS: ${{ secrets.KINGHOST_FTP_PASS }}
-          DEPLOY_ENV: prod
-        run: python .exec/deploy_ftp.py --env prod
+      - name: Valida sintaxe PHP
+        run: |
+          find www/api/src -name "*.php" -exec php -l {} \;
+          find www/api/cli -name "*.php" -exec php -l {} \;
+          php -l www/api/index.php
+          echo "✓ Sintaxe PHP OK"
