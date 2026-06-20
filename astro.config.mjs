@@ -109,45 +109,9 @@ export default defineConfig({
 
   security: {
     checkOrigin: true,
-    // 🌟 CSP nativo do Astro: gera hashes automaticamente para os scripts
-    // is:inline estáticos (ex: Analytics.astro) e libera os domínios do
-    // GTM/GA4 necessários para o Tag Manager funcionar.
-    // ⚠️ Restrito ao build (produção): em `astro dev` o painel do Keystatic
-    // (/keystatic) renderizava 100% em branco porque o editor MDX do
-    // Keystatic precisa de `'unsafe-eval'` em script-src, que o CSP nativo
-    // do Astro não inclui — sem `'unsafe-eval'`, o React do painel falha
-    // antes de montar qualquer coisa. Em produção, `/keystatic` é uma rota
-    // SSR (prerender: false) e vai sofrer o mesmo problema: mover essa
-    // política para `public/_headers` com exceção de `/keystatic/*` (ver
-    // memória "csp-security-headers-gap") antes de publicar.
-    csp: isBuild
-      ? {
-          directives: [
-            "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.googletagmanager.com",
-            "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
-            // style-src-attr: sub-diretiva específica para atributos style="".
-            // 'unsafe-inline' aqui NÃO é anulado pelos hashes do style-src (comportamento
-            // de spec CSP3 — hashes no style-src só anulam unsafe-inline do próprio style-src).
-            // Cobre: --stagger-index, oklch() da paleta, aspect-ratio de imagens, back-to-top.
-            "style-src-attr 'self' 'unsafe-inline'",
-          ],
-          scriptDirective: {
-            resources: [
-              'https://*.googletagmanager.com',
-              'https://*.google-analytics.com',
-              'https://analytics.google.com',
-              // Cloudflare Web Analytics (injetado automaticamente pelo CF Pages)
-              'https://static.cloudflareinsights.com',
-            ],
-          },
-          // styleDirective com unsafe-inline é ineficaz quando hashes estão presentes
-          // (spec CSP3 ignora unsafe-inline se houver hashes no mesmo style-src).
-          // A correção real é style-src-attr acima.
-          styleDirective: {
-            values: ["'unsafe-inline'"],
-          },
-        }
-      : false,
+    // CSP gerenciado em public/_headers (Cloudflare Pages) para ter controle
+    // total sobre style-src-attr e outras sub-diretivas que o Astro não suporta.
+    csp: false,
   },
 
   markdown: {
