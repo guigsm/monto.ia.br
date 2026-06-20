@@ -15,7 +15,7 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
   Cross-Origin-Opener-Policy: same-origin
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://*.googletagmanager.com https://*.google-analytics.com https://analytics.google.com https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; style-src-attr 'self' 'unsafe-inline'; connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; font-src 'self' data:; frame-ancestors 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://*.googletagmanager.com https://*.google-analytics.com https://analytics.google.com https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; style-src-attr 'self' 'unsafe-inline'; connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.googletagmanager.com; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com https://*.googleusercontent.com; font-src 'self' data:; frame-ancestors 'self'
 
 # -----------------------------------------------------------------------
 # Cache longo + imutável para assets com hash no nome (gerados pelo Vite)
