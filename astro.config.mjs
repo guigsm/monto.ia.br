@@ -125,17 +125,24 @@ export default defineConfig({
           directives: [
             "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.googletagmanager.com",
             "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
+            // style-src-attr: sub-diretiva específica para atributos style="".
+            // 'unsafe-inline' aqui NÃO é anulado pelos hashes do style-src (comportamento
+            // de spec CSP3 — hashes no style-src só anulam unsafe-inline do próprio style-src).
+            // Cobre: --stagger-index, oklch() da paleta, aspect-ratio de imagens, back-to-top.
+            "style-src-attr 'self' 'unsafe-inline'",
           ],
           scriptDirective: {
             resources: [
               'https://*.googletagmanager.com',
               'https://*.google-analytics.com',
               'https://analytics.google.com',
+              // Cloudflare Web Analytics (injetado automaticamente pelo CF Pages)
+              'https://static.cloudflareinsights.com',
             ],
           },
-          // 'unsafe-inline' libera element.style.xxx = value nos scripts is:inline
-          // (back-to-top, CursorTrail, Header progress bar) e o style="" estático.
-          // Não afeta XSS — esse risco fica em scriptDirective (que continua estrito).
+          // styleDirective com unsafe-inline é ineficaz quando hashes estão presentes
+          // (spec CSP3 ignora unsafe-inline se houver hashes no mesmo style-src).
+          // A correção real é style-src-attr acima.
           styleDirective: {
             values: ["'unsafe-inline'"],
           },
