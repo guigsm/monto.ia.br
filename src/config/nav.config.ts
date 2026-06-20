@@ -52,7 +52,7 @@ export interface NavItem {
  *   2. Apague as pastas src/pages/index/ e src/pages/en/index/.
  * (busque por "TEMP-HOME-OVERRIDE" no projeto para achar todos os usos)
  */
-export const HOME_PATH = '/index';
+export const HOME_PATH = '/home';
 
 export interface LegalLink {
   label: string;

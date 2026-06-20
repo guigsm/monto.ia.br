@@ -18,13 +18,14 @@ const sizeClass = isHeader
   : 'h-7';
 ---
 
-<div class={cn("inline-flex items-center pointer-events-none select-none", isHeader ? "header-logo" : "general-logo", className)}>
+<div class={cn("inline-flex items-center pointer-events-none select-none", isHeader ? "header-logo" : "general-logo", className)} aria-hidden="true">
   <svg
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="120.11344535981893 878.7741179406132 4870.89592728325 1221.2258820593877" 
-    version="1.2"  
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="120.11344535981893 878.7741179406132 4870.89592728325 1221.2258820593877"
+    version="1.2"
     class={cn("w-auto select-none overflow-visible", sizeClass)}
     style="aspect-ratio: 4870 / 1221;"
+    focusable="false"
   >
     <g id="ia">
       <path id="box" fill-rule="evenodd" class="s0" d="m4991.01 1137.89l-1.9 705.89c-1.92 135.19-80.54 211.9-226.29 210.94l-790.06-1.92c-123.69-1.91-198.48-77.66-201.36-204.23l-0.81-715.78c0-146.29 83.21-216.91 207.18-217.74l810.1-1.23c107.11 3.7 203.14 67.72 203.14 224.07z"/>

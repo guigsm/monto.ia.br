@@ -209,7 +209,7 @@ const buttonId = `${menuId}-button`;
         (hasLogoSlot ? (
           <slot name="logo" />
         ) : (
-          <a href={homeHref} class="flex items-center gap-2 hdr-logo-text">
+          <a href={homeHref} class="flex items-center gap-2 hdr-logo-text" aria-label={isPt ? 'Monto IA — Página inicial' : 'Monto IA — Home'}>
             <Logo size={size === 'sm' ? 'md' : 'lg'} forceDark={isInvert} />
           </a>
         ))

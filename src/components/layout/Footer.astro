@@ -34,6 +34,7 @@ import { getCollection } from 'astro:content';
 
 // 2. CAPTURA DINÂMICA DO IDIOMA DA PÁGINA ATUAL
 const currentLocale = getLocaleFromPath(Astro.url.pathname);
+const isPt = !currentLocale || currentLocale.startsWith('pt');
 
 // Páginas livres — só no locale padrão (PT-BR)
 const isDefaultLocale = !currentLocale || currentLocale === defaultLocale;
@@ -178,7 +179,7 @@ const socialIcons: Record<string, string> = {
             {hasLogoSlot ? (
               <slot name="logo" />
             ) : (
-              <a href={localizedPath(HOME_PATH, currentLocale) /* TEMP-HOME-OVERRIDE: ver nav.config.ts */} class="flex items-center gap-2">
+              <a href={localizedPath(HOME_PATH, currentLocale) /* TEMP-HOME-OVERRIDE: ver nav.config.ts */} class="flex items-center gap-2" aria-label={isPt ? 'Monto IA — Página inicial' : 'Monto IA — Home'}>
                 <Logo size="md" />
                 <span class="font-display text-base font-bold text-brand-600 dark:text-foreground"></span>
               </a>
@@ -243,7 +244,7 @@ const socialIcons: Record<string, string> = {
               {hasLogoSlot ? (
                 <slot name="logo" />
               ) : (
-                  <a href={localizedPath(HOME_PATH, currentLocale) /* TEMP-HOME-OVERRIDE: ver nav.config.ts */} class="flex items-center gap-2">
+                  <a href={localizedPath(HOME_PATH, currentLocale) /* TEMP-HOME-OVERRIDE: ver nav.config.ts */} class="flex items-center gap-2" aria-label={isPt ? 'Monto IA — Página inicial' : 'Monto IA — Home'}>
                     <Logo size="md" />
                     <span class="font-display text-base font-bold text-brand-600 dark:text-foreground"></span>
                   </a>
@@ -344,7 +345,7 @@ const socialIcons: Record<string, string> = {
           hasLogoSlot ? (
             <slot name="logo" />
           ) : (
-            <a href={localizedPath(HOME_PATH, currentLocale) /* TEMP-HOME-OVERRIDE: ver nav.config.ts */} class="flex items-center gap-2">
+            <a href={localizedPath(HOME_PATH, currentLocale) /* TEMP-HOME-OVERRIDE: ver nav.config.ts */} class="flex items-center gap-2" aria-label={isPt ? 'Monto IA — Página inicial' : 'Monto IA — Home'}>
               <Logo size="md" />
               <span class="font-display text-xl font-bold text-brand-600 dark:text-foreground"></span>
             </a>

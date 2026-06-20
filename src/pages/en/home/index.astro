@@ -1,0 +1,18 @@
+---
+/**
+ * 🧪 TEMP-HOME-OVERRIDE — rota /en/home (SOMENTE PARA TESTES)
+ *
+ * Espelha o conteúdo da home em inglês (src/pages/en/index.astro) nesta
+ * rota /en/home, pois o domínio de produção tem um redirecionamento
+ * configurado na raiz ("/") que impede visualizar a home durante os testes.
+ *
+ * IMPORTANTE: Não usar "/index" — CF Pages trata "/index" como sinônimo
+ * do root "/" e redireciona, derrubando na regra de redirect do Cloudflare.
+ *
+ * PARA REMOVER: apague esta pasta inteira (src/pages/en/home/) e ajuste
+ * HOME_PATH em src/config/nav.config.ts de volta para '/'.
+ */
+import HomePage from '../index.astro';
+---
+
+<HomePage />
