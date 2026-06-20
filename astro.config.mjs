@@ -125,6 +125,10 @@ export default defineConfig({
           directives: [
             "connect-src 'self' https://*.google-analytics.com https://analytics.google.com https://*.googletagmanager.com",
             "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
+            // 'unsafe-inline' em style-src libera element.style.xxx = value (back-to-top,
+            // CursorTrail, Header progress bar) e o atributo estático style="" no botão.
+            // Não abre risco de XSS — esse risco fica em script-src (que continua estrito).
+            "style-src 'self' 'unsafe-inline'",
           ],
           scriptDirective: {
             resources: [
