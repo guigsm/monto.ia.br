@@ -83,10 +83,14 @@
     "email": "Email",
     "subject": "Subject",
     "message": "Message",
+    "messageHint": "Between 20 and 500 characters.",
     "send": "Send message",
     "sending": "Sending…",
-    "success": "Thanks! Your message has been sent.",
-    "error": "Something went wrong. Please try again."
+    "success": "Thanks! Your message has been sent successfully.",
+    "error": "Something went wrong. Please try again.",
+    "nameValidation": "Please enter your full name (first and last name).",
+    "emailValidation": "Please enter a valid email address.",
+    "messageValidation": "Message must be between 20 and 500 characters."
   },
   "theme": {
     "selectTheme": "Select theme",

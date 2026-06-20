@@ -1,0 +1,39 @@
+---
+/**
+ * TestimonialsGrid — grade reutilizável de depoimentos.
+ *
+ * O chamador é responsável por pré-processar o array:
+ *   - slice(0, N)           → limitar quantidade
+ *   - shuffle(reviews)      → aleatorizar no build time (sem JS no cliente)
+ *
+ * Exemplos de uso:
+ *   Página completa: <TestimonialsGrid reviews={reviews.slice(0, 15)} />
+ *   Widget home:     <TestimonialsGrid reviews={shuffle(reviews).slice(0, 3)} columns={3} />
+ */
+import TestimonialCard from './TestimonialCard.astro';
+import type { NormalizedReview } from '@/lib/testimonials';
+
+interface Props {
+  reviews: NormalizedReview[];
+  columns?: 1 | 2 | 3;
+  locale?: string;
+}
+
+const { reviews, columns = 3, locale = 'pt-br' } = Astro.props;
+
+const gridClass: Record<1 | 2 | 3, string> = {
+  1: 'grid gap-6',
+  2: 'grid gap-6 md:grid-cols-2',
+  3: 'grid gap-6 md:grid-cols-2 lg:grid-cols-3',
+};
+---
+
+<div class={gridClass[columns]}>
+  {reviews.map((review, i) => (
+    <TestimonialCard
+      review={review}
+      locale={locale}
+      revealDelay={(i % columns) as 0 | 1 | 2}
+    />
+  ))}
+</div>

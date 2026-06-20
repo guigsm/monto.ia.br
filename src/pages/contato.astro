@@ -1,6 +1,6 @@
 ---
 /**
- * Contact page
+ * Página de Contato
  * URL: /contato
  */
 import PageLayout from '@/layouts/PageLayout.astro';
@@ -11,6 +11,20 @@ import { Hero } from '@/components/hero';
 import ContactForm from '@/components/patterns/ContactForm.astro';
 import siteConfig from '@/config/site.config';
 import { resolveSocialLinks } from '@/lib/utils';
+import contactContent from '@/content/pages/contact.json';
+
+const locale = 'pt-br';
+
+const content = {
+  badge: contactContent.ptBadge,
+  heroTitle: contactContent.ptHeroTitle,
+  heroTitleBrand: contactContent.ptHeroTitleBrand,
+  heroDescription: contactContent.ptHeroDescription,
+  formTitle: contactContent.ptFormTitle,
+  channelsTitle: contactContent.ptChannelsTitle,
+  channelsDescription: contactContent.ptChannelsDescription,
+  locationNote: contactContent.ptLocationNote,
+};
 
 const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
 
@@ -19,7 +33,6 @@ const channels = [
     icon: 'mail',
     label: 'Email',
     value: siteConfig.email,
-    note: 'Fale com a gente',
     href: `mailto:${siteConfig.email}`,
     external: false,
   },
@@ -27,7 +40,6 @@ const channels = [
     icon: link.icon,
     label: link.label,
     value: link.href.replace(/^https?:\/\/(www\.)?/, ''),
-    note: 'Acompanhe a Monto IA',
     href: link.href,
     external: true,
   })),
@@ -36,45 +48,44 @@ const channels = [
 
 <PageLayout
   title="Contato — Monto IA"
-  description="Fale com a Monto IA sobre o seu projeto: site, SEO, Ads, blog com produção por IA ou automações com IA conversacional."
+  description={`${content.heroTitle} ${content.heroTitleBrand}. ${content.heroDescription}`}
   eagerReveal
 >
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>
       <Icon name="mail" size="sm" />
-      Comece um projeto
+      {content.badge}
     </Badge>
 
     <h1 slot="title">
-      Conte sobre o seu <span class="text-brand-500">projeto</span>
+      {content.heroTitle} <span class="text-brand-500">{content.heroTitleBrand}</span>
     </h1>
 
     <p slot="description">
-      Compartilhe alguns detalhes abaixo e retornamos em até 1 dia útil. Prefere outro canal? Escolha o que for melhor&nbsp;para você.
+      {content.heroDescription}
     </p>
   </Hero>
 
-  <!-- Contact Section -->
+  <!-- Seção principal -->
   <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
     <div class="mx-auto max-w-5xl px-6">
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16 items-stretch">
 
-        <!-- Left column: contact form -->
+        <!-- Coluna esquerda: formulário -->
         <div class="lg:col-span-3 h-full" data-reveal="right">
           <Card padding="lg" class="h-full flex flex-col justify-center">
-            <h2 class="font-display text-xl font-bold text-foreground mb-6">Envie uma mensagem</h2>
-            <ContactForm />
+            <h2 class="font-display text-xl font-bold text-foreground mb-6">{content.formTitle}</h2>
+            <ContactForm locale={locale} />
           </Card>
         </div>
 
-        <!-- Right column: contact channels -->
+        <!-- Coluna direita: canais e localização -->
         <div class="lg:col-span-2 space-y-4" data-reveal="left" data-reveal-delay="1">
           <div>
-            <h2 class="font-display text-lg font-bold text-foreground mb-1">Outros canais</h2>
-            <p class="text-sm text-foreground-muted">Prefere um canal direto? Escolha o que for melhor para você.</p>
+            <h2 class="font-display text-lg font-bold text-foreground mb-1">{content.channelsTitle}</h2>
+            <p class="text-sm text-foreground-muted">{content.channelsDescription}</p>
           </div>
 
-          <!-- Channel list -->
           <div class="space-y-2">
             {channels.map((ch) => (
               <a
@@ -98,7 +109,6 @@ const channels = [
             ))}
           </div>
 
-          <!-- Location card -->
           <Card hover padding="sm" class="bg-brand-500/5 border-brand-500/20">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
@@ -106,7 +116,7 @@ const channels = [
               </div>
               <div>
                 <p class="font-semibold text-sm text-foreground">{siteConfig.address?.city ?? 'São Paulo'}/{siteConfig.address?.state ?? 'SP'}</p>
-                <p class="text-xs text-foreground-muted mt-0.5">Atendimento remoto para todo o {siteConfig.address?.country ?? 'Brasil'}</p>
+                <p class="text-xs text-foreground-muted mt-0.5">{content.locationNote}</p>
               </div>
             </div>
           </Card>

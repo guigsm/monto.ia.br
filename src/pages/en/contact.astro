@@ -1,7 +1,7 @@
 ---
 /**
  * Contact page
- * URL: /contact
+ * URL: /en/contact
  */
 import PageLayout from '@/layouts/PageLayout.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
@@ -11,6 +11,20 @@ import { Hero } from '@/components/hero';
 import ContactForm from '@/components/patterns/ContactForm.astro';
 import siteConfig from '@/config/site.config';
 import { resolveSocialLinks } from '@/lib/utils';
+import contactContent from '@/content/pages/contact.json';
+
+const locale = 'en';
+
+const content = {
+  badge: contactContent.enBadge,
+  heroTitle: contactContent.enHeroTitle,
+  heroTitleBrand: contactContent.enHeroTitleBrand,
+  heroDescription: contactContent.enHeroDescription,
+  formTitle: contactContent.enFormTitle,
+  channelsTitle: contactContent.enChannelsTitle,
+  channelsDescription: contactContent.enChannelsDescription,
+  locationNote: contactContent.enLocationNote,
+};
 
 const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
 
@@ -19,7 +33,6 @@ const channels = [
     icon: 'mail',
     label: 'Email',
     value: siteConfig.email,
-    note: 'Drop us a line',
     href: `mailto:${siteConfig.email}`,
     external: false,
   },
@@ -27,7 +40,6 @@ const channels = [
     icon: link.icon,
     label: link.label,
     value: link.href.replace(/^https?:\/\/(www\.)?/, ''),
-    note: 'Follow along',
     href: link.href,
     external: true,
   })),
@@ -35,46 +47,45 @@ const channels = [
 ---
 
 <PageLayout
-  title="Contact — Astro Rocket"
-  description="Get in touch"
+  title="Contact — Monto IA"
+  description={`${content.heroTitle} ${content.heroTitleBrand}. ${content.heroDescription}`}
   eagerReveal
 >
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>
       <Icon name="mail" size="sm" />
-      Start a project
+      {content.badge}
     </Badge>
 
     <h1 slot="title">
-      Tell me about your <span class="text-brand-500">project</span>
+      {content.heroTitle} <span class="text-brand-500">{content.heroTitleBrand}</span>
     </h1>
 
     <p slot="description">
-      Share a few details below and I'll get back to you within 1 business day. Prefer a different channel? Pick whichever works&nbsp;best.
+      {content.heroDescription}
     </p>
   </Hero>
 
-  <!-- Contact Section -->
+  <!-- Contact section -->
   <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
     <div class="mx-auto max-w-5xl px-6">
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16 items-stretch">
 
-        <!-- Left column: contact form -->
+        <!-- Left column: form -->
         <div class="lg:col-span-3 h-full" data-reveal="right">
           <Card padding="lg" class="h-full flex flex-col justify-center">
-            <h2 class="font-display text-xl font-bold text-foreground mb-6">Send a message</h2>
-            <ContactForm />
+            <h2 class="font-display text-xl font-bold text-foreground mb-6">{content.formTitle}</h2>
+            <ContactForm locale={locale} />
           </Card>
         </div>
 
-        <!-- Right column: contact channels -->
+        <!-- Right column: channels + location -->
         <div class="lg:col-span-2 space-y-4" data-reveal="left" data-reveal-delay="1">
           <div>
-            <h2 class="font-display text-lg font-bold text-foreground mb-1">Other channels</h2>
-            <p class="text-sm text-foreground-muted">Prefer a direct channel? Pick whichever works best.</p>
+            <h2 class="font-display text-lg font-bold text-foreground mb-1">{content.channelsTitle}</h2>
+            <p class="text-sm text-foreground-muted">{content.channelsDescription}</p>
           </div>
 
-          <!-- Channel list -->
           <div class="space-y-2">
             {channels.map((ch) => (
               <a
@@ -98,15 +109,14 @@ const channels = [
             ))}
           </div>
 
-          <!-- Location card -->
           <Card hover padding="sm" class="bg-brand-500/5 border-brand-500/20">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
                 <Icon name="map-pin" size="sm" />
               </div>
               <div>
-                <p class="font-semibold text-sm text-foreground">{siteConfig.address?.city ?? 'Your City'}</p>
-                <p class="text-xs text-foreground-muted mt-0.5">Based in {siteConfig.address?.country ?? 'Your Country'}</p>
+                <p class="font-semibold text-sm text-foreground">{siteConfig.address?.city ?? 'São Paulo'}/{siteConfig.address?.state ?? 'SP'}</p>
+                <p class="text-xs text-foreground-muted mt-0.5">{content.locationNote}</p>
               </div>
             </div>
           </Card>

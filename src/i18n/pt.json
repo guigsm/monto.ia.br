@@ -83,10 +83,14 @@
     "email": "E-mail",
     "subject": "Assunto",
     "message": "Mensagem",
+    "messageHint": "Entre 20 e 500 caracteres.",
     "send": "Enviar mensagem",
     "sending": "Enviando…",
     "success": "Obrigado! Sua mensagem foi enviada com sucesso.",
-    "error": "Algo deu errado. Por favor, tente novamente."
+    "error": "Algo deu errado. Por favor, tente novamente.",
+    "nameValidation": "Por favor, informe seu nome completo (nome e sobrenome).",
+    "emailValidation": "Por favor, informe um e-mail válido.",
+    "messageValidation": "A mensagem deve ter entre 20 e 500 caracteres."
   },
   "theme": {
     "selectTheme": "Selecionar tema",

@@ -41,12 +41,36 @@ final class Mailer
         $name    = $data['name']    ?? '';
         $company = $data['company'] ?? '';
         $subject = $data['subject'] ?? '';
+        $locale  = $data['_locale'] ?? 'pt';
 
-        // Campos extras (tudo que não é um campo conhecido)
+        // Labels do email baseados no idioma enviado pelo formulário
+        $labels = $locale === 'en' ? [
+            'name'        => 'Name',
+            'company'     => 'Company',
+            'email'       => 'Email',
+            'message'     => 'Message',
+            'newContact'  => 'New contact',
+            'extraData'   => 'Additional Data',
+            'field'       => 'Field',
+            'value'       => 'Value',
+            'sentVia'     => 'Sent via Monto API on',
+        ] : [
+            'name'        => 'Nome',
+            'company'     => 'Empresa',
+            'email'       => 'Email',
+            'message'     => 'Mensagem',
+            'newContact'  => 'Novo contato',
+            'extraData'   => 'Dados Adicionais',
+            'field'       => 'Campo',
+            'value'       => 'Valor',
+            'sentVia'     => 'Enviado via Monto API em',
+        ];
+
+        // Campos extras (tudo que não é um campo conhecido nem prefixo _)
         $extras = Validator::extractExtras($data);
 
         // Monta assunto do email
-        $emailSubject = 'Formulário de Contato';
+        $emailSubject = $labels['newContact'];
         if (!empty($subject)) {
             $emailSubject .= ' — ' . $subject;
         }
@@ -60,8 +84,8 @@ final class Mailer
             $mail->addAddress($this->emailTo);
             $mail->addReplyTo($email, $senderName);
             $mail->Subject = $emailSubject;
-            $mail->Body    = $this->buildHtml($email, $message, $name, $company, $subject, $extras);
-            $mail->AltBody = $this->buildPlainText($email, $message, $name, $company, $subject, $extras);
+            $mail->Body    = $this->buildHtml($email, $message, $name, $company, $subject, $extras, $labels);
+            $mail->AltBody = $this->buildPlainText($email, $message, $name, $company, $subject, $extras, $labels);
 
             $mail->send();
 
@@ -81,6 +105,7 @@ final class Mailer
 
     /**
      * @param array<string, string> $extras
+     * @param array<string, string> $labels
      */
     private function buildHtml(
         string $email,
@@ -88,13 +113,14 @@ final class Mailer
         string $name,
         string $company,
         string $subject,
-        array  $extras
+        array  $extras,
+        array  $labels
     ): string {
         $html  = $this->htmlHeader();
         $html .= '<div class="container">';
 
         // ── Cabeçalho ──────────────────────────────────────────────
-        $displayTitle = !empty($subject) ? htmlspecialchars($subject) : 'Novo contato';
+        $displayTitle = !empty($subject) ? htmlspecialchars($subject) : $labels['newContact'];
         $html .= '<div class="header"><h1>' . $displayTitle . '</h1></div>';
 
         // ── Bloco de identidade (name / company) ────────────────────
@@ -102,18 +128,18 @@ final class Mailer
             $html .= '<div class="identity-block">';
             if ($name) {
                 $html .= '<div class="identity-item">';
-                $html .= '<span class="identity-label">Nome</span>';
+                $html .= '<span class="identity-label">' . $labels['name'] . '</span>';
                 $html .= '<span class="identity-value">' . htmlspecialchars($name) . '</span>';
                 $html .= '</div>';
             }
             if ($company) {
                 $html .= '<div class="identity-item">';
-                $html .= '<span class="identity-label">Empresa</span>';
+                $html .= '<span class="identity-label">' . $labels['company'] . '</span>';
                 $html .= '<span class="identity-value">' . htmlspecialchars($company) . '</span>';
                 $html .= '</div>';
             }
             $html .= '<div class="identity-item">';
-            $html .= '<span class="identity-label">Email</span>';
+            $html .= '<span class="identity-label">' . $labels['email'] . '</span>';
             $html .= '<span class="identity-value"><a href="mailto:' . htmlspecialchars($email) . '">' . htmlspecialchars($email) . '</a></span>';
             $html .= '</div>';
             $html .= '</div>';
@@ -123,15 +149,15 @@ final class Mailer
         }
 
         // ── Mensagem ────────────────────────────────────────────────
-        $html .= '<div class="section"><h2>Mensagem</h2>';
+        $html .= '<div class="section"><h2>' . $labels['message'] . '</h2>';
         $html .= '<div class="message-body">' . nl2br(htmlspecialchars($message)) . '</div>';
         $html .= '</div>';
 
         // ── Dados adicionais (tabela) ────────────────────────────────
         if (!empty($extras)) {
-            $html .= '<div class="section"><h2>Dados Adicionais</h2>';
+            $html .= '<div class="section"><h2>' . $labels['extraData'] . '</h2>';
             $html .= '<table class="extras-table">';
-            $html .= '<thead><tr><th>Campo</th><th>Valor</th></tr></thead><tbody>';
+            $html .= '<thead><tr><th>' . $labels['field'] . '</th><th>' . $labels['value'] . '</th></tr></thead><tbody>';
             foreach ($extras as $key => $value) {
                 $html .= '<tr>';
                 $html .= '<td class="extras-key">' . htmlspecialchars(ucfirst($key)) . '</td>';
@@ -141,7 +167,7 @@ final class Mailer
             $html .= '</tbody></table></div>';
         }
 
-        $html .= '<div class="footer">Enviado via Monto API &mdash; ' . date('d/m/Y H:i') . '</div>';
+        $html .= '<div class="footer">' . $labels['sentVia'] . ' ' . date('d/m/Y H:i') . '</div>';
         $html .= '</div>'; // container
         $html .= '</body></html>';
 
@@ -194,6 +220,7 @@ final class Mailer
 
     /**
      * @param array<string, string> $extras
+     * @param array<string, string> $labels
      */
     private function buildPlainText(
         string $email,
@@ -201,27 +228,28 @@ final class Mailer
         string $name,
         string $company,
         string $subject,
-        array  $extras
+        array  $extras,
+        array  $labels
     ): string {
         $lines = [];
 
         if ($subject) {
-            $lines[] = 'ASSUNTO: ' . $subject;
+            $lines[] = strtoupper($labels['message']) . ': ' . $subject;
             $lines[] = str_repeat('-', 40);
         }
 
-        if ($name)    $lines[] = 'NOME:    ' . $name;
-        if ($company) $lines[] = 'EMPRESA: ' . $company;
-        $lines[] = 'EMAIL:   ' . $email;
+        if ($name)    $lines[] = strtoupper($labels['name'])    . ':    ' . $name;
+        if ($company) $lines[] = strtoupper($labels['company']) . ': ' . $company;
+        $lines[] = strtoupper($labels['email']) . ':   ' . $email;
 
         $lines[] = '';
-        $lines[] = 'MENSAGEM:';
+        $lines[] = strtoupper($labels['message']) . ':';
         $lines[] = str_repeat('-', 40);
         $lines[] = $message;
 
         if (!empty($extras)) {
             $lines[] = '';
-            $lines[] = 'DADOS ADICIONAIS:';
+            $lines[] = strtoupper($labels['extraData']) . ':';
             $lines[] = str_repeat('-', 40);
             foreach ($extras as $key => $value) {
                 $lines[] = strtoupper($key) . ': ' . $value;
@@ -230,7 +258,7 @@ final class Mailer
 
         $lines[] = '';
         $lines[] = str_repeat('-', 40);
-        $lines[] = 'Enviado via Monto API em ' . date('d/m/Y H:i');
+        $lines[] = $labels['sentVia'] . ' ' . date('d/m/Y H:i');
 
         return implode(PHP_EOL, $lines);
     }

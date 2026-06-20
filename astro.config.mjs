@@ -74,9 +74,36 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    // 🌟 DEDUPE: garante uma única instância de React — sem isso, @keystatic/core/ui
+    // pode carregar por um caminho de módulo diferente do renderer (react-dom),
+    // resultando em duas cópias do React e o erro "Invalid hook call" no painel.
+    resolve: {
+      dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
+    },
     // 🌟 ENGENHARIA DE INTEROPERABILIDADE (VITE 7 + LEGACY COMMONJS)
     optimizeDeps: {
-      include: ['lodash/debounce', 'lodash']
+      // 🌟 react-dom/client explícito: sem isso, quando a dep optimization
+      // falha (por causa do @keystatic/astro abaixo), o react-dom/client.js
+      // é servido como CJS cru pelo Vite e perde o createRoot como named
+      // export — quebrando a hidratação de qualquer ilha React (incluindo
+      // o painel do Keystatic). Com include explícito, o esbuild garante
+      // que esses módulos sejam pré-bundlados ANTES de qualquer falha
+      // downstream.
+      include: [
+        'lodash/debounce',
+        'lodash',
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+      ],
+      // 🌟 @keystatic/astro contém internal/keystatic-api.js que importa
+      // `virtual:keystatic-config` — um módulo virtual que só existe como
+      // plugin Vite em runtime. O esbuild do dep optimizer não tem esse
+      // plugin e derruba toda a otimização. Excluindo o pacote do optimizer,
+      // o esbuild nunca escaneia esse arquivo; o Vite resolve tudo via
+      // plugin em runtime normalmente.
+      exclude: ['@keystatic/astro'],
     }
   },
 

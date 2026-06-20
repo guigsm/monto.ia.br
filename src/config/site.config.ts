@@ -1,5 +1,20 @@
 import { SITE_URL, GOOGLE_SITE_VERIFICATION, BING_SITE_VERIFICATION } from 'astro:env/server';
 import i18nConfig, { type I18nConfig } from './i18n.config';
+import profileData from '../content/profile/profile.json';
+
+// Perfil editável via Keystatic — dados públicos do negócio.
+// Segredos (SMTP, tokens, API keys) permanecem em variáveis de ambiente.
+const profile = profileData as {
+  nomeNegocio?: string;
+  descricao?: string;
+  email?: string;
+  telefone?: string;
+  whatsapp?: string;
+  cidade?: string;
+  estado?: string;
+  atendimento?: string;
+  redesSociais?: string[];
+};
 
 export { i18nConfig };
 export type { I18nConfig };
@@ -95,6 +110,15 @@ export interface SiteConfig {
    */
   i18n?: I18nConfig;
   /**
+   * Testimonials — widget source.
+   * Update `widgetUrl` when switching the Google Reviews profile.
+   * The URL is fetched at build time; no client-side requests are made.
+   */
+  testimonials?: {
+    /** Featurable widget API URL. Usar o URL original do dashboard (featurable.com/api/v2/...), não o redirect target. */
+    widgetUrl?: string;
+  };
+  /**
    * Branding configuration
    * Logo files: Replace SVGs in src/assets/branding/
    * Favicon: Replace in public/favicon.svg
@@ -121,25 +145,30 @@ export interface SiteConfig {
 }
 
 const siteConfig: SiteConfig = {
-  name: 'Monto IA',
-  description: 'A Monto IA cria sites profissionais com bom SEO, Ads, blog com produção por IA, boas práticas (Lighthouse) e IA conversacional na medida — automações e integrações com N8N para o seu negócio crescer.',
+  name: profile.nomeNegocio || 'Monto IA',
+  description: profile.descricao || 'Monto IA — sites, SEO e automações.',
   url: SITE_URL || 'https://monto.ia.br',
   ogImage: '/og-default.svg',
-  author: 'Monto IA',
-  email: 'contato@monto.ia.br',
+  author: profile.nomeNegocio || 'Monto IA',
+  email: profile.email || 'contato@monto.ia.br',
+  phone: profile.telefone || undefined,
   address: {
     street: '',
-    city: 'São Paulo',
-    state: 'SP',
+    city: profile.cidade || 'São Paulo',
+    state: profile.estado || 'SP',
     zip: '',
     country: 'Brasil',
   },
-  socialLinks: [
+  socialLinks: profile.redesSociais?.length ? profile.redesSociais : [
     'https://www.instagram.com/monto.ia.br',
   ],
   verification: {
     google: GOOGLE_SITE_VERIFICATION,
     bing: BING_SITE_VERIFICATION,
+  },
+  testimonials: {
+    // Audição Paulista — trocar pela URL do perfil Monto IA quando disponível
+    widgetUrl: 'https://featurable.com/api/v2/widgets/77213730-86ea-470f-b50e-5304479bcc96',
   },
   blogImageOverlay: true,
   articleFeatures: {

@@ -14,6 +14,16 @@
  */
 
 import { defaultLocale, isBlogTranslated } from '@/i18n';
+import contactPage from '../content/pages/contact.json';
+import testimonialsPage from '../content/pages/testimonials.json';
+
+// Visibilidade das páginas blindadas controlada pelo campo showInMenu no Keystatic.
+// Undefined (campo ausente) trata como true para não quebrar ambientes sem o campo.
+type WithShowInMenu = { showInMenu?: boolean };
+const blindadaVisible: Record<string, boolean> = {
+  '/contato': (contactPage as WithShowInMenu).showInMenu !== false,
+  '/depoimentos': (testimonialsPage as WithShowInMenu).showInMenu !== false,
+};
 
 export interface NavItem {
   label: string;
@@ -87,8 +97,10 @@ const navItemsEn: NavItem[] = [
 export const footerNavItems: NavItem[] = [
   { label: 'Blog', href: '/blog', order: 1, key: 'blog' },
   { label: 'Portfólio', href: '/portfolio', order: 2 },
-  { label: 'Sobre', href: '/sobre', order: 3 },
-  { label: 'Contato', href: '/contato', order: 4 },
+  { label: 'Serviços', href: '/servicos', order: 3 },
+  { label: 'Sobre', href: '/sobre', order: 4 },
+  { label: 'Depoimentos', href: '/depoimentos', order: 5 },
+  { label: 'Contato', href: '/contato', order: 6 },
 ];
 
 const footerNavItemsEn: NavItem[] = [
@@ -119,7 +131,12 @@ function filterForLocale(items: NavItem[], locale?: string): NavItem[] {
  */
 export function getNavItems(locale?: string): NavItem[] {
   const source = locale && locale !== defaultLocale ? navItemsEn : navItems;
-  return filterForLocale([...source].sort((a, b) => a.order - b.order), locale);
+  return filterForLocale(
+    [...source]
+      .filter((item) => blindadaVisible[item.href] !== false)
+      .sort((a, b) => a.order - b.order),
+    locale,
+  );
 }
 
 /**
@@ -131,7 +148,12 @@ export function getNavItems(locale?: string): NavItem[] {
  */
 export function getFooterNavItems(locale?: string): NavItem[] {
   const source = locale && locale !== defaultLocale ? footerNavItemsEn : footerNavItems;
-  return filterForLocale([...source].sort((a, b) => a.order - b.order), locale);
+  return filterForLocale(
+    [...source]
+      .filter((item) => blindadaVisible[item.href] !== false)
+      .sort((a, b) => a.order - b.order),
+    locale,
+  );
 }
 
 /**

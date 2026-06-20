@@ -7,7 +7,9 @@ const blog = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
   schema: ({ image }) =>
     z.object({
+      slug: z.string().optional(),
       title: z.string().max(100),
+      metaTitle: z.string().max(70).optional(),
       description: z.string().max(200),
       publishedAt: z.coerce.date(),
       updatedAt: z.coerce.date().optional(),
@@ -28,7 +30,7 @@ const blog = defineCollection({
     }),
 });
 
-// Pages collection for static pages
+// Pages collection for static pages (template leftover — kept for compatibility)
 const pages = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/pages' }),
   schema: z.object({
@@ -36,6 +38,19 @@ const pages = defineCollection({
     description: z.string(),
     updatedAt: z.coerce.date().optional(),
     locale: z.enum(['en', 'es', 'fr']).default('en'),
+  }),
+});
+
+// Custom pages — free-form pages created via Keystatic (not blindadas)
+const customPages = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/custom-pages' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    showInMenu: z.boolean().default(true),
+    menuLabel: z.string().optional(),
+    menuOrder: z.number().default(99),
+    draft: z.boolean().default(false),
   }),
 });
 
@@ -122,6 +137,7 @@ const stack = defineCollection({
 export const collections = {
   blog,
   pages,
+  customPages,
   authors,
   faqs,
   stack,

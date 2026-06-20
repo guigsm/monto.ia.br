@@ -14,6 +14,9 @@ final class Validator
     // Campos com tratamento especial no Formail
     public const KNOWN_FIELDS = ['email', 'message', 'name', 'company', 'subject'];
 
+    // Prefixo reservado: campos com _ são metadados de sistema (nunca vão para extras)
+    private const SYSTEM_PREFIX = '_';
+
     // Limites de tamanho (caracteres)
     private const MAX_EMAIL   = 254;
     private const MAX_SHORT   = 200;   // name, company, subject
@@ -81,6 +84,7 @@ final class Validator
 
     /**
      * Extrai campos além dos conhecidos (serão tabulados no email).
+     * Campos com prefixo _ são metadados de sistema e são ignorados.
      *
      * @param  array<string, mixed> $data
      * @return array<string, string>
@@ -89,7 +93,10 @@ final class Validator
     {
         $extras = [];
         foreach ($data as $key => $value) {
-            if (!in_array($key, self::KNOWN_FIELDS, true)) {
+            if (
+                !in_array($key, self::KNOWN_FIELDS, true)
+                && !str_starts_with($key, self::SYSTEM_PREFIX)
+            ) {
                 $extras[$key] = (string) $value;
             }
         }

@@ -29,10 +29,23 @@ import Logo from '@/components/ui/marketing/Logo/Logo.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import siteConfig from '@/config/site.config';
 import { getSocialIcon } from '@/utils/icons';
-import { getLocaleFromPath, localizedPath } from '@/i18n';
+import { getLocaleFromPath, localizedPath, defaultLocale } from '@/i18n';
+import { getCollection } from 'astro:content';
 
 // 2. CAPTURA DINÂMICA DO IDIOMA DA PÁGINA ATUAL
 const currentLocale = getLocaleFromPath(Astro.url.pathname);
+
+// Páginas livres — só no locale padrão (PT-BR)
+const isDefaultLocale = !currentLocale || currentLocale === defaultLocale;
+const customPageEntries = isDefaultLocale
+  ? await getCollection('customPages', ({ data }) => data.showInMenu && !data.draft)
+  : [];
+const customNavItems: NavItem[] = customPageEntries
+  .sort((a, b) => (a.data.menuOrder ?? 99) - (b.data.menuOrder ?? 99))
+  .map((entry) => ({
+    label: entry.data.menuLabel || entry.data.title,
+    href: `/paginas/${entry.id}`,
+  }));
 
 export interface NavItem {
   label: string;
@@ -113,11 +126,14 @@ const maxWidthClass = {
 
 // Get navigation items — footer nav is configured independently from the
 // header in `nav.config.ts` (see `footerNavItems`).
-const defaultNav: NavItem[] = getFooterNavItems(currentLocale).map((item: NavConfigItem) => ({
-  label: item.label,
-  href: localizedPath(item.href, currentLocale), // 🌟 Injeta dinamicamente /en se o usuário mudar de idioma
-  external: item.external,
-}));
+const defaultNav: NavItem[] = [
+  ...getFooterNavItems(currentLocale).map((item: NavConfigItem) => ({
+    label: item.label,
+    href: localizedPath(item.href, currentLocale),
+    external: item.external,
+  })),
+  ...customNavItems,
+];
 const navItems: NavItem[] = nav ? nav.map(item => ({ ...item, href: localizedPath(item.href, currentLocale) })) : defaultNav;
 const allNavItems: NavItem[] = navItems;
 

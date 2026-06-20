@@ -1,22 +1,23 @@
 {
   "_meta": {
-    "source": "Google Business Profile — Audição Paulista (projeto Monto IA)",
+    "source": "Featurable — https://featurable.com/api/v2/widgets/77213730-86ea-470f-b50e-5304479bcc96",
+    "updatedAt": "2026-06-20T01:23:22",
     "summary": {
-      "count": 111,
-      "rating": 5.0,
-      "writeAReviewUri": "https://www.google.com/maps/place//data=!4m3!3m2!1s0x94ce59b78ddadddd:0xa3d99cc2e912f62f!12e1"
-    },
-    "note": "Este arquivo é gerado via API e substituído automaticamente. Não edite manualmente."
+      "count": 112,
+      "rating": 5,
+      "writeAReviewUri": "https://www.google.com/maps/place//data=!4m3!3m2!1s0x94ce59b78ddadddd:0xa3d99cc2e912f62f!12e1?g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAIYBCAA"
+    }
   },
   "reviews": [
     {
       "id": "1299b976-62f1-4692-84d7-9578582160e6",
       "platform": "gbp",
       "author": {
-        "name": "Yasmin Silva Azevedo",
+        "name": "YASMIN SILVA AZEVEDO",
         "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocKgeZdmesUYUwBsikRTQtV0mpwLNc0TxVb8sL-sYiUeS5qjiQ=s64-c-rp-mo-br100"
       },
-      "text": "Dra Diane excelente profissional!! Dedicada, transparente, carinhosa, perfeita no que faz. Ficamos muito contentes com a aquisição do aparelho da minha vó — nos explicou preços, como funcionava — hoje minha vó voltou a escutar e está muito contente. Indico mil vezes!!!",
+      "originalText": "Dra Diane excelente profissional!! dedicada, transparente, carinhosa, perfeita no que faz, ficamos muito contentes com a aquisição do aparelho da minha vó, nos explicou preços, como funcionava, hoje minha vó voltou a escutar e está muito contente, indico mil vezes!!!",
+      "text": "Dr. Diane is an excellent professional!! Dedicated, transparent, caring, and perfect at what she does. We were very happy with the purchase of the hearing aid for my grandmother. She explained the prices and how it worked. Today, my grandmother can hear again and is very happy. I recommend her a thousand times!!!",
       "rating": 5,
       "publishedAt": "2026-01-29T15:44:37.000Z"
     },
@@ -25,9 +26,10 @@
       "platform": "gbp",
       "author": {
         "name": "Clau Goes",
-        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjWKRQMnnGlBfDxCjrwQljq9Ws6x0WGbM3a6sLHkhYiydDRNfGrwlg=s64-c-rp-mo-ba2-br100"
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjWfVO29SunTKYbj0J3EH_c_Mp0wPqb-a73NJEQzGUq_kEYLK92GGQ=s64-c-rp-mo-ba12-br100"
       },
-      "text": "Excelente atendimento. A fonoaudióloga Diane é super competente, muito dedicada, nos transmite muita segurança. Trabalho muito transparente. Fui em outros lugares e o atendimento dela faz toda diferença. Sem contar que é um amor de pessoa. Super indico para quem precisa de aparelho auditivo.",
+      "originalText": "Excelente atendimento.  A fonoaudióloga Diane é super competente, muito dedicada, nos transmite muito segurança. Trabalho muito transparente. Fui em outros lugares e o atendimento dela faz toda diferença. Sem contar que é um amor de pessoa. Super indico para quem precisa de aparelho auditivo.",
+      "text": "Excellent service. The speech therapist Diane is super competent, very dedicated, and makes us feel very safe. Her work is very transparent. I've been to other places and her service makes all the difference. Not to mention she's a lovely person. I highly recommend her to anyone who needs a hearing aid.",
       "rating": 5,
       "publishedAt": "2025-12-16T18:45:55.000Z"
     },
@@ -38,7 +40,8 @@
         "name": "Gustavo Silva",
         "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjVLzbDlL56O8rYZ_hUMheHIgIk2pOftwobsgOUaeLVm7kjAs7z8lg=s64-c-rp-mo-br100"
       },
-      "text": "O atendimento da Diane é excelente. Cheguei com muitas dúvidas e anseios após ter descoberto minha perda auditiva e a Diane desde o primeiro contato me acolheu super bem, me explicando todo o processo. O teste e adaptação do aparelho também foram incríveis — sempre à disposição para ajustes. Indico muito!",
+      "originalText": "O atendimento da Diane é excelente. Cheguei com muitas dúvidas e anseios após ter descoberto a minha perda a auditiva e a Diane desde o primeiro contato me acolheu super bem, me explicando sobre todo o processo da perda auditiva, e sobre os aparelhos na primeira consulta (que reitero, foi excelente, completa e cheia de informações).\n\nO processo de teste e adaptação do aparelho auditivo também foi incrível, a Diane estava sempre à disposição para fazer os ajustes necessários no aparelho e isso fez o processo ser muito mais tranquilo.\n\nIndico muito a Audição Paulista, é um lugar acolhedor e os profissionais Diane e Matheus são excelentes 👏❤️",
+      "text": "Diane's service is excellent. I arrived with many doubts and anxieties after discovering my hearing loss, and Diane welcomed me very well from the first contact, explaining the entire hearing loss process and the hearing aids during the first consultation (which, I reiterate, was excellent, complete, and full of information).\n\nThe hearing aid testing and fitting process was also incredible; Diane was always available to make the necessary adjustments to the device, which made the process much smoother.\n\nI highly recommend Audição Paulista; it's a welcoming place, and the professionals Diane and Matheus are excellent 👏❤️",
       "rating": 5,
       "publishedAt": "2025-12-15T18:32:01.000Z"
     },
@@ -49,7 +52,8 @@
         "name": "Yoná Oliveira",
         "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocJVPEnepbHh-M--nb8KyVzAWsh7u5VIyECgEaUHkWo2ZtMtIg=s64-c-rp-mo-br100"
       },
-      "text": "Desde a compra do meu AASI há 4 meses só tenho a agradecer — não é apenas comprar, tem todo o acompanhamento que tem sido ótimo. Diane e Matheus são profissionais incríveis! Tenho certeza que fiz a escolha certa. Gratidão por tudo! 🥰",
+      "originalText": "Desde a compra do meu AASI há 4 meses só tenho agradecer,  não é apenas comprar tem todo o acompanhamento que tem sido ótimo, Diane e Matheus são profissionais incríveis!\nEstou aqui para relatar minha gratidão pois devido una variação anatômica no ouvido esquerdo tenho um pouco de dificuldade ainda na adaptação, mas Diane tem sido excelente me deu outras opções de trocar a oliva por um micro molde sob medida e também a opção de poder voltar para a oliva se necessário! É isto que faz toda diferença entre os profissionais! Mais uma vez agradeço e tenho certeza que fiz a escolha certa com a audição Paulista!\nGratidão por tudo, que continuem nesta jornada e tenham cada vez mais sucesso e que outras pessoas tenham a mesma oportunidade que tive!\nMuito obrigada!🥰",
+      "text": "Since purchasing my hearing aid 4 months ago, I can only express my gratitude. It's not just about the purchase; the support has been excellent. Diane and Matheus are incredible professionals!\nI'm here to express my gratitude because, due to an anatomical variation in my left ear, I'm still having some difficulty adapting, but Diane has been excellent. She gave me other options, such as replacing the ear tip with a custom-made micro-mold, and also the option of returning to the ear tip if necessary! This is what makes all the difference between professionals! Once again, thank you, and I'm sure I made the right choice with Audição Paulista!\nThank you for everything. May you continue on this journey and have even more success, and may other people have the same opportunity I had!\nThank you so much! 🥰",
       "rating": 5,
       "publishedAt": "2025-08-18T14:58:20.000Z"
     },
@@ -60,7 +64,8 @@
         "name": "Telma Marconi",
         "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocJvtr6pu-GvfYvtbJxljI3kouyvJipX8XsGPMudlDw2Yw5tdXY=s64-c-rp-mo-br100"
       },
-      "text": "Só tenho gratidão e elogios. Atendimento 100% humanizado, com muita ética e profissionalismo. Me passaram muita segurança quando comprei meu aparelho auditivo, e o acompanhamento pós-compra continua maravilhoso. Dra Diane é muito atenciosa, dedicada, comprometida com a qualidade e focada no bem-estar dos pacientes.",
+      "originalText": "Só tenho Gratidao e elogios, Dra Diane e Mateus são maravilhosos, atendimento 100% humanizado, com muita ética e profissionalismo. Me passaram muita segurança qdo comprei meu aparelho auditivo com eles, e o acompanhamento pós compra, continua maravilhoso. Recomendo muito a Audição Paulista.\nDra Diane, é muito atenciosa, dedicada, comprometida na qualidade e excelência e focada no bem estar de seus pacientes.",
+      "text": "I only have gratitude and praise, Dr. Diane and Mateus are wonderful, 100% humanized care, with great ethics and professionalism. They gave me a lot of confidence when I bought my hearing aid from them, and the post-purchase follow-up continues to be wonderful. I highly recommend Audição Paulista.\nDr. Diane is very attentive, dedicated, committed to quality and excellence, and focused on the well-being of her patients.",
       "rating": 5,
       "publishedAt": "2025-07-25T16:01:08.000Z"
     },
@@ -68,10 +73,11 @@
       "id": "b52d4af3-e5cd-4528-985a-15ec6568adf1",
       "platform": "gbp",
       "author": {
-        "name": "Fatima Palermo",
+        "name": "fatima palermo",
         "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocI_EmqQlzyNNvN5v4TOxeHanwG6zIyUVjxSPTI1zCHVOOVTTm0g=s64-c-rp-mo-br100"
       },
-      "text": "Após muitas pesquisas esse foi o melhor resultado: ótimo atendimento, rapidez, melhor preço e mais benefícios. Diane, a fonoaudióloga, é muito competente — explicou tudo sobre os aparelhos e as diferenças entre cada tipo. Ótimo custo-benefício!",
+      "originalText": "Após muitas pesquisas esse foi o melhor resultado com otimo atendimento, rapidez, melhor preço e mais benefícios. Diane a fonoaudióloga é muito competente, explicou tudo sobre os aparelhos e as diferenças entre cada tipo. Ótimo custo benefício!",
+      "text": "After much research, this was the best result, with excellent service, speed, the best price, and more benefits. Diane, the audiologist, is very competent; she explained everything about the devices and the differences between each type. Great value for money!",
       "rating": 5,
       "publishedAt": "2025-07-12T19:20:11.000Z"
     },
@@ -80,22 +86,96 @@
       "platform": "gbp",
       "author": {
         "name": "Karina Kalil",
-        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjXFWvZ5uULhoDLr4XeB5oE7nXirgwUSzWQDULcs-F89p52yG6Q=s64-c-rp-mo-ba2-br100"
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjXFWvZ5uULhoDLr4XeB5oE7nXirgwUSzWQDULcs-F89p52yG6Q=s64-c-rp-mo-ba12-br100"
       },
-      "text": "Atendimento excelente! Recomendo a todos, tanto para revisão de aparelhos (consertei dois e ficaram ótimos) como para aquisição de novos. A localização também é muito boa, na Paulista, muito próximo ao metrô Brigadeiro.",
+      "originalText": "Atendimento excelente!\nRecomendo a todos, tanto para a revisão de seus aparelhos (consertei dois e ficaram ótimos) como aquisição de novos (comprei dois outros para não ficar mais sem).\nA localização também é muito boa, na Paulista muito próximo ao metrô Brigadeiro.",
+      "text": "Excellent service!\nI recommend them to everyone, both for servicing your devices (I had two repaired and they're great) and for purchasing new ones (I bought two more so I wouldn't be without one anymore).\n\nThe location is also very good, on Paulista Avenue, very close to the Brigadeiro metro station.",
       "rating": 5,
       "publishedAt": "2025-06-16T19:02:59.000Z"
+    },
+    {
+      "id": "afd3fb96-a0d1-42aa-a9c0-07043979d859",
+      "platform": "gbp",
+      "author": {
+        "name": "u/5Vc0",
+        "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocI3XEek9VvxOodLN43fAvWoENVeSxzkFhyD0SO4q5qWlUcIEQ=s64-c-rp-mo-br100"
+      },
+      "originalText": "Olá equipe Audição Paulista! Aqui é a Yoná. Primeiramente gostaria de expressar minha gratidão a todos, a Fono Diane pelo acolhimento nessa minha nova jornada auditiva,  estava desde janeiro a procura do meu primeiro aparelho e já estava ficando desanimada e preocupada... Estou muito feliz e grata por tè-los  encontrado! Profissionais competentes e de humanidade ímpar!\nDesde o primeiro atendimento via WhatsApp já fui muito bem atendida e informações importantes me foram passadas com clareza e transparência,  o que é realmente um diferencial neste ramo!\nEstou muito satisfeita de como tudo aconteceu, consegui o aparelho que precisava por um ótimo custo benefício! Equipe excelente em todos os aspectos! Parabéns a todos e espero continuar minha jornada auditiva com a Audição Paulista!\nGratidão!",
+      "text": "Hello Audição Paulista team! This is Yoná. First of all, I would like to express my gratitude to everyone, especially to Speech Therapist Diane for the welcoming atmosphere on this new hearing journey. I had been looking for my first hearing aid since January and was getting discouraged and worried... I am very happy and grateful to have found you! Competent professionals with unparalleled humanity!\nFrom the first contact via WhatsApp, I was very well attended to and important information was passed on to me with clarity and transparency, which is truly a differentiator in this field!\nI am very satisfied with how everything went, I got the hearing aid I needed at a great cost-benefit ratio! Excellent team in every aspect! Congratulations to everyone and I hope to continue my hearing journey with Audição Paulista!\nThank you!",
+      "rating": 5,
+      "publishedAt": "2025-04-05T00:14:31.000Z"
     },
     {
       "id": "14a816c5-ff23-42e6-a915-674648679857",
       "platform": "gbp",
       "author": {
         "name": "Anderson Garcia",
-        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjWQmAlbCk-yXR01tO48M8GyTYugt1ZhglJYFZuyrR4G_Su6-DsPvw=s64-c-rp-mo-ba5-br100"
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjWQmAlbCk-yXR01tO48M8GyTYugt1ZhglJYFZuyrR4G_Su6-DsPvw=s64-c-rp-mo-ba12-br100"
       },
-      "text": "A experiência de adquirir um aparelho auditivo foi muito positiva. Diane e Matheus são uma equipe altamente qualificada e me auxiliaram em todas as etapas — desde a tentativa de conserto do meu aparelho até a adaptação. Agradeço pela paciência e profissionalismo.",
+      "originalText": "A experiência de adquirir um aparelho auditivo foi muito positiva. A Diane e Matheus são uma equipe altamente qualificada e me auxiliou em todas as etapas, desde a tentativa de conserto do meu aparelho,  escolha do aparelho até a adaptação. Agradeço pela paciência e profissionalismo.",
+      "text": "The experience of acquiring a hearing aid was very positive. Diane and Matheus are a highly qualified team and assisted me in every step, from attempting to repair my device and choosing the right one to the fitting process. I am grateful for their patience and professionalism.",
       "rating": 5,
       "publishedAt": "2024-12-17T00:00:38.000Z"
+    },
+    {
+      "id": "2a88a4e1-8f92-40c0-954a-6be047a183a7",
+      "platform": "gbp",
+      "author": {
+        "name": "Ana Carolina Machado",
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjW6nqXtqGxMjuhBD8vP95WpBkNEvhdniAjgi_S9yj2lod6MvhOK=s64-c-rp-mo-br100"
+      },
+      "originalText": "Eu conheço o Matheus mais de 10 anos e ele não pode fugir de mim rsrs, pois perdi contato com ele, não achava ele e agora dessa vez encontrei. Porque antes, ele era técnico e agora é fono espetacular  e mágico (super indico). Ele fazia outras coisas que não fazia na época, e agora ele voltou como fazia. Mesmo que eu moro no interior, viajo até SP por causa do Matheus. Conheço pouco tempo a Diane através com o Matheus, sim eu gostei dela, profissional, objetiva, atenciosa, e por aí vai rsrs, continua assim  e como pessoa também. Beijos pra cada um de vocês.",
+      "text": "I've known Matheus for over 10 years and he can't escape me, haha, because I lost contact with him, I couldn't find him, and now this time I've found him. Because before, he was a technician and now he's a spectacular and magical speech therapist (I highly recommend him). He used to do other things that he didn't do back then, and now he's back to how he used to be. Even though I live in the countryside, I travel to São Paulo because of Matheus. I've known Diane for a short time through Matheus, and yes, I liked her; she's professional, objective, attentive, and so on, haha, keep it up, both as a person and as a person. Kisses to each of you.",
+      "rating": 5,
+      "publishedAt": "2024-09-02T19:31:36.000Z"
+    },
+    {
+      "id": "001a114e-c1d1-47cd-9fda-02f583af0a63",
+      "platform": "gbp",
+      "author": {
+        "name": "Karoline Fernanda",
+        "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocIc7N0_I1AClbTvrRKoE2z45uhOZG0wP5yQW7DmnEapICsiHQ=s64-c-rp-mo-ba12-br100"
+      },
+      "originalText": "A Dra. Diane e o Dr. Matheus são profissionais excepcionais!\nConheci o Dr. Matheus há cerca de 6 ou 7 anos, e desde então ele sempre demonstrou grande solicitude e atenção. Posteriormente, tive o prazer de conhecer a Dra. Diane uma pessoa encantadora! Ela é incrivelmente atenciosa, simpática e paciente, características que ambos compartilham. Eles são profissionais de altíssima qualidade, sempre explicando tudo com clareza e prontamente disponíveis para ajudar, seja para manutenções ou ajustes do aparelho. Além disso, o ambiente do consultório é muito acolhedor, tornando cada visita uma experiência agradável.",
+      "text": "Dr. Diane and Dr. Matheus are exceptional professionals!\nI met Dr. Matheus about 6 or 7 years ago, and since then he has always shown great solicitude and attention. Later, I had the pleasure of meeting Dr. Diane, a delightful person! She is incredibly attentive, friendly, and patient, characteristics that they both share. They are top-quality professionals, always explaining everything clearly and readily available to help, whether for maintenance or adjustments to the appliance. In addition, the office environment is very welcoming, making each visit a pleasant experience.",
+      "rating": 5,
+      "publishedAt": "2024-07-30T14:17:00.000Z"
+    },
+    {
+      "id": "0b679a80-ffa3-4489-ae39-0ccd3fedf345",
+      "platform": "gbp",
+      "author": {
+        "name": "Portal DBO",
+        "avatarUrl": "https://lh3.googleusercontent.com/a/ACg8ocLB4vJ0YSiAAeucM4pWfUnVJrr4WT7ctAye5hYGMWRn5RB6dg=s64-c-rp-mo-br100"
+      },
+      "originalText": "DEsde o primeiro contato por whatsapp com a Audição Paulista, a impressão foi muito boa e o atendimento pela Diane só reforçou isso. Mesmo levando audiometria feita anteriormente, fez questão de refazer os testes e já saí com o aparelho que desejava, calibrado , para teste, sem nenhuma burocracia. Uma semana depois, retornei para confirmar a compra. E levei meu irmão, que repetiu a sequência: refez o teste e também saiu com aparelho para teste. Por referência de valor que tinha antes de chegar à Audição Paulista / Diane, posso dizer que a relação custo x benefício está bem favorável.",
+      "text": "From the first contact via WhatsApp with Audição Paulista, the impression was very good, and the service provided by Diane only reinforced this. Even though I had previously done an audiometry test, she insisted on repeating the tests, and I left with the hearing aid I wanted, calibrated, for testing, without any bureaucracy. A week later, I returned to confirm the purchase. And I brought my brother, who repeated the sequence: he repeated the test and also left with a hearing aid for testing. Based on the price I had before arriving at Audição Paulista / Diane, I can say that the cost-benefit ratio is very favorable.",
+      "rating": 5,
+      "publishedAt": "2024-06-24T17:20:48.000Z"
+    },
+    {
+      "id": "527dcce0-c778-456c-a8b5-3ca3a8eda821",
+      "platform": "gbp",
+      "author": {
+        "name": "VILMA BONIFÁCIO KLEIN BONIFÁCIO KLEIN",
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjVTWR0blsGnfhkn8k2pYvNi-t2n4nnfoVEIXhRVMY2JgJlUDu9R=s64-c-rp-mo-ba4-br100"
+      },
+      "originalText": "Não sabia nada sobre aparelhos auditivos ,e de repente me vi na necessidade de usá-lo. Obrigada Diane pela recepção e paciência de me apresentar e me instruir sobre todo o funcionamento,modelos, investimentos e tudo mais que me deixaram bem tranquila para iniciar essa nova experiência. Parabéns a você e ao Matheus pelo profissionalismo, conhecimento, simpatia e disponibilidade  para esclarecer qualquer dúvida que eu tiver sobre o aparelho e o uso do mesmo.",
+      "text": "I knew nothing about hearing aids, and suddenly I found myself needing one. Thank you, Diane, for the warm welcome and patience in introducing me to and instructing me on everything, the models, the investment, and everything else that made me feel very comfortable starting this new experience. Congratulations to you and Matheus for your professionalism, knowledge, friendliness, and willingness to clarify any doubts I had about the device and its use.",
+      "rating": 5,
+      "publishedAt": "2024-03-27T12:49:18.000Z"
+    },
+    {
+      "id": "a04b04d0-2638-4df0-ae47-c36f863c7581",
+      "platform": "gbp",
+      "author": {
+        "name": "Luís Carlos Lucas",
+        "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjVPe3x00ZdQr9crZQgxPi5X9oG8ymFxU4Pyf0UZsW3bqUI3z7FK=s64-c-rp-mo-br100"
+      },
+      "originalText": "Adiquirimos um protetor auditivo na Audição Paulista e ficamos super satisfeitos com o atendimento desde o início de nosso contato. A Diane é uma profissional super competente, dedicada e atenciosa. Sempre disposta a tirar dúvidas e nos auxiiar com paciência. Tem uma excelente didática com idosos.",
+      "text": "We purchased hearing protection from Audição Paulista and were extremely satisfied with the service from the very beginning. Diane is a highly competent, dedicated, and attentive professional. She is always willing to answer questions and assist us patiently. She has excellent teaching skills when working with the elderly.",
+      "rating": 5,
+      "publishedAt": "2023-11-28T15:32:48.000Z"
     },
     {
       "id": "e7939c46-e226-44a4-aa30-91a93f328846",
@@ -104,7 +184,8 @@
         "name": "Milena Telles Longhi",
         "avatarUrl": "https://lh3.googleusercontent.com/a-/ALV-UjW5dpcVCdGRSSW-vXAuxg3ZaaxiGRPTzChDvWBYJmAAk9oEzPW1Qg=s64-c-rp-mo-br100"
       },
-      "text": "Tenho otosclerose. Só passei a ter qualidade na minha audição quando virei cliente deles. Me acolheram com os aparelhos antigos e o vínculo de confiança foi tão incrível que fiz um novo — com acompanhamento personalizado. Consegui promoção no trabalho, diminuí remédios de depressão e sou muito mais feliz. Indico com coração!",
+      "originalText": "Tenho otosclerose, comprei aparelho auditivo em loja com todo marketing envolvido, mas só passei a ter qualidade na minha audição quando virei cliente da Audição Paulista, me acolheram ainda com os aparelhos antigos e o vínculo de confiança foi tão incrível que fiz um novo. Aí veio a melhor parte fizemos uma costumizado e um plano de acompanhamento com a Diane que ajusta meu aparelho e me orienta sempre. Foi meu divisor de aguas, a minha energia perdida pra conseguir fazer as coisas, agora aplicada em tudo que eu quero me fez conseguir uma promoção no trabalho, diminuir remédios de depressão e ser muito mais feliz no meu dia a dia. Palavras nunca serão suficientes, mas eles sabem o quanto fazem diferença na minha vida. Indico com coração e com meu relato sincero!",
+      "text": "I have otosclerosis. I bought a hearing aid from a store with all the marketing hype, but I only started having quality hearing when I became a client of Audição Paulista. They welcomed me even with my old devices, and the bond of trust was so incredible that I got a new one. Then came the best part: we got a customized hearing aid and a follow-up plan with Diane, who adjusts my device and always guides me. It was a turning point for me. The energy I used to lose trying to do things, now applied to everything I want, has allowed me to get a promotion at work, reduce my antidepressants, and be much happier in my daily life. Words will never be enough, but they know how much of a difference they make in my life. I recommend them wholeheartedly and with my sincere testimony!",
       "rating": 5,
       "publishedAt": "2023-09-06T16:43:11.000Z"
     }

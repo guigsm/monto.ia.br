@@ -1,0 +1,25 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('customPages', ({ data }) => {
+    return import.meta.env.PROD ? !data.draft : true;
+  });
+  return pages.map((page) => ({
+    params: { slug: page.id },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+const { Content } = await render(page);
+---
+
+<PageLayout title={page.data.title} description={page.data.description}>
+  <main class="mx-auto max-w-3xl px-4 py-16">
+    <article class="prose prose-lg dark:prose-invert mx-auto">
+      <Content />
+    </article>
+  </main>
+</PageLayout>

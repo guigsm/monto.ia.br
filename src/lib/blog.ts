@@ -49,14 +49,18 @@ export function getPostUrl(postId: string, locale = 'pt-br'): string {
 }
 
 /**
- * Get all published posts for a locale, newest first. Drafts are filtered
- * out in production, kept visible in dev so authors can preview them.
+ * Get all published posts for a locale, newest first.
+ * In production: filters out drafts and posts with a future publishedAt date.
+ * In dev: shows everything so authors can preview drafts and scheduled posts.
  */
 export async function getPublishedPosts(
   locale = 'pt-br',
 ): Promise<CollectionEntry<'blog'>[]> {
+  const now = new Date();
   const all = await getCollection('blog', ({ data }) => {
-    return data.locale === locale && (import.meta.env.PROD ? data.draft !== true : true);
+    if (data.locale !== locale) return false;
+    if (!import.meta.env.PROD) return true;
+    return data.draft !== true && data.publishedAt <= now;
   });
   return all.sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 }

@@ -21,6 +21,7 @@ const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
 
 interface Props {
   title: string;
+  metaTitle?: string;
   description: string;
   publishedAt: Date;
   updatedAt?: Date;
@@ -42,6 +43,7 @@ interface Props {
 
 const {
   title,
+  metaTitle,
   description,
   publishedAt,
   updatedAt,
@@ -99,7 +101,7 @@ const blogPostingSchema = createBlogPostSchema({
 ---
 
 <BaseLayout
-  title={title}
+  title={metaTitle || title}
   description={description}
   image={ogImage}
   imageAlt={imageAlt || title}

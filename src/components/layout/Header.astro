@@ -20,11 +20,24 @@ import siteConfig from '@/config/site.config';
 import { isEnabled as i18nIsEnabled } from '@/i18n';
 
 // 1. IMPORTAÇÃO DOS HELPERS NATIVOS
-import { getLocaleFromPath, localizedPath } from '@/i18n'; 
+import { getLocaleFromPath, localizedPath, defaultLocale } from '@/i18n';
+import { getCollection } from 'astro:content';
 
 // 2. CAPTURA DINÂMICA DO IDIOMA DA PÁGINA ATUAL
 const currentLocale = getLocaleFromPath(Astro.url.pathname);
 const rawNavConfigItems = getNavItems(currentLocale);
+
+// 3. PÁGINAS LIVRES — só no locale padrão (PT-BR); sem versão EN por ora
+const isDefaultLocale = !currentLocale || currentLocale === defaultLocale;
+const customPageEntries = isDefaultLocale
+  ? await getCollection('customPages', ({ data }) => data.showInMenu && !data.draft)
+  : [];
+const customNavItems = customPageEntries
+  .sort((a, b) => (a.data.menuOrder ?? 99) - (b.data.menuOrder ?? 99))
+  .map((entry) => ({
+    label: entry.data.menuLabel || entry.data.title,
+    href: `/paginas/${entry.id}`,
+  }));
 
 // TEMP-HOME-OVERRIDE: ver comentário em src/config/nav.config.ts
 const homeHref = localizedPath(HOME_PATH, currentLocale);
@@ -111,10 +124,13 @@ const maxWidthClass = {
 }[maxWidth];
 const effectiveShowScrollProgress = showScrollProgress || (isFloating && !autoHide);
 const isInvert = colorScheme === 'invert';
-const defaultNav = getNavItems(currentLocale).map((item: NavConfigItem) => ({
-  label: item.label,
-  href: localizedPath(item.href, currentLocale), // 🌟 Injeta dinamicamente /en se o usuário mudar de idioma
-}));
+const defaultNav = [
+  ...getNavItems(currentLocale).map((item: NavConfigItem) => ({
+    label: item.label,
+    href: localizedPath(item.href, currentLocale),
+  })),
+  ...customNavItems,
+];
 const navItems: NavItem[] = nav ? nav.map(item => ({ ...item, href: localizedPath(item.href, currentLocale) })) : [...extraNav, ...defaultNav];
 
 const currentPath = Astro.url.pathname;

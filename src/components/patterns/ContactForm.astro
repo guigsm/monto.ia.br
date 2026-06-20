@@ -4,117 +4,156 @@ import Textarea from '@/components/ui/form/Textarea/Textarea.astro';
 import Button from '@/components/ui/form/Button/Button.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import { cn } from '@/lib/cn';
+import { t } from '@/i18n';
+import type { Locale } from '@/i18n';
 
 interface Props {
-  action?: string;
-  successMessage?: string;
+  locale?: Locale;
   class?: string;
 }
 
-const {
-  action = '/api/contact',
-  successMessage = 'Message sent successfully!',
-  class: className,
-} = Astro.props;
+const { locale = 'pt-br', class: className } = Astro.props;
+
+// API config — PUBLIC_ é seguro: token é restrito por domínio na API
+const apiUrl = (import.meta.env.PUBLIC_CONTACT_API_URL ?? 'https://api.monto.ia.br') + '/formail';
+const apiToken = import.meta.env.PUBLIC_CONTACT_API_TOKEN ?? '';
+
+// Locale enviado para a API para que os labels do email sigam o idioma
+const apiLocale = locale === 'en' ? 'en' : 'pt';
+
+const labels = {
+  name: t('contact.name', locale),
+  email: t('contact.email', locale),
+  message: t('contact.message', locale),
+  messageHint: t('contact.messageHint', locale),
+  send: t('contact.send', locale),
+  sending: t('contact.sending', locale),
+  success: t('contact.success', locale),
+  error: t('contact.error', locale),
+  nameValidation: t('contact.nameValidation', locale),
+  emailValidation: t('contact.emailValidation', locale),
+  messageValidation: t('contact.messageValidation', locale),
+};
 ---
 
-<form
-  id="contact-form"
-  action={action}
-  method="POST"
-  class={cn('space-y-6', className)}
-  data-success-message={successMessage}
->
-  <!-- Name + Email side by side on sm+ -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <Input
-      label="Name"
-      name="name"
-      type="text"
-      required
-      autocomplete="name"
-    />
-    <Input
-      label="Email"
-      name="email"
-      type="email"
-      required
-      autocomplete="email"
-    />
-  </div>
+<form id="contact-form" class={cn('space-y-5', className)} novalidate>
+
+  <!-- Nome completo — padrão exige pelo menos 2 palavras com ≥2 chars cada -->
+  <Input
+    label={labels.name}
+    name="name"
+    type="text"
+    required
+    minlength={5}
+    autocomplete="name"
+    pattern={"[A-Za-z\\u00C0-\\u024F]{2,}([ ][A-Za-z\\u00C0-\\u024F]{2,})+"}
+    title={labels.nameValidation}
+  />
 
   <Input
-    label="Subject"
-    name="subject"
-    type="text"
+    label={labels.email}
+    name="email"
+    type="email"
+    required
+    autocomplete="email"
+    title={labels.emailValidation}
   />
 
   <Textarea
-    label="Message"
+    label={labels.message}
     name="message"
     required
     rows={5}
+    minlength={20}
+    maxlength={500}
+    title={labels.messageValidation}
+    hint={labels.messageHint}
   />
 
-  <!-- Honeypot field for spam protection -->
+  <!-- Honeypot para spam -->
   <div class="hidden" aria-hidden="true">
-    <input type="text" name="honeypot" tabindex="-1" autocomplete="off" />
+    <input type="text" name="_honeypot" tabindex="-1" autocomplete="off" />
   </div>
 
-  <div id="form-message" class="hidden text-sm"></div>
+  <!-- Metadados para a API: locale (labels do email) e assunto identificador -->
+  <input type="hidden" name="_locale" value={apiLocale} />
+  <input type="hidden" name="subject" value={locale === 'en' ? 'Contact — monto.ia.br' : 'Contato — monto.ia.br'} />
+
+  <div id="form-message" role="alert" aria-live="polite" class="hidden text-sm rounded-md px-4 py-3"></div>
 
   <div class="flex justify-center">
-    <Button type="submit" id="submit-button" class="gap-2">
-      Send message
+    <Button type="submit" id="submit-button" class="gap-2 w-full sm:w-auto">
+      {labels.send}
       <Icon name="arrow-right" size="sm" />
     </Button>
   </div>
 </form>
 
-<script>
+<script define:vars={{ apiUrl, apiToken, labels }}>
   function initContactForm() {
-    const form = document.getElementById('contact-form') as HTMLFormElement;
-    const button = document.getElementById('submit-button') as HTMLButtonElement;
-    const message = document.getElementById('form-message') as HTMLDivElement;
+    const form = /** @type {HTMLFormElement|null} */ (document.getElementById('contact-form'));
+    const button = /** @type {HTMLButtonElement|null} */ (document.getElementById('submit-button'));
+    const messageEl = document.getElementById('form-message');
 
-    if (!form || !button || !message) return;
+    if (!form || !button || !messageEl) return;
 
-    const successMessage = form.dataset.successMessage || 'Message sent successfully!';
+    // Aplica mensagens de validação customizadas (idioma correto no tooltip nativo)
+    form.querySelectorAll('[title][pattern], [title][type="email"], [title][required]').forEach((el) => {
+      el.addEventListener('invalid', () => {
+        /** @type {HTMLInputElement} */ (el).setCustomValidity(el.getAttribute('title') ?? '');
+      });
+      el.addEventListener('input', () => {
+        /** @type {HTMLInputElement} */ (el).setCustomValidity('');
+      });
+    });
+
+    function setMessage(text, isSuccess) {
+      messageEl.textContent = text;
+      if (isSuccess) {
+        messageEl.className = 'text-sm rounded-md px-4 py-3 bg-success/10 text-success border border-success/20';
+      } else {
+        messageEl.className = 'text-sm rounded-md px-4 py-3 bg-destructive/10 text-destructive border border-destructive/20';
+      }
+      messageEl.classList.remove('hidden');
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Honeypot — bot preencheu o campo oculto
+      if (/** @type {HTMLInputElement} */ (form.elements.namedItem('_honeypot'))?.value) return;
+
+      // Dispara validação HTML5 nativa antes do fetch
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
       button.disabled = true;
-      button.textContent = 'Sending…';
-      message.classList.add('hidden');
+      const originalText = button.textContent;
+      button.textContent = labels.sending;
+      messageEl.classList.add('hidden');
 
       try {
-        const formData = new FormData(form);
-        const response = await fetch(form.action, {
+        const response = await fetch(apiUrl, {
           method: 'POST',
-          body: formData,
+          headers: { 'X-API-Token': apiToken },
+          body: new FormData(form),
         });
 
         const data = await response.json();
 
         if (data.success) {
-          message.textContent = successMessage;
-          message.className = 'text-sm text-success';
+          setMessage(labels.success, true);
           form.reset();
         } else {
-          const errors = data.errors
-            ? Object.values(data.errors).flat().join(', ')
-            : 'Something went wrong';
-          message.textContent = errors as string;
-          message.className = 'text-sm text-destructive';
+          setMessage(data.message || labels.error, false);
         }
       } catch {
-        message.textContent = 'Failed to send message. Please try again.';
-        message.className = 'text-sm text-destructive';
+        setMessage(labels.error, false);
       } finally {
         button.disabled = false;
-        button.textContent = 'Send message';
-        message.classList.remove('hidden');
+        button.textContent = originalText;
       }
     });
   }
