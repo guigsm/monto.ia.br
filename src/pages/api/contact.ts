@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ request }) => {
       email: formData.get('email')?.toString() || '',
       subject: formData.get('subject')?.toString() || '',
       message: formData.get('message')?.toString() || '',
-      honeypot: formData.get('honeypot')?.toString() || '',
+      honeypot: formData.get('_honeypot')?.toString() || '',
     };
 
     // Validate

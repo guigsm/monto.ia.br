@@ -14,9 +14,7 @@ interface Props {
 
 const { locale = 'pt-br', class: className } = Astro.props;
 
-// API config — PUBLIC_ é seguro: token é restrito por domínio na API
-const apiUrl = (import.meta.env.PUBLIC_CONTACT_API_URL ?? 'https://api.monto.ia.br') + '/formail';
-const apiToken = import.meta.env.PUBLIC_CONTACT_API_TOKEN ?? '';
+const apiUrl = '/api/contact';
 
 // Locale enviado para a API para que os labels do email sigam o idioma
 const apiLocale = locale === 'en' ? 'en' : 'pt';
@@ -89,7 +87,7 @@ const labels = {
   </div>
 </form>
 
-<script define:vars={{ apiUrl, apiToken, labels }}>
+<script define:vars={{ apiUrl, labels }}>
   function initContactForm() {
     const form = /** @type {HTMLFormElement|null} */ (document.getElementById('contact-form'));
     const button = /** @type {HTMLButtonElement|null} */ (document.getElementById('submit-button'));
@@ -137,7 +135,6 @@ const labels = {
       try {
         const response = await fetch(apiUrl, {
           method: 'POST',
-          headers: { 'X-API-Token': apiToken },
           body: new FormData(form),
         });
 
