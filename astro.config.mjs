@@ -7,6 +7,8 @@ import tailwindcss from '@tailwindcss/vite';
 import cloudflare from '@astrojs/cloudflare';
 import i18nConfig from './src/config/i18n.config.ts';
 import { loadEnv } from 'vite';
+import { fileURLToPath } from 'url';
+import { join } from 'path';
 
 // 🌟 Força o carregamento do arquivo .env antes do Astro inicializar
 const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
@@ -26,6 +28,34 @@ const astroI18nOptions = i18nEnabled
 
 // 🌟 DETECÇÃO NATIVA DE COMANDO (Substitui o command === 'build' da função antiga)
 const isBuild = process.argv.includes('build') || process.env.NODE_ENV === 'production';
+
+// Gera icon-192.png e icon-512.png no diretório de saída após o build.
+// Usados pelo manifest.webmanifest para o critério "installable manifest" do Lighthouse.
+// A cor #3b82f6 deve bater com siteConfig.branding.colors.themeColor e theme_color no manifest.
+const PWA_ICON_COLOR = '#3b82f6';
+const PWA_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="96" fill="${PWA_ICON_COLOR}"/>
+  <text x="256" y="256" text-anchor="middle" dominant-baseline="central"
+    font-family="system-ui,-apple-system,sans-serif" font-weight="700" font-size="250" fill="white">iA</text>
+</svg>`;
+
+function pwaIconsIntegration() {
+  return {
+    name: 'pwa-icons',
+    hooks: {
+      'astro:build:done': async ({ dir, logger }) => {
+        const { default: sharp } = await import('sharp');
+        const outDir = fileURLToPath(dir);
+        const buf = Buffer.from(PWA_ICON_SVG);
+        await Promise.all([
+          sharp(buf).resize(192, 192).png().toFile(join(outDir, 'icon-192.png')),
+          sharp(buf).resize(512, 512).png().toFile(join(outDir, 'icon-512.png')),
+        ]);
+        logger.info('PWA icons gerados: icon-192.png, icon-512.png');
+      },
+    },
+  };
+}
 
 export default defineConfig({
   output: 'static',
@@ -64,7 +94,8 @@ export default defineConfig({
     react(),
     mdx(),
     sitemap(),
-    keystatic() // 🌟 O Keystatic agora está oficialmente ativo!
+    keystatic(), // 🌟 O Keystatic agora está oficialmente ativo!
+    pwaIconsIntegration(),
   ],
   
   // 🌟 i18n removido daqui: já é calculado dinamicamente em `astroI18nOptions`
