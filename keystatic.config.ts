@@ -1,8 +1,13 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 export default config({
-  storage: {
-    kind: 'local',
+  storage: isDev
+    ? { kind: 'local' }
+    : { kind: 'cloud' },
+  cloud: {
+    project: 'monto-ia/institucional',
   },
   ui: {
     brand: { name: 'Monto IA' },
