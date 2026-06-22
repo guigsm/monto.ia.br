@@ -1,0 +1,43 @@
+# Monto IA
+
+> Criamos sites profissionais com SEO técnico, Ads, blog com produção por IA e automações com N8N — tudo integrado, na medida do seu negócio crescer.
+
+## Sobre
+
+A Monto IA é um estúdio digital especializado em presença online de alta performance. Unimos design, desenvolvimento, marketing e inteligência artificial para entregar sites que aparecem no Google, convertem visitantes e escalam com automação.
+
+- **Fundador:** Guilherme Montoia — designer e desenvolvedor com foco em resultados mensuráveis
+- **Localização:** São Paulo, SP — atendimento remoto para todo o Brasil
+- **Contato:** contato@monto.ia.br
+- **Instagram:** [@monto.ia.br](https://www.instagram.com/monto.ia.br)
+
+## Serviços
+
+- **Sites Profissionais:** Desenvolvimento com Astro, performance Lighthouse 100/100, SEO técnico desde o código
+- **SEO & Ads:** Estratégia orgânica e campanhas pagas no Google e Meta para gerar leads qualificados
+- **Blog com IA:** Produção de conteúdo assistida por IA com publicação automatizada e otimização contínua
+- **Automações com N8N:** Integrações entre sistemas, fluxos de atendimento via WhatsApp e automações de marketing
+
+## Diferenciais
+
+- Sites com pontuação 100/100 no Google Lighthouse (Performance, Acessibilidade, Boas Práticas, SEO)
+- Infraestrutura em Cloudflare Pages — carregamento global em milissegundos
+- Blog operado com IA que mantém frequência de publicação sem custo de redator
+- Automações que conectam site, CRM, WhatsApp e ferramentas de marketing sem código
+
+## Portfólio
+
+- [Audição Paulista](https://www.monto.ia.br/portfolio/audicao-paulista) — Clínica de reabilitação auditiva na Avenida Paulista
+- [Aposenta Certo](https://www.monto.ia.br/portfolio/aposenta-certo) — Planejamento de aposentadoria e benefícios do INSS
+
+## Blog
+
+Publicações em português sobre sites, SEO, marketing digital, automação com IA e N8N.
+
+- [Blog](https://www.monto.ia.br/blog)
+
+## Informações de Contato
+
+- **E-mail:** contato@monto.ia.br
+- **Site:** https://www.monto.ia.br
+- **Atendimento:** Remoto para todo o Brasil
