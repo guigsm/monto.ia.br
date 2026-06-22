@@ -9,6 +9,7 @@ import i18nConfig from './src/config/i18n.config.ts';
 import { loadEnv } from 'vite';
 import { fileURLToPath } from 'url';
 import { join } from 'path';
+import sharp from 'sharp';
 
 // 🌟 Força o carregamento do arquivo .env antes do Astro inicializar
 const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
@@ -44,7 +45,6 @@ function pwaIconsIntegration() {
     name: 'pwa-icons',
     hooks: {
       'astro:build:done': async ({ dir, logger }) => {
-        const { default: sharp } = await import('sharp');
         const outDir = fileURLToPath(dir);
         const buf = Buffer.from(PWA_ICON_SVG);
         await Promise.all([
