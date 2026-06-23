@@ -87,11 +87,12 @@ export function t(key: string, locale: Locale = defaultLocale, vars?: Record<str
  * listed here (home, blog, etc.) keep the same slug in every locale.
  */
 export const routeSlugs: Record<string, Partial<Record<Locale, string>>> = {
-  about:        { 'pt-br': '/sobre',       en: '/about' },
-  contact:      { 'pt-br': '/contato',     en: '/contact' },
-  projects:     { 'pt-br': '/portfolio',   en: '/projects' },
-  services:     { 'pt-br': '/servicos',    en: '/services' },
-  testimonials: { 'pt-br': '/depoimentos', en: '/testimonials' },
+  about:        { 'pt-br': '/sobre',                      en: '/about' },
+  contact:      { 'pt-br': '/contato',                    en: '/contact' },
+  projects:     { 'pt-br': '/portfolio',                  en: '/projects' },
+  services:     { 'pt-br': '/servicos',                   en: '/services' },
+  testimonials: { 'pt-br': '/depoimentos',                en: '/testimonials' },
+  privacy:      { 'pt-br': '/politica-de-privacidade',    en: '/privacy-policy' },
 };
 
 /**

@@ -61,10 +61,7 @@ export default defineConfig({
   output: 'static',
   adapter: isBuild ? cloudflare() : undefined,
 
-  // 🌟 O TRUQUE DE MARKETING: Redireciona o cliente de forma transparente
-  redirects: {
-    '/admin': '/keystatic'
-  },
+  redirects: {},
   
   site: calculatedSiteUrl,
   ...(astroI18nOptions ? { i18n: astroI18nOptions } : {}),

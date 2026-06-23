@@ -1,0 +1,250 @@
+---
+/**
+ * Página portão do CMS — /admin
+ * Exibida para qualquer visitante que acesse a área administrativa.
+ * O botão executa o fluxo PKCE do Keystatic Cloud diretamente,
+ * eliminando a tela intermediária de login do Keystatic.
+ */
+import Logo from '@/components/ui/marketing/Logo/Logo.astro';
+import siteConfig from '@/config/site.config';
+
+const whatsapp = siteConfig.phone
+  ? `https://wa.me/${siteConfig.phone.replace(/\D/g, '')}`
+  : null;
+const email = siteConfig.email;
+
+// Deve bater com a versão instalada de @keystatic/core
+const KEYSTATIC_VERSION = '0.5.50';
+const KEYSTATIC_CLOUD_PROJECT = 'monto-ia/institucional';
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Administração — {siteConfig.name}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background-color: #111113;
+      color: #e4e4e7;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      gap: 2rem;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background-color: #1c1c1f;
+      border: 1px solid #2e2e32;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    .logo-wrap {
+      opacity: 0.92;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #2e2e32;
+    }
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f4f4f5;
+      letter-spacing: -0.02em;
+    }
+
+    .description {
+      font-size: 0.875rem;
+      color: #71717a;
+      line-height: 1.6;
+    }
+
+    .btn-enter {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: #3b82f6;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 0.65rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: background-color 0.15s;
+      width: 100%;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-enter:hover { background-color: #2563eb; }
+    .btn-enter:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .contact-section {
+      width: 100%;
+      background-color: #17171a;
+      border: 1px solid #2e2e32;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      text-align: left;
+    }
+
+    .contact-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #52525b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.75rem;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      color: #a1a1aa;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .contact-link:hover { color: #e4e4e7; }
+
+    .contact-icon {
+      width: 14px;
+      height: 14px;
+      opacity: 0.6;
+      flex-shrink: 0;
+    }
+
+    .footer-note {
+      font-size: 0.75rem;
+      color: #3f3f46;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="card">
+
+      <div class="logo-wrap">
+        <Logo size="sm" />
+      </div>
+
+      <div class="divider"></div>
+
+      <div>
+        <p class="title">Área restrita</p>
+        <p class="description" style="margin-top: 0.5rem;">
+          Este é o painel de administração do conteúdo do site.<br />
+          O acesso é exclusivo para a equipe da Monto IA.
+        </p>
+      </div>
+
+      <button id="btn-login" class="btn-enter">
+        Entrar com Keystatic Cloud
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+
+      <div class="divider"></div>
+
+      <div class="contact-section">
+        <p class="contact-label">Solicitar acesso</p>
+        <div class="contact-links">
+          <a href={`mailto:${email}`} class="contact-link">
+            <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+            {email}
+          </a>
+          {whatsapp && (
+            <a href={whatsapp} target="_blank" rel="noopener noreferrer" class="contact-link">
+              <svg class="contact-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.558 4.121 1.529 5.849L.057 23.625a.75.75 0 0 0 .921.921l5.776-1.472A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.912 0-3.703-.536-5.224-1.465l-.374-.225-3.881.99.99-3.881-.225-.374A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+              </svg>
+              WhatsApp Monto IA
+            </a>
+          )}
+        </div>
+      </div>
+
+    </div>
+
+    <p class="footer-note">
+      Acesso não autorizado é monitorado e registrado.
+    </p>
+  </main>
+
+  <script define:vars={{ KEYSTATIC_VERSION, KEYSTATIC_CLOUD_PROJECT }}>
+    function base64UrlEncode(bytes) {
+      return btoa(String.fromCharCode(...bytes))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+    }
+
+    async function redirectToCloudAuth() {
+      const btn = document.getElementById('btn-login');
+      btn.disabled = true;
+      btn.textContent = 'Redirecionando…';
+
+      const encoder = new TextEncoder();
+      const code_verifier = base64UrlEncode(crypto.getRandomValues(new Uint8Array(32)));
+      const digest = await crypto.subtle.digest('SHA-256', encoder.encode(code_verifier));
+      const code_challenge = base64UrlEncode(new Uint8Array(digest));
+      const state = base64UrlEncode(crypto.getRandomValues(new Uint8Array(32)));
+
+      localStorage.setItem('keystatic-cloud-state', JSON.stringify({
+        state,
+        from: '/keystatic',
+        code_verifier,
+      }));
+
+      const url = new URL('https://api.keystatic.cloud/oauth/authorize');
+      url.searchParams.set('state', state);
+      url.searchParams.set('client_id', KEYSTATIC_CLOUD_PROJECT);
+      url.searchParams.set('redirect_uri', `${window.location.origin}/keystatic/cloud/oauth/callback`);
+      url.searchParams.set('response_type', 'code');
+      url.searchParams.set('code_challenge_method', 'S256');
+      url.searchParams.set('code_challenge', code_challenge);
+      url.searchParams.set('keystatic_version', KEYSTATIC_VERSION);
+
+      window.location.href = url.toString();
+    }
+
+    document.getElementById('btn-login').addEventListener('click', redirectToCloudAuth);
+  </script>
+</body>
+</html>

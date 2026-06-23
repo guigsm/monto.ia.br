@@ -15,6 +15,7 @@ interface Props {
 const { locale = 'pt-br', class: className } = Astro.props;
 
 const apiUrl = '/api/contact';
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
 
 // Locale enviado para a API para que os labels do email sigam o idioma
 const apiLocale = locale === 'en' ? 'en' : 'pt';
@@ -73,6 +74,16 @@ const labels = {
     <input type="text" name="_honeypot" tabindex="-1" autocomplete="off" />
   </div>
 
+  <!-- Cloudflare Turnstile — widget invisível, executado manualmente no submit -->
+  <div
+    id="cf-turnstile-widget"
+    class="cf-turnstile"
+    data-sitekey={turnstileSiteKey}
+    data-execution="execute"
+    data-appearance="invisible"
+    data-callback="onTurnstileToken"
+  ></div>
+
   <!-- Metadados para a API: locale (labels do email) e assunto identificador -->
   <input type="hidden" name="_locale" value={apiLocale} />
   <input type="hidden" name="subject" value={locale === 'en' ? 'Contact — monto.ia.br' : 'Contato — monto.ia.br'} />
@@ -87,7 +98,33 @@ const labels = {
   </div>
 </form>
 
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
 <script define:vars={{ apiUrl, labels }}>
+  // Resolução da Promise do Turnstile — preenchida pelo callback global
+  let _turnstileResolve = null;
+  let _turnstileReject  = null;
+
+  window.onTurnstileToken = (token) => {
+    if (_turnstileResolve) { _turnstileResolve(token); _turnstileResolve = null; _turnstileReject = null; }
+  };
+  window.onTurnstileError = () => {
+    if (_turnstileReject) { _turnstileReject(new Error('turnstile')); _turnstileResolve = null; _turnstileReject = null; }
+  };
+
+  function getTurnstileToken() {
+    return new Promise((resolve, reject) => {
+      _turnstileResolve = resolve;
+      _turnstileReject  = reject;
+      if (window.turnstile) {
+        window.turnstile.execute('#cf-turnstile-widget');
+      } else {
+        // Turnstile não carregou (ex: dev sem chave) — envia sem token
+        resolve('');
+      }
+    });
+  }
+
   function initContactForm() {
     const form = /** @type {HTMLFormElement|null} */ (document.getElementById('contact-form'));
     const button = /** @type {HTMLButtonElement|null} */ (document.getElementById('submit-button'));
@@ -133,9 +170,15 @@ const labels = {
       messageEl.classList.add('hidden');
 
       try {
+        // Dispara o Turnstile e aguarda o token (invisível para o usuário)
+        const turnstileToken = await getTurnstileToken();
+
+        const formData = new FormData(form);
+        if (turnstileToken) formData.set('cf-turnstile-response', turnstileToken);
+
         const response = await fetch(apiUrl, {
           method: 'POST',
-          body: new FormData(form),
+          body: formData,
         });
 
         const data = await response.json();
@@ -143,11 +186,15 @@ const labels = {
         if (data.success) {
           setMessage(labels.success, true);
           form.reset();
+          // Reseta o widget para permitir novo envio
+          if (window.turnstile) window.turnstile.reset('#cf-turnstile-widget');
         } else {
           setMessage(data.message || labels.error, false);
+          if (window.turnstile) window.turnstile.reset('#cf-turnstile-widget');
         }
       } catch {
         setMessage(labels.error, false);
+        if (window.turnstile) window.turnstile.reset('#cf-turnstile-widget');
       } finally {
         button.disabled = false;
         button.textContent = originalText;

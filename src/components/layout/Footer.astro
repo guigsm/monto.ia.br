@@ -227,9 +227,23 @@ const socialIcons: Record<string, string> = {
           )
         )}
       </div>
-      {showCopyright && (
-        <div class="mt-[var(--space-stack-lg)] pt-[var(--space-stack-lg)] border-t border-border text-center">
-          <p class="text-sm text-foreground-muted" set:html={processedCopyright} />
+      {(showCopyright || resolvedLegalLinks.length > 0) && (
+        <div class="mt-[var(--space-stack-lg)] pt-[var(--space-stack-lg)] border-t border-border flex flex-col md:flex-row justify-center items-center gap-[var(--space-stack-md)]">
+          {showCopyright && (
+            <p class="text-sm text-foreground-muted" set:html={processedCopyright} />
+          )}
+          {resolvedLegalLinks.length > 0 && (
+            <div class="flex items-center gap-[var(--space-inline-lg)]">
+              {resolvedLegalLinks.map((link) => (
+                <a
+                  href={link.href}
+                  class="text-sm transition-colors text-foreground-muted hover:text-foreground"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       )}
       </>

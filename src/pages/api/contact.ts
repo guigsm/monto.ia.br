@@ -13,9 +13,41 @@ const contactSchema = z.object({
   honeypot: z.string().max(0), // Anti-spam: must be empty
 });
 
-export const POST: APIRoute = async ({ request }) => {
+async function verifyTurnstile(token: string, ip: string): Promise<boolean> {
+  const secret = import.meta.env.TURNSTILE_SECRET_KEY;
+  if (!secret) return true; // sem chave configurada — permite (dev local)
+  if (!token) return false;
+
+  const body = new FormData();
+  body.append('secret', secret);
+  body.append('response', token);
+  body.append('remoteip', ip);
+
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body,
+    });
+    const data: { success: boolean } = await res.json();
+    return data.success === true;
+  } catch {
+    return false;
+  }
+}
+
+export const POST: APIRoute = async ({ request, clientAddress }) => {
   try {
     const formData = await request.formData();
+
+    // Turnstile — valida antes de processar qualquer dado
+    const turnstileToken = formData.get('cf-turnstile-response')?.toString() || '';
+    const turnstileOk = await verifyTurnstile(turnstileToken, clientAddress);
+    if (!turnstileOk) {
+      return new Response(
+        JSON.stringify({ success: false, errors: { form: ['Verificação de segurança falhou. Recarregue a página e tente novamente.'] } }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
     const data = {
       name: formData.get('name')?.toString() || '',

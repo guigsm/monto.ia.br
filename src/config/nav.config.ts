@@ -110,7 +110,9 @@ const footerNavItemsEn: NavItem[] = [
   { label: 'Contact', href: '/contato', order: 4 },
 ];
 
-export const legalLinks: LegalLink[] = [];
+export const legalLinks: LegalLink[] = [
+  { label: 'Política de Privacidade', href: '/politica-de-privacidade' },
+];
 
 /**
  * Filter out nav items that shouldn't appear for the given locale.

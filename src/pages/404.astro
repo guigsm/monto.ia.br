@@ -1,7 +1,4 @@
 ---
-/**
- * 404 page
- */
 import PageLayout from '@/layouts/PageLayout.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import Badge from '@/components/ui/data-display/Badge/Badge.astro';
@@ -13,63 +10,62 @@ import { HOME_PATH } from '@/config/nav.config'; // TEMP-HOME-OVERRIDE: ver nav.
 const recoveryLinks = [
   {
     icon: 'layers',
-    title: 'Projects',
-    description: 'Selected work and case studies.',
+    title: 'Portfólio',
+    description: 'Projetos selecionados e estudos de caso.',
     href: '/portfolio',
   },
   {
     icon: 'book',
     title: 'Blog',
-    description: 'Notes on design, code, and the craft.',
+    description: 'Artigos sobre design, código e tecnologia.',
     href: '/blog',
   },
   {
     icon: 'mail',
-    title: 'Contact',
-    description: 'Start a conversation about your project.',
+    title: 'Contato',
+    description: 'Fale sobre o seu projeto.',
     href: '/contato',
   },
 ];
 ---
 
 <PageLayout
-  title="Page not found — Astro Rocket"
-  description="This page has moved, been removed, or never existed in the first place."
+  title="Página não encontrada — Monto IA"
+  description="Esta página foi movida, removida ou nunca existiu."
   noindex
   eagerReveal
 >
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>
       <Icon name="compass" size="sm" />
-      404 — page not found
+      404 — página não encontrada
     </Badge>
 
     <h1 slot="title">
-      Page not <span class="text-brand-500">found.</span>
+      Página não <span class="text-brand-500">encontrada.</span>
     </h1>
 
     <p slot="description">
-      This page has moved, been removed, or never existed in the first place. Let's get you back on track.
+      Esta página foi movida, removida ou nunca existiu. Vamos te colocar nos trilhos.
     </p>
 
     <div slot="actions" class="flex flex-col sm:flex-row items-center justify-center gap-4">
       <Button href={HOME_PATH} size="lg">
         <Icon name="arrow-left" size="sm" />
-        Back to home
+        Voltar ao início
       </Button>
       <Button href="/blog" variant="outline" size="lg">
-        Browse the blog
+        Ver o blog
         <Icon name="arrow-right" size="sm" />
       </Button>
     </div>
   </Hero>
 
-  <!-- Recovery Section -->
   <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
     <div class="mx-auto max-w-6xl px-6">
       <div class="mb-8 text-center" data-reveal>
         <h2 class="font-display text-3xl md:text-4xl font-bold text-foreground">
-          Try one of these instead
+          Experimente um desses
         </h2>
       </div>
 
