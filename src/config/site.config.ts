@@ -14,6 +14,7 @@ const profile = profileData as {
   estado?: string;
   atendimento?: string;
   redesSociais?: string[];
+  calendly?: string;
 };
 
 export { i18nConfig };
@@ -28,6 +29,7 @@ export interface SiteConfig {
   author: string;
   email: string;
   phone?: string;
+  whatsapp?: string;
   address?: {
     street: string;
     city: string;
@@ -36,6 +38,7 @@ export interface SiteConfig {
     country: string;
   };
   socialLinks: string[];
+  calendly?: string;
   twitter?: {
     site: string;
     creator: string;
@@ -152,6 +155,7 @@ const siteConfig: SiteConfig = {
   author: profile.nomeNegocio || 'Monto IA',
   email: profile.email || 'contato@monto.ia.br',
   phone: profile.telefone || undefined,
+  whatsapp: profile.whatsapp || undefined,
   address: {
     street: '',
     city: profile.cidade || 'São Paulo',
@@ -162,6 +166,7 @@ const siteConfig: SiteConfig = {
   socialLinks: profile.redesSociais?.length ? profile.redesSociais : [
     'https://www.instagram.com/monto.ia.br',
   ],
+  calendly: profile.calendly || undefined,
   verification: {
     google: GOOGLE_SITE_VERIFICATION,
     bing: BING_SITE_VERIFICATION,

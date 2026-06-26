@@ -37,11 +37,12 @@ export function isExternalUrl(url: string): boolean {
  * Matches each URL against known platforms to derive icon name and label.
  */
 const SOCIAL_PLATFORMS = [
-  { key: 'github',    match: /github\.com/i,                  label: 'GitHub',      icon: 'github'    },
-  { key: 'twitter',   match: /x\.com|twitter\.com/i,          label: 'X / Twitter', icon: 'x-twitter' },
-  { key: 'linkedin',  match: /linkedin\.com/i,                label: 'LinkedIn',    icon: 'linkedin'  },
-  { key: 'instagram', match: /instagram\.com/i,               label: 'Instagram',   icon: 'instagram' },
-  { key: 'bluesky',   match: /bsky\.app|bluesky\.social/i,    label: 'Bluesky',     icon: 'bluesky'   },
+  { key: 'github',        match: /github\.com/i,                              label: 'GitHub',      icon: 'github'                    },
+  { key: 'twitter',       match: /x\.com|twitter\.com/i,                     label: 'X / Twitter', icon: 'x-twitter'                 },
+  { key: 'linkedin',      match: /linkedin\.com/i,                            label: 'LinkedIn',    icon: 'linkedin'                  },
+  { key: 'instagram',     match: /instagram\.com/i,                           label: 'Instagram',   icon: 'instagram'                 },
+  { key: 'bluesky',       match: /bsky\.app|bluesky\.social/i,               label: 'Bluesky',     icon: 'bluesky'                   },
+  { key: 'google-place',  match: /share\.google|maps\.google|google\.com\/maps/i, label: 'Google', icon: 'simple-icons:google'       },
 ] as const;
 
 export interface ResolvedSocialLink {

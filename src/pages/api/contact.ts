@@ -7,6 +7,8 @@ import siteConfig from '@/config/site.config';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
+  company: z.string().max(100).optional(),
+  whatsapp: z.string().min(6, 'Please enter a valid phone number').max(25),
   email: z.email('Please enter a valid email address'),
   subject: z.string().max(200).optional(),
   message: z.string().min(10, 'Message must be at least 10 characters').max(5000),
@@ -51,6 +53,8 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
     const data = {
       name: formData.get('name')?.toString() || '',
+      company: formData.get('company')?.toString() || undefined,
+      whatsapp: formData.get('whatsapp')?.toString() || '',
       email: formData.get('email')?.toString() || '',
       subject: formData.get('subject')?.toString() || '',
       message: formData.get('message')?.toString() || '',
@@ -100,12 +104,20 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     const fromEmail = import.meta.env.RESEND_FROM_EMAIL || toEmail;
     const siteLabel = siteConfig.name;
 
-    const { name, email: replyEmail, message } = result.data;
+    const { name, company, whatsapp, email: replyEmail, message } = result.data;
     const subjectLine = result.data.subject || `Contato via ${siteLabel}`;
     const emailSubject = `[${siteLabel}] ${subjectLine}`;
 
     const safeMessage = message.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
     const safeSubject = subjectLine.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const safeCompany = (company || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const safeWhatsapp = (whatsapp || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    const companyRow = company ? `
+              <tr style="background-color:#f9f9fb;">
+                <td style="padding:13px 16px;font-size:13px;font-weight:600;color:#52525b;border-top:1px solid #e4e4e7;">Empresa</td>
+                <td style="padding:13px 16px;font-size:14px;color:#18181b;border-top:1px solid #e4e4e7;">${safeCompany}</td>
+              </tr>` : '';
 
     const html = `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -136,12 +148,16 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
               <tr style="background-color:#ffffff;">
                 <td style="padding:13px 16px;font-size:13px;font-weight:600;color:#52525b;border-top:1px solid #e4e4e7;">Nome</td>
                 <td style="padding:13px 16px;font-size:14px;color:#18181b;border-top:1px solid #e4e4e7;">${name}</td>
-              </tr>
+              </tr>${companyRow}
               <tr style="background-color:#f9f9fb;">
+                <td style="padding:13px 16px;font-size:13px;font-weight:600;color:#52525b;border-top:1px solid #e4e4e7;">WhatsApp</td>
+                <td style="padding:13px 16px;font-size:14px;border-top:1px solid #e4e4e7;"><a href="https://wa.me/${safeWhatsapp.replace(/\D/g, '')}" style="color:#25d366;text-decoration:none;font-weight:500;">${safeWhatsapp}</a></td>
+              </tr>
+              <tr style="background-color:#ffffff;">
                 <td style="padding:13px 16px;font-size:13px;font-weight:600;color:#52525b;border-top:1px solid #e4e4e7;">E-mail</td>
                 <td style="padding:13px 16px;font-size:14px;border-top:1px solid #e4e4e7;"><a href="mailto:${replyEmail}" style="color:#3b82f6;text-decoration:none;font-weight:500;">${replyEmail}</a></td>
               </tr>
-              <tr style="background-color:#ffffff;">
+              <tr style="background-color:#f9f9fb;">
                 <td style="padding:13px 16px;font-size:13px;font-weight:600;color:#52525b;border-top:1px solid #e4e4e7;">Assunto</td>
                 <td style="padding:13px 16px;font-size:14px;color:#18181b;border-top:1px solid #e4e4e7;">${safeSubject}</td>
               </tr>

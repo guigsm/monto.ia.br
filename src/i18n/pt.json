@@ -79,8 +79,10 @@
   },
   "contact": {
     "heading": "Entre em contato",
-    "name": "Nome",
-    "email": "E-mail",
+    "name": "Nome Completo",
+    "company": "Empresa",
+    "whatsapp": "WhatsApp",
+    "email": "Melhor E-mail",
     "subject": "Assunto",
     "message": "Mensagem",
     "messageHint": "Entre 20 e 500 caracteres.",
@@ -89,8 +91,10 @@
     "success": "Obrigado! Sua mensagem foi enviada com sucesso.",
     "error": "Algo deu errado. Por favor, tente novamente.",
     "nameValidation": "Por favor, informe seu nome completo (nome e sobrenome).",
+    "whatsappValidation": "Por favor, informe um número de WhatsApp válido.",
     "emailValidation": "Por favor, informe um e-mail válido.",
-    "messageValidation": "A mensagem deve ter entre 20 e 500 caracteres."
+    "messageValidation": "A mensagem deve ter entre 20 e 500 caracteres.",
+    "searchCountry": "Pesquisar país"
   },
   "theme": {
     "selectTheme": "Selecionar tema",
@@ -114,5 +118,35 @@
   "footer": {
     "copyright": "© {year} {name}. Todos os direitos reservados.",
     "builtWith": "Desenvolvido com Astro Rocket"
+  },
+  "consent": {
+    "heading": "Sua Privacidade",
+    "description": "Este site utiliza cookies para melhorar sua experiência de navegação, personalizar conteúdo e analisar nosso tráfego. Ao continuar navegando, você concorda com este uso, conforme descrito em nossa",
+    "acceptAll": "Aceitar todos",
+    "declineAll": "Recusar",
+    "customize": "Personalizar",
+    "savePreferences": "Salvar preferências",
+    "settingsHeading": "Configurações de Privacidade",
+    "alwaysOn": "Sempre ativo",
+    "privacyPolicy": "Política de Privacidade",
+    "reopener": "Abrir configurações de cookies",
+    "categories": {
+      "necessary": {
+        "label": "Necessários",
+        "description": "Cookies essenciais para o funcionamento do site. Não podem ser desativados."
+      },
+      "analytics": {
+        "label": "Análise",
+        "description": "Nos ajudam a entender como os visitantes interagem com o site, coletando dados anônimos de uso."
+      },
+      "marketing": {
+        "label": "Marketing",
+        "description": "Usados para exibir anúncios relevantes e medir o desempenho de campanhas publicitárias."
+      },
+      "preferences": {
+        "label": "Preferências",
+        "description": "Permitem que o site lembre suas escolhas, como idioma ou região."
+      }
+    }
   }
 }

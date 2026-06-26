@@ -16,32 +16,47 @@ import contactContent from '@/content/pages/contact.json';
 const locale = 'en';
 
 const content = {
-  badge: contactContent.enBadge,
-  heroTitle: contactContent.enHeroTitle,
-  heroTitleBrand: contactContent.enHeroTitleBrand,
-  heroDescription: contactContent.enHeroDescription,
-  formTitle: contactContent.enFormTitle,
-  channelsTitle: contactContent.enChannelsTitle,
-  channelsDescription: contactContent.enChannelsDescription,
-  locationNote: contactContent.enLocationNote,
+  badge:              contactContent.enBadge,
+  heroTitle:          contactContent.enHeroTitle,
+  heroTitleBrand:     contactContent.enHeroTitleBrand,
+  heroDescription:    contactContent.enHeroDescription,
+  formTitle:          contactContent.enFormTitle,
+  channelsTitle:      contactContent.enChannelsTitle,
+  channelsDescription:contactContent.enChannelsDescription,
+  locationNote:       contactContent.enLocationNote,
 };
 
 const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
 
+function formatBrPhone(raw: string): string {
+  const d = raw.replace(/\D/g, '');
+  if (d.startsWith('55') && d.length >= 12) {
+    const local = d.slice(2);
+    if (local.length === 11) return `(${local.slice(0,2)}) ${local.slice(2,7)}-${local.slice(7)}`;
+    if (local.length === 10) return `(${local.slice(0,2)}) ${local.slice(2,6)}-${local.slice(6)}`;
+  }
+  return `+${d}`;
+}
+
+const whatsappDisplay = siteConfig.whatsapp ? formatBrPhone(siteConfig.whatsapp) : '';
+
+// Order: WhatsApp · Instagram · LinkedIn · Google Place
 const channels = [
-  {
-    icon: 'mail',
-    label: 'Email',
-    value: siteConfig.email,
-    href: `mailto:${siteConfig.email}`,
-    external: false,
-  },
-  ...socialLinks.map((link) => ({
-    icon: link.icon,
-    label: link.label,
-    value: link.href.replace(/^https?:\/\/(www\.)?/, ''),
-    href: link.href,
+  ...(siteConfig.whatsapp ? [{
+    icon:     'simple-icons:whatsapp',
+    label:    'WhatsApp',
+    value:    whatsappDisplay,
+    href:     `https://wa.me/${siteConfig.whatsapp}`,
     external: true,
+    pulse:    true,
+  }] : []),
+  ...socialLinks.map((link) => ({
+    icon:     link.icon,
+    label:    link.key === 'google-place' ? 'Google Business' : link.label,
+    value:    link.key === 'google-place' ? 'Check our reviews' : link.href.replace(/^https?:\/\/(www\.)?/, ''),
+    href:     link.href,
+    external: true,
+    pulse:    false,
   })),
 ];
 ---
@@ -73,8 +88,8 @@ const channels = [
 
         <!-- Left column: form -->
         <div class="lg:col-span-3 h-full" data-reveal="right">
-          <Card padding="lg" class="h-full flex flex-col justify-center">
-            <h2 class="font-display text-xl font-bold text-foreground mb-6">{content.formTitle}</h2>
+          <Card padding="md" class="h-full flex flex-col justify-center !py-4 lg:!py-5">
+            <h2 class="font-display text-xl font-bold text-foreground mb-4">{content.formTitle}</h2>
             <ContactForm locale={locale} />
           </Card>
         </div>
@@ -93,7 +108,11 @@ const channels = [
                 {...ch.external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
                 class="block group"
               >
-                <Card hover padding="sm" class="h-full">
+                <Card
+                  hover
+                  padding="sm"
+                  class={ch.pulse ? 'h-full channel-wp-pulse' : 'h-full channel-shimmer'}
+                >
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
                       <Icon name={ch.icon} size="sm" />
@@ -107,19 +126,33 @@ const channels = [
                 </Card>
               </a>
             ))}
-          </div>
 
-          <Card hover padding="sm" class="bg-brand-500/5 border-brand-500/20">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500">
-                <Icon name="map-pin" size="sm" />
-              </div>
-              <div>
-                <p class="font-semibold text-sm text-foreground">{siteConfig.address?.city ?? 'São Paulo'}/{siteConfig.address?.state ?? 'SP'}</p>
-                <p class="text-xs text-foreground-muted mt-0.5">{content.locationNote}</p>
-              </div>
-            </div>
-          </Card>
+            {siteConfig.calendly && (
+              <a
+                href={siteConfig.calendly}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="block group"
+              >
+                <Card
+                  hover
+                  padding="sm"
+                  class="h-full channel-shimmer bg-gradient-to-br from-brand-500/10 to-brand-600/5 border-brand-500/25"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 shrink-0 rounded-xl bg-brand-500 flex items-center justify-center text-white">
+                      <Icon name="simple-icons:calendly" size="sm" />
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="font-semibold text-sm text-foreground">Schedule a meeting</p>
+                      <p class="text-xs text-foreground-muted">30 min · Google Meet</p>
+                    </div>
+                    <Icon name="arrow-up-right" size="sm" class="text-foreground-muted group-hover:text-brand-500 transition-colors shrink-0" />
+                  </div>
+                </Card>
+              </a>
+            )}
+          </div>
 
         </div>
 
@@ -127,3 +160,57 @@ const channels = [
     </div>
   </section>
 </PageLayout>
+
+<style is:global>
+  @keyframes wp-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklch, var(--brand-500) 0%, transparent); }
+    50%       { box-shadow: 0 0 0 3px color-mix(in oklch, var(--brand-500) 20%, transparent),
+                            0 0 10px color-mix(in oklch, var(--brand-500) 10%, transparent); }
+  }
+  @property --shimmer-x {
+    syntax: '<percentage>';
+    initial-value: -30%;
+    inherits: false;
+  }
+  @keyframes channel-shimmer {
+    from { --shimmer-x: -30%; }
+    to   { --shimmer-x: 130%; }
+  }
+
+  .channel-wp-pulse {
+    animation: wp-pulse 2.5s ease-in-out infinite;
+  }
+
+  .channel-shimmer,
+  .channel-wp-pulse {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .channel-shimmer::before,
+  .channel-wp-pulse::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background-image: linear-gradient(
+      105deg,
+      transparent 0%,
+      transparent calc(var(--shimmer-x) - 25%),
+      color-mix(in oklch, var(--brand-600) 3%, transparent) calc(var(--shimmer-x) - 12%),
+      color-mix(in oklch, var(--brand-300) 7%, transparent) var(--shimmer-x),
+      color-mix(in oklch, var(--brand-600) 3%, transparent) calc(var(--shimmer-x) + 12%),
+      transparent calc(var(--shimmer-x) + 25%),
+      transparent 100%
+    );
+  }
+
+  .group:hover .channel-shimmer::before,
+  .group:hover .channel-wp-pulse::before {
+    opacity: 1;
+    animation: channel-shimmer 1.8s linear infinite;
+  }
+</style>

@@ -49,6 +49,8 @@ export function getSocialIconData(url: string): { icon: string; label: string } 
   if (url.includes('linkedin.com'))  return { icon: 'linkedin',  label: 'LinkedIn' };
   if (url.includes('bsky.app'))      return { icon: 'bluesky',   label: 'Bluesky' };
   if (url.includes('youtube.com'))   return { icon: 'youtube',   label: 'YouTube' };
+  if (url.includes('share.google') || url.includes('maps.google') || url.includes('google.com/maps'))
+    return { icon: 'simple-icons:google', label: 'Google' };
   return { icon: 'link', label: 'Social' };
 }
 

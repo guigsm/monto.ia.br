@@ -38,6 +38,7 @@ const iconMap: Record<string, string> = {
   instagram:        'simple-icons:instagram',
   linkedin:         'simple-icons:linkedin',
   bluesky:          'simple-icons:bluesky',
+  whatsapp:         'simple-icons:whatsapp',
   // Tech stack → Simple Icons
   'brand-astro':      'simple-icons:astro',
   'brand-tailwind':   'simple-icons:tailwindcss',

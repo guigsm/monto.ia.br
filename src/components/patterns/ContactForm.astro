@@ -1,6 +1,4 @@
 ---
-import Input from '@/components/ui/form/Input/Input.astro';
-import Textarea from '@/components/ui/form/Textarea/Textarea.astro';
 import Button from '@/components/ui/form/Button/Button.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import { cn } from '@/lib/cn';
@@ -16,192 +14,760 @@ const { locale = 'pt-br', class: className } = Astro.props;
 
 const apiUrl = '/api/contact';
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '';
-
-// Locale enviado para a API para que os labels do email sigam o idioma
-const apiLocale = locale === 'en' ? 'en' : 'pt';
+const isEn = locale === 'en';
 
 const labels = {
-  name: t('contact.name', locale),
-  email: t('contact.email', locale),
-  message: t('contact.message', locale),
-  messageHint: t('contact.messageHint', locale),
-  send: t('contact.send', locale),
-  sending: t('contact.sending', locale),
-  success: t('contact.success', locale),
-  error: t('contact.error', locale),
-  nameValidation: t('contact.nameValidation', locale),
-  emailValidation: t('contact.emailValidation', locale),
-  messageValidation: t('contact.messageValidation', locale),
+  name:               t('contact.name',               locale),
+  company:            t('contact.company',             locale),
+  whatsapp:           t('contact.whatsapp',            locale),
+  email:              t('contact.email',               locale),
+  message:            t('contact.message',             locale),
+  messageHint:        t('contact.messageHint',         locale),
+  send:               t('contact.send',                locale),
+  sending:            t('contact.sending',             locale),
+  success:            t('contact.success',             locale),
+  error:              t('contact.error',               locale),
+  nameValidation:     t('contact.nameValidation',      locale),
+  whatsappValidation: t('contact.whatsappValidation',  locale),
+  emailValidation:    t('contact.emailValidation',     locale),
+  messageValidation:  t('contact.messageValidation',   locale),
+  searchCountry:      t('contact.searchCountry',       locale),
 };
 ---
 
-<form id="contact-form" class={cn('space-y-5', className)} novalidate>
+<form
+  id="contact-form"
+  class={cn('flex flex-col gap-3', className)}
+  novalidate
+  data-api-url={apiUrl}
+  data-labels={JSON.stringify(labels)}
+  data-locale={locale}
+>
 
-  <!-- Nome completo — padrão exige pelo menos 2 palavras com ≥2 chars cada -->
-  <Input
-    label={labels.name}
-    name="name"
-    type="text"
-    required
-    minlength={5}
-    autocomplete="name"
-    pattern={"[A-Za-z\\u00C0-\\u024F]{2,}([ ][A-Za-z\\u00C0-\\u024F]{2,})+"}
-    title={labels.nameValidation}
-  />
+  <!-- Row 1: Nome | Empresa -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
 
-  <Input
-    label={labels.email}
-    name="email"
-    type="email"
-    required
-    autocomplete="email"
-    title={labels.emailValidation}
-  />
+    <div class="cf-field">
+      <label for="cf-name" class="cf-label">
+        {labels.name}<span class="cf-req" aria-hidden="true"> *</span>
+      </label>
+      <div class="cf-ring">
+        <input
+          id="cf-name"
+          name="name"
+          type="text"
+          class="cf-input"
+          required
+          minlength={5}
+          autocomplete="name"
+          pattern={"[A-Za-z\\u00C0-\\u024F]{2,}([ ][A-Za-z\\u00C0-\\u024F]{2,})+"}
+          placeholder={isEn ? 'John Smith' : 'João Silva'}
+        />
+        <span class="cf-vi" aria-hidden="true"></span>
+      </div>
+    </div>
 
-  <Textarea
-    label={labels.message}
-    name="message"
-    required
-    rows={5}
-    minlength={20}
-    maxlength={500}
-    title={labels.messageValidation}
-    hint={labels.messageHint}
-  />
+    <div class="cf-field">
+      <label for="cf-company" class="cf-label">{labels.company}</label>
+      <div class="cf-ring">
+        <input
+          id="cf-company"
+          name="company"
+          type="text"
+          class="cf-input"
+          autocomplete="organization"
+          placeholder={isEn ? 'Your company (optional)' : 'Sua empresa (opcional)'}
+        />
+      </div>
+    </div>
 
-  <!-- Honeypot para spam -->
+  </div>
+
+  <!-- Row 2: WhatsApp | Email -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+    <div class="cf-field">
+      <label for="cf-phone" class="cf-label">
+        {labels.whatsapp}<span class="cf-req" aria-hidden="true"> *</span>
+      </label>
+      <div class="cf-ring cf-ring-phone" id="cf-ring-phone">
+        <input
+          id="cf-phone"
+          name="whatsapp"
+          type="tel"
+          class="cf-input"
+          required
+        />
+        <span class="cf-vi" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="cf-field">
+      <label for="cf-email" class="cf-label">
+        {labels.email}<span class="cf-req" aria-hidden="true"> *</span>
+      </label>
+      <div class="cf-ring">
+        <input
+          id="cf-email"
+          name="email"
+          type="email"
+          class="cf-input"
+          required
+          autocomplete="email"
+          placeholder={isEn ? 'you@example.com' : 'voce@exemplo.com'}
+        />
+        <span class="cf-vi" aria-hidden="true"></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Mensagem (full width) -->
+  <div class="cf-field">
+    <label for="cf-message" class="cf-label">
+      {labels.message}<span class="cf-req" aria-hidden="true"> *</span>
+    </label>
+    <div class="cf-ring">
+      <textarea
+        id="cf-message"
+        name="message"
+        class="cf-input cf-textarea"
+        required
+        minlength={20}
+        maxlength={500}
+      ></textarea>
+      <span class="cf-vi cf-vi--textarea" aria-hidden="true"></span>
+    </div>
+    <p class="text-xs text-foreground-muted">
+      {isEn ? 'Type between 20 and 500 characters. Now: ' : 'Digite entre 20 e 500 caracteres. Agora: '}<strong id="cf-char-count">(0)</strong>.
+    </p>
+  </div>
+
+  <!-- Honeypot anti-spam -->
   <div class="hidden" aria-hidden="true">
     <input type="text" name="_honeypot" tabindex="-1" autocomplete="off" />
   </div>
 
-  <!-- Cloudflare Turnstile — widget invisível, executado manualmente no submit -->
-  <div
-    id="cf-turnstile-widget"
-    class="cf-turnstile"
-    data-sitekey={turnstileSiteKey}
-    data-execution="execute"
-    data-appearance="invisible"
-    data-callback="onTurnstileToken"
-  ></div>
+  <!-- Cloudflare Turnstile — só renderiza quando a site key está configurada -->
+  {turnstileSiteKey && (
+    <div
+      id="cf-turnstile"
+      class="cf-turnstile"
+      data-sitekey={turnstileSiteKey}
+      data-execution="execute"
+      data-appearance="interaction-only"
+      data-callback="onTurnstileToken"
+      data-error-callback="onTurnstileError"
+    ></div>
+  )}
 
-  <!-- Metadados para a API: locale (labels do email) e assunto identificador -->
-  <input type="hidden" name="_locale" value={apiLocale} />
-  <input type="hidden" name="subject" value={locale === 'en' ? 'Contact — monto.ia.br' : 'Contato — monto.ia.br'} />
+  <input type="hidden" name="subject" value={isEn ? 'Contact — monto.ia.br' : 'Contato — monto.ia.br'} />
 
-  <div id="form-message" role="alert" aria-live="polite" class="hidden text-sm rounded-md px-4 py-3"></div>
+  <div id="cf-status" role="alert" aria-live="polite" class="hidden text-sm rounded-md px-4 py-3"></div>
 
-  <div class="flex justify-center">
-    <Button type="submit" id="submit-button" class="gap-2 w-full sm:w-auto">
+  <div class="flex justify-center pt-1">
+    <Button type="submit" id="cf-submit" class="gap-2 w-full sm:w-auto">
       {labels.send}
       <Icon name="arrow-right" size="sm" />
     </Button>
   </div>
+
 </form>
 
-<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<!-- Turnstile SDK — só carrega quando a site key está configurada -->
+{turnstileSiteKey && (
+  <>
+    <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+    <script is:inline>
+      window.onTurnstileToken = function(token) {
+        if (window._cfResolve) {
+          window._cfResolve(token);
+          window._cfResolve = null;
+          window._cfReject  = null;
+        }
+      };
+      window.onTurnstileError = function() {
+        if (window._cfReject) {
+          window._cfReject(new Error('turnstile'));
+          window._cfResolve = null;
+          window._cfReject  = null;
+        }
+      };
+    </script>
+  </>
+)}
 
-<script define:vars={{ apiUrl, labels }}>
-  // Resolução da Promise do Turnstile — preenchida pelo callback global
-  let _turnstileResolve = null;
-  let _turnstileReject  = null;
+<!-- Form logic — Vite-bundled (enables static import of intl-tel-input) -->
+<script>
+  import intlTelInput from 'intl-tel-input';
 
-  window.onTurnstileToken = (token) => {
-    if (_turnstileResolve) { _turnstileResolve(token); _turnstileResolve = null; _turnstileReject = null; }
+  let _iti = null;
+  let _selectedCountry = 'br';    // tracks user's explicit country choice
+  let _isRestoringCountry = false; // prevents countrychange loop when we call setSelectedCountry
+  let _countryClickHandler = null; // ref kept for cleanup on re-init (astro:after-swap)
+
+  // Per-country format map. Each entry has one or more templates ordered by maxDigits ascending.
+  // applyMask() picks the first template whose maxDigits >= digit count; the last is the fallback.
+  // placeholder is the example shown to the user — applyMask(example_digits) must produce it.
+  const phoneFormats = {
+    br: { templates: [
+      { maxDigits: 10, mask: 'XX XXXX-XXXX',  placeholder: '11 1234-5678'  },
+      { maxDigits: 11, mask: 'XX XXXXX-XXXX', placeholder: '11 12345-6789' },
+    ]},
+    us: { templates: [{ maxDigits: 10, mask: 'XXX-XXX-XXXX',    placeholder: '201-555-0123'  }] },
+    ca: { templates: [{ maxDigits: 10, mask: 'XXX-XXX-XXXX',    placeholder: '506-555-0123'  }] },
+    pt: { templates: [{ maxDigits:  9, mask: 'XXX XXX XXX',     placeholder: '912 345 678'   }] },
+    es: { templates: [{ maxDigits:  9, mask: 'XXX XX XX XX',    placeholder: '612 34 56 78'  }] },
+    gb: { templates: [{ maxDigits: 11, mask: 'XXXXX XXXXXX',    placeholder: '07700 900123'  }] },
+    ar: { templates: [{ maxDigits: 10, mask: 'XX XXXX-XXXX',    placeholder: '11 2345-6789'  }] },
+    mx: { templates: [{ maxDigits: 10, mask: 'XX XXXX XXXX',    placeholder: '55 1234 5678'  }] },
+    de: { templates: [{ maxDigits: 11, mask: 'XXXX XXXXXXX',    placeholder: '0301 2345678'  }] },
+    fr: { templates: [{ maxDigits: 10, mask: 'XX XX XX XX XX',  placeholder: '06 12 34 56 78'}] },
+    it: { templates: [{ maxDigits: 10, mask: 'XXX XXX XXXX',    placeholder: '312 345 6789'  }] },
+    cl: { templates: [{ maxDigits:  9, mask: 'X XXXX XXXX',     placeholder: '9 1234 5678'   }] },
+    co: { templates: [{ maxDigits: 10, mask: 'XXX XXX XXXX',    placeholder: '312 345 6789'  }] },
+    uy: { templates: [{ maxDigits:  9, mask: 'X XXX XXXX',      placeholder: '9 123 4567'    }] },  // actually varies
+    pe: { templates: [{ maxDigits:  9, mask: 'XXX XXX XXX',     placeholder: '912 345 678'   }] },
+    jp: { templates: [{ maxDigits: 11, mask: 'XXX-XXXX-XXXX',   placeholder: '090-1234-5678' }] },
+    au: { templates: [{ maxDigits: 10, mask: 'XXXX XXX XXX',    placeholder: '0412 345 678'  }] },
+    nz: { templates: [{ maxDigits: 10, mask: 'XXX XXX XXXX',    placeholder: '021 234 5678'  }] },
   };
-  window.onTurnstileError = () => {
-    if (_turnstileReject) { _turnstileReject(new Error('turnstile')); _turnstileResolve = null; _turnstileReject = null; }
-  };
 
-  function getTurnstileToken() {
-    return new Promise((resolve, reject) => {
-      _turnstileResolve = resolve;
-      _turnstileReject  = reject;
-      if (window.turnstile) {
-        window.turnstile.execute('#cf-turnstile-widget');
+  // Generic mask application — no country-specific IFs inside.
+  // Picks the template whose maxDigits fits the current digit count.
+  function applyMask(rawDigits, templates) {
+    const tmpl = templates.find(t => rawDigits.length <= t.maxDigits) ?? templates.at(-1);
+    const digits = rawDigits.slice(0, tmpl.maxDigits);
+    let out = '';
+    let di = 0;
+    for (const ch of tmpl.mask) {
+      if (ch === 'X') {
+        if (di < digits.length) out += digits[di++];
+        else break;
+      } else if (di > 0) {
+        out += ch; // separador só após ao menos um dígito
+      }
+    }
+    return out.replace(/[\s\-]+$/, ''); // remove separadores finais pendentes
+  }
+
+  function applyRingState(ring, ok) {
+    ring.classList.toggle('cf-error', !ok);
+    ring.classList.toggle('cf-valid', ok);
+    ring.closest('.cf-field')?.classList.toggle('cf-field--err', !ok);
+  }
+
+  function checkRing(ring, field) {
+    if (!field.required && !field.value.trim()) {
+      ring.classList.remove('cf-error', 'cf-valid');
+      ring.closest('.cf-field')?.classList.remove('cf-field--err');
+      return true;
+    }
+    const ok = field.checkValidity() && field.value.trim() !== '';
+    applyRingState(ring, ok);
+    return ok;
+  }
+
+  function checkPhoneRing() {
+    const ring = document.getElementById('cf-ring-phone');
+    if (!ring || !_iti) return true;
+    const phoneInput = /** @type {HTMLInputElement|null} */ (ring.querySelector('input'));
+    const hasValue = !!(phoneInput && phoneInput.value.trim().length > 3);
+    const valid = hasValue && !!(_iti?.isValidNumber ? _iti.isValidNumber() : true);
+    applyRingState(ring, valid);
+    return valid;
+  }
+
+  function initPhone() {
+    const phoneInput = /** @type {HTMLInputElement|null} */ (document.getElementById('cf-phone'));
+    if (!phoneInput) return;
+
+    if (_iti) { try { _iti.destroy(); } catch (_) {} _iti = null; }
+
+    // Reset per-mount state
+    _selectedCountry = 'br';
+    _isRestoringCountry = false;
+
+    const form   = document.getElementById('contact-form');
+    const labels = JSON.parse(form?.dataset.labels || '{}');
+    const locale = form?.dataset.locale || 'pt-br';
+
+    _iti = intlTelInput(phoneInput, {
+      initialCountry: 'br',
+      separateDialCode: true,
+      strictMode: false,
+      countrySearch: true,
+      formatAsYouType: false, // we apply our own template-based mask
+      countryNameLocale: locale === 'en' ? 'en' : 'pt-BR',
+      uiTranslations: { searchPlaceholder: labels.searchCountry || 'Buscar país' },
+      loadUtils: () => import('intl-tel-input/dist/js/utils.js'),
+      // For countries in phoneFormats: use our example; otherwise fall back to library default.
+      customPlaceholder: (libDefault, countryData) => {
+        const fmt = phoneFormats[countryData?.iso2];
+        return fmt ? fmt.templates.at(-1).placeholder : libDefault;
+      },
+    });
+
+    // Returns the format for the selected country.
+    // If the country is in phoneFormats, use our curated entry.
+    // Otherwise auto-derive mask and maxDigits from the library's own placeholder —
+    // this guarantees placeholder === applyMask(digits) for every country universally.
+    function getFormat() {
+      const iso2 = _iti?.getSelectedCountry?.()?.iso2;
+      if (phoneFormats[iso2]) return phoneFormats[iso2];
+      const ph = phoneInput.placeholder;
+      if (!ph) return null;
+      return { templates: [{
+        maxDigits : (ph.match(/\d/g) ?? []).length,
+        mask      : ph.replace(/\d/g, 'X'),
+        placeholder: ph,
+      }]};
+    }
+
+    function updateMaxLength() {
+      const fmt = getFormat();
+      if (fmt) phoneInput.maxLength = fmt.templates.at(-1).placeholder.length;
+      else phoneInput.removeAttribute('maxlength');
+    }
+
+    // Block non-digit keystrokes before they reach the input value.
+    phoneInput.addEventListener('keydown', (e) => {
+      if (
+        e.key.length > 1 || // control keys (Backspace, Delete, Tab, ArrowLeft…)
+        e.ctrlKey || e.metaKey || // Ctrl/Cmd combos (copy, paste, select-all)
+        /^\d$/.test(e.key)  // digit — allow
+      ) return;
+      e.preventDefault();
+    });
+
+    // On every input (including paste), strip non-digits and apply the country mask.
+    phoneInput.addEventListener('input', () => {
+      const rawDigits = phoneInput.value.replace(/\D/g, '');
+      const fmt = getFormat();
+      const masked = fmt ? applyMask(rawDigits, fmt.templates) : rawDigits;
+      if (phoneInput.value !== masked) {
+        phoneInput.value = masked;
+      }
+    });
+
+    // Dynamically compute text-indent to clear the country button (width varies by dial code).
+    // Also set border-radius as inline style so it beats any library CSS !important rule.
+    function updatePhoneIndent() {
+      const container = /** @type {HTMLElement|null} */ (document.querySelector('.cf-ring-phone .iti__country-container'));
+      if (!container) return;
+      phoneInput.style.textIndent = (container.offsetWidth + 5) + 'px';
+      phoneInput.style.borderRadius = 'calc(0.5rem - 1.5px)';
+      updateMaxLength();
+    }
+    requestAnimationFrame(updatePhoneIndent);
+
+    // Placeholder (and therefore maxlength) is only set after utils.js finishes loading.
+    if (_iti.promise) _iti.promise.then(updateMaxLength);
+
+    // Track user-chosen country via clicks on dropdown items.
+    // The selector is detached (iti--detached-country-selector), so listen on document capture phase
+    // which fires before intl-tel-input closes the dropdown and before countrychange fires.
+    if (_countryClickHandler) document.removeEventListener('click', _countryClickHandler, true);
+    _countryClickHandler = (e) => {
+      const li = /** @type {HTMLElement|null} */ (/** @type {HTMLElement} */ (e.target).closest('[data-iso2]'));
+      if (li) _selectedCountry = li.dataset.iso2 ?? _selectedCountry;
+    };
+    document.addEventListener('click', _countryClickHandler, true);
+
+    phoneInput.addEventListener('countrychange', () => {
+      // Guard: we called setSelectedCountry() ourselves to undo an auto-switch — skip processing.
+      if (_isRestoringCountry) { _isRestoringCountry = false; return; }
+
+      const newIso2 = _iti?.getSelectedCountry?.()?.iso2;
+
+      if (newIso2 === _selectedCountry) {
+        // User-initiated change (dropdown click already updated _selectedCountry)
+        phoneInput.value = '';
+        requestAnimationFrame(updatePhoneIndent);
       } else {
-        // Turnstile não carregou (ex: dev sem chave) — envia sem token
-        resolve('');
+        // Library auto-switched country (e.g. Canada → USA via formatAsYouType).
+        // Lock back to what the user explicitly chose.
+        _isRestoringCountry = true;
+        try { _iti.setSelectedCountry(_selectedCountry); } catch (_) { _isRestoringCountry = false; }
       }
     });
   }
 
-  function initContactForm() {
+  function initForm() {
     const form = /** @type {HTMLFormElement|null} */ (document.getElementById('contact-form'));
-    const button = /** @type {HTMLButtonElement|null} */ (document.getElementById('submit-button'));
-    const messageEl = document.getElementById('form-message');
+    if (!form) return;
 
-    if (!form || !button || !messageEl) return;
+    const apiUrl   = form.dataset.apiUrl || '/api/contact';
+    const labels   = JSON.parse(form.dataset.labels || '{}');
+    const button   = /** @type {HTMLButtonElement|null} */ (document.getElementById('cf-submit'));
+    const statusEl = document.getElementById('cf-status');
 
-    // Aplica mensagens de validação customizadas (idioma correto no tooltip nativo)
-    form.querySelectorAll('[title][pattern], [title][type="email"], [title][required]').forEach((el) => {
-      el.addEventListener('invalid', () => {
-        /** @type {HTMLInputElement} */ (el).setCustomValidity(el.getAttribute('title') ?? '');
+    initPhone();
+
+    // Live character counter for message textarea
+    const textarea = /** @type {HTMLTextAreaElement|null} */ (document.getElementById('cf-message'));
+    const charCount = document.getElementById('cf-char-count');
+    if (textarea && charCount) {
+      textarea.addEventListener('input', () => {
+        charCount.textContent = `(${textarea.value.length})`;
       });
-      el.addEventListener('input', () => {
-        /** @type {HTMLInputElement} */ (el).setCustomValidity('');
+    }
+
+    // Blur: validate if field has content or is already marked
+    // Input: re-validate if already marked (update error→valid in real time)
+    form.querySelectorAll('.cf-ring').forEach((ring) => {
+      const field = /** @type {HTMLInputElement|HTMLTextAreaElement|null} */ (ring.querySelector('input, textarea'));
+      if (!field) return;
+      field.addEventListener('blur', () => {
+        const marked = ring.classList.contains('cf-error') || ring.classList.contains('cf-valid');
+        if (field.value.trim() || marked) {
+          if (ring.id === 'cf-ring-phone') checkPhoneRing();
+          else checkRing(ring, field);
+        }
+      });
+      field.addEventListener('input', () => {
+        const marked = ring.classList.contains('cf-error') || ring.classList.contains('cf-valid');
+        if (marked) {
+          if (ring.id === 'cf-ring-phone') checkPhoneRing();
+          else checkRing(ring, field);
+        }
       });
     });
 
-    function setMessage(text, isSuccess) {
-      messageEl.textContent = text;
-      if (isSuccess) {
-        messageEl.className = 'text-sm rounded-md px-4 py-3 bg-success/10 text-success border border-success/20';
-      } else {
-        messageEl.className = 'text-sm rounded-md px-4 py-3 bg-destructive/10 text-destructive border border-destructive/20';
-      }
-      messageEl.classList.remove('hidden');
+    function setStatus(text, ok) {
+      if (!statusEl) return;
+      statusEl.textContent = text;
+      statusEl.className = ok
+        ? 'text-sm rounded-md px-4 py-3 bg-success/10 text-success border border-success/20'
+        : 'text-sm rounded-md px-4 py-3 bg-destructive/10 text-destructive border border-destructive/20';
+      statusEl.classList.remove('hidden');
     }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // Honeypot — bot preencheu o campo oculto
       if (/** @type {HTMLInputElement} */ (form.elements.namedItem('_honeypot'))?.value) return;
 
-      // Dispara validação HTML5 nativa antes do fetch
-      if (!form.checkValidity()) {
-        form.reportValidity();
+      // Validate all — show ! on every invalid field, focus the first one
+      let allOk = true;
+      let firstInvalid = null;
+      form.querySelectorAll('.cf-ring').forEach((ring) => {
+        const field = /** @type {HTMLInputElement|HTMLTextAreaElement|null} */ (ring.querySelector('input, textarea'));
+        if (!field) return;
+        const ok = ring.id === 'cf-ring-phone' ? checkPhoneRing() : checkRing(ring, field);
+        if (!ok) {
+          allOk = false;
+          if (!firstInvalid) firstInvalid = field;
+        }
+      });
+      if (!allOk) {
+        firstInvalid?.focus();
         return;
       }
 
-      button.disabled = true;
-      const originalText = button.textContent;
-      button.textContent = labels.sending;
-      messageEl.classList.add('hidden');
+      if (button) button.disabled = true;
+      const origLabel = button ? button.textContent : '';
+      if (button) button.textContent = labels.sending || '…';
+      statusEl?.classList.add('hidden');
 
       try {
-        // Dispara o Turnstile e aguarda o token (invisível para o usuário)
-        const turnstileToken = await getTurnstileToken();
-
-        const formData = new FormData(form);
-        if (turnstileToken) formData.set('cf-turnstile-response', turnstileToken);
-
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          body: formData,
+        const token = await new Promise((resolve, reject) => {
+          window._cfResolve = resolve;
+          window._cfReject  = reject;
+          if (window.turnstile) window.turnstile.execute('#cf-turnstile');
+          else resolve('');
         });
 
-        const data = await response.json();
+        const fd = new FormData(form);
+
+        if (_iti && _iti.getNumber) {
+          const fullNum = _iti.getNumber();
+          if (fullNum) fd.set('whatsapp', fullNum);
+        }
+
+        if (token) fd.set('cf-turnstile-response', String(token));
+
+        const res  = await fetch(apiUrl, { method: 'POST', body: fd });
+        const data = await res.json();
 
         if (data.success) {
-          setMessage(labels.success, true);
+          setStatus(labels.success, true);
           form.reset();
-          // Reseta o widget para permitir novo envio
-          if (window.turnstile) window.turnstile.reset('#cf-turnstile-widget');
+          try { if (_iti) _iti.setSelectedCountry('br'); } catch (_) {}
+          form.querySelectorAll('.cf-ring').forEach(r => r.classList.remove('cf-error', 'cf-valid'));
+          form.querySelectorAll('.cf-field').forEach(f => f.classList.remove('cf-field--err'));
+          const cc = document.getElementById('cf-char-count');
+          if (cc) cc.textContent = '(0)';
+          if (window.turnstile) window.turnstile.reset('#cf-turnstile');
         } else {
-          setMessage(data.message || labels.error, false);
-          if (window.turnstile) window.turnstile.reset('#cf-turnstile-widget');
+          setStatus(data.message || labels.error, false);
+          if (window.turnstile) window.turnstile.reset('#cf-turnstile');
         }
       } catch {
-        setMessage(labels.error, false);
-        if (window.turnstile) window.turnstile.reset('#cf-turnstile-widget');
+        setStatus(labels.error, false);
+        if (window.turnstile) window.turnstile.reset('#cf-turnstile');
       } finally {
-        button.disabled = false;
-        button.textContent = originalText;
+        if (button) { button.disabled = false; button.textContent = origLabel; }
       }
     });
   }
 
-  initContactForm();
-  document.addEventListener('astro:after-swap', initContactForm);
+  initForm();
+  document.addEventListener('astro:after-swap', initForm);
 </script>
+
+<style is:global>
+  /* ─── intl-tel-input base CSS (provides dropdown hide/show + flag sprite rules) ─── */
+  @import 'intl-tel-input/dist/css/intlTelInput-no-assets.css';
+
+  /* ─── Flag sprite path (override defaults; files copied to public/ for reliable serving) ─── */
+  :root {
+    --iti-path-flags-1x: url('/flags.webp');
+    --iti-path-flags-2x: url('/flags@2x.webp');
+  }
+
+  /* ─── @property for animatable angle ─── */
+  @property --cf-spin {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  /* ─── Keyframes ─── */
+  @keyframes cf-border-run {
+    to { --cf-spin: 360deg; }
+  }
+  @keyframes cf-border-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 color-mix(in oklch, var(--brand-500) 0%, transparent);
+    }
+    50% {
+      box-shadow:
+        0 0 0 3px color-mix(in oklch, var(--brand-500) 22%, transparent),
+        0 0 12px color-mix(in oklch, var(--brand-500) 14%, transparent);
+    }
+  }
+
+  /* ─── Field container ─── */
+  .cf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  /* ─── Label ─── */
+  .cf-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
+    color: var(--foreground);
+    transition: color 0.2s ease;
+  }
+  .cf-req {
+    color: var(--brand-500);
+    font-weight: 600;
+  }
+
+  /* Label turns brand-colored when its field has an error */
+  .cf-field--err .cf-label {
+    color: var(--brand-500);
+  }
+
+  /* ─── Border ring wrapper ─── */
+  .cf-ring {
+    position: relative;
+    border-radius: 0.5rem;
+    padding: 1.5px;
+    background: color-mix(in oklch, var(--brand-500) 30%, transparent);
+    transition: box-shadow 0.35s ease;
+  }
+
+  /* Focus state: spinning gradient border */
+  .cf-ring:focus-within:not(.cf-error) {
+    background: conic-gradient(
+      from var(--cf-spin),
+      transparent 55%,
+      var(--brand-500) 75%,
+      transparent 100%
+    );
+    animation: cf-border-run 1.8s linear infinite;
+  }
+
+  /* Error state: solid brand border + neon pulse + tinted background */
+  .cf-ring.cf-error {
+    background: var(--brand-500) !important;
+    animation: cf-border-pulse 1.5s ease-in-out infinite !important;
+  }
+  .cf-ring.cf-error > input,
+  .cf-ring.cf-error > textarea {
+    background: color-mix(in oklch, var(--brand-500) 10%, var(--input-bg, var(--background))) !important;
+  }
+  .cf-ring-phone.cf-error .iti,
+  .cf-ring-phone.cf-error .iti input[type=tel],
+  .cf-ring-phone.cf-error .iti__selected-country {
+    background: color-mix(in oklch, var(--brand-500) 10%, var(--input-bg, var(--background))) !important;
+  }
+
+  /* ─── Validation icon — absolute in ring, zero layout impact ─── */
+  .cf-vi {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8125rem;
+    font-weight: 900;
+    line-height: 1;
+    pointer-events: none;
+    color: var(--brand-500);
+    display: none;
+    z-index: 2;
+  }
+  /* Textarea icon sits at top-right, not vertically centered */
+  .cf-vi--textarea {
+    top: 0.625rem;
+    transform: none;
+  }
+  .cf-ring.cf-valid .cf-vi,
+  .cf-ring.cf-error .cf-vi { display: block; }
+  .cf-ring.cf-valid .cf-vi::before { content: '✓'; }
+  .cf-ring.cf-error .cf-vi::before { content: '✕'; }
+
+  /* ─── Input / textarea inside the ring ─── */
+  .cf-ring > input,
+  .cf-ring > textarea {
+    display: block;
+    width: 100%;
+    background: var(--input-bg, var(--background));
+    color: var(--foreground);
+    border: none !important;
+    outline: none !important;
+    border-radius: calc(0.5rem - 1.5px);
+    padding: 0 1.75rem 0 0.875rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    height: 2.375rem;
+  }
+  .cf-ring > input::placeholder,
+  .cf-ring > textarea::placeholder {
+    color: var(--foreground-muted);
+    opacity: 0.65;
+  }
+
+  /* Textarea specifics */
+  .cf-textarea {
+    height: 6.5rem !important;
+    padding-top: 0.625rem !important;
+    padding-bottom: 0.625rem !important;
+    resize: none !important;
+  }
+
+  /* ─── intl-tel-input: fit inside .cf-ring ─── */
+  /* border-radius matches the inner arc of cf-ring (concentric = uniform 1.5px border).
+     No overflow clipping needed — each child clips its own background via its own border-radius. */
+  .cf-ring-phone .iti {
+    display: flex !important;
+    width: 100% !important;
+    background: var(--input-bg, var(--background)) !important;
+    border-radius: calc(0.5rem - 1.5px) !important;
+  }
+  /* padding-left: 0 !important overrides the library's inline style; text-indent and border-radius set dynamically by JS.
+     outline/box-shadow must be none — the phone input is a grandchild of .cf-ring (.cf-ring > .iti > input),
+     so the generic .cf-ring > input rule does not apply here; without this the browser's focus ring leaks
+     outside the .iti (overflow:visible) and creates a fixed solid border on top of the animated ring. */
+  .cf-ring-phone .iti input[type=tel] {
+    height: 2.375rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-right: 1.75rem !important;
+    padding-left: 0 !important;
+    background: var(--input-bg, var(--background)) !important;
+    color: var(--foreground) !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  /* Country container: needs its own left border-radius so its rectangular background
+     doesn't overlap the ring's animated border at the top-left / bottom-left corners. */
+  .cf-ring-phone .iti__country-container {
+    border-radius: calc(0.5rem - 1.5px) 0 0 calc(0.5rem - 1.5px) !important;
+    overflow: hidden !important;
+  }
+  /* Bring flag closer to the left border */
+  .cf-ring-phone .iti__selected-country {
+    background: var(--input-bg, var(--background)) !important;
+    border-right: 1px solid color-mix(in oklch, var(--foreground) 12%, transparent) !important;
+    padding: 0 0.5rem 0 0.375rem !important;
+    gap: 0.375rem !important;
+    border-radius: calc(0.5rem - 1.5px) 0 0 calc(0.5rem - 1.5px) !important;
+  }
+  .cf-ring-phone .iti__selected-country:hover,
+  .cf-ring-phone .iti__selected-country[aria-expanded="true"] {
+    background: color-mix(in oklch, var(--brand-500) 8%, var(--input-bg, var(--background))) !important;
+  }
+  .cf-ring-phone .iti__arrow {
+    border-top-color: var(--foreground-muted) !important;
+  }
+  .cf-ring-phone .iti__arrow--up {
+    border-bottom-color: var(--foreground-muted) !important;
+  }
+  .cf-ring-phone .iti__selected-dial-code {
+    color: var(--foreground-muted) !important;
+    font-size: 0.8125rem !important;
+  }
+
+  /* ─── Override iti CSS variables for dark-mode theming ─── */
+  .cf-ring-phone .iti,
+  .iti__country-selector {
+    --iti-country-selector-bg: var(--card, var(--background));
+    --iti-border-color: color-mix(in oklch, var(--foreground) 14%, transparent);
+    --iti-hover-color: color-mix(in oklch, var(--brand-500) 10%, transparent);
+    --iti-icon-color: var(--foreground-muted, #888);
+  }
+
+  /* ─── Dropdown: rounded corners + shadow ─── */
+  .iti__country-selector {
+    border-radius: 0.5rem !important;
+    overflow: hidden !important;
+    border: 1px solid color-mix(in oklch, var(--foreground) 14%, transparent) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25) !important;
+    background: var(--card, var(--background)) !important;
+  }
+
+  /* ─── Search input ─── */
+  .iti__search-input {
+    background: var(--input-bg, var(--background)) !important;
+    color: var(--foreground) !important;
+    border-bottom: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent) !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+  .iti__search-input::placeholder {
+    color: var(--foreground-muted) !important;
+    opacity: 0.7 !important;
+  }
+  .iti__search-input-wrapper {
+    border-bottom: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent) !important;
+    background: var(--input-bg, var(--background)) !important;
+  }
+  .iti__country {
+    color: var(--foreground) !important;
+  }
+  .iti__country:hover,
+  .iti__country.iti__highlight {
+    background: color-mix(in oklch, var(--brand-500) 10%, transparent) !important;
+  }
+  .iti__dial-code {
+    color: var(--foreground-muted) !important;
+  }
+  .iti__country-name {
+    color: var(--foreground) !important;
+  }
+  .iti__divider {
+    border-bottom-color: color-mix(in oklch, var(--foreground) 10%, transparent) !important;
+  }
+  .iti__country-list {
+    background: var(--card, var(--background)) !important;
+  }
+</style>

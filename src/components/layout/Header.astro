@@ -140,12 +140,10 @@ const isPt = detectedLocale.startsWith('pt');
 
 const ui = {
   navigate: isPt ? 'Navegar' : 'Navigate',
-  appearance: isPt ? 'Aparência' : 'Appearance',
-  themeMode: isPt ? 'Modo do tema' : 'Theme mode',
-  theme: isPt ? 'Tema' : 'Theme',
-  colourTheme: isPt ? 'Cor do tema' : 'Colour theme',
+  modo: isPt ? 'Modo' : 'Mode',
+  cor: isPt ? 'Cor' : 'Colour',
   language: isPt ? 'Idioma' : 'Language',
-  connect: isPt ? 'Conectar' : 'Connect'
+  socialLinks: isPt ? 'Redes Sociais' : 'Social links',
 };
 const isLandingPage = currentPath === '/';
 const ctaHref = cta.href?.startsWith('#') && !isLandingPage
@@ -184,7 +182,7 @@ function getNavIcon(href: string): string {
   return 'chevron-right';
 }
 
-const mobileSocialOrder = ['x.com', 'instagram.com', 'bsky.app', 'github.com', 'linkedin.com', 'youtube.com'];
+const mobileSocialOrder = ['x.com', 'instagram.com', 'bsky.app', 'github.com', 'linkedin.com', 'youtube.com', 'share.google', 'maps.google'];
 const mobileSocialLinks = mobileSocialOrder
   .map((host) => siteConfig.socialLinks.find((u) => u.includes(host)))
   .filter((u): u is string => Boolean(u));
@@ -218,19 +216,20 @@ const buttonId = `${menuId}-button`;
     {
       layout !== 'minimal' &&
         (hasNavSlot ? (
-        <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+        <nav class="hidden items-center gap-1 md:flex relative" aria-label="Main navigation">
+          <div class="nav-elastic-pill" aria-hidden="true"></div>
           {navItems.map(({ label, href }) => (
             <a
               href={href}
               class={cn(
                 'nav-link relative rounded-md px-3 py-2 text-sm',
-                'transition-all duration-(--transition-fast)',
+                'transition-colors duration-(--transition-fast)',
                 isFloating && 'hdr-invert-text',
                 isFloating
                   ? (isActive(href) ? 'hdr-nav-active font-semibold' : 'font-medium')
                   : (isActive(href)
-                      ? 'nav-link-active font-semibold text-foreground bg-secondary'
-                      : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground hover:bg-secondary/70')
+                      ? 'nav-link-active font-semibold text-foreground'
+                      : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground')
               )}
               aria-current={isActive(href) ? 'page' : undefined}
             >
@@ -239,19 +238,20 @@ const buttonId = `${menuId}-button`;
           ))}
         </nav>
         ) : (
-          <nav class="hidden items-center gap-1 md:flex" aria-label="Main navigation">
+          <nav class="hidden items-center gap-1 md:flex relative" aria-label="Main navigation">
+            <div class="nav-elastic-pill" aria-hidden="true"></div>
             {navItems.map(({ label, href }) => (
               <a
                 href={href.startsWith('#') && !isLandingPage ? `/${href}` : href}
                 class={cn(
                   'nav-link relative rounded-md px-3 py-2 text-sm',
-                  'transition-all duration-(--transition-fast)',
+                  'transition-colors duration-(--transition-fast)',
                   isFloating && 'hdr-invert-text',
                   isFloating
                     ? (isActive(href) ? 'hdr-nav-active font-semibold' : 'font-medium')
                     : (isActive(href)
-                        ? 'nav-link-active font-semibold text-foreground bg-secondary'
-                        : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground hover:bg-secondary/70')
+                        ? 'nav-link-active font-semibold text-foreground'
+                        : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground')
                 )}
                 aria-current={isActive(href) ? 'page' : undefined}
               >
@@ -282,7 +282,7 @@ const buttonId = `${menuId}-button`;
 
             {showLanguageSwitcher && (
               <div class="hidden md:flex lang-switcher-wrapper">
-                <LanguageSwitcher class={isFloating ? 'hdr-invert-text' : undefined} />
+                <LanguageSwitcher compact class={isFloating ? 'hdr-invert-text' : undefined} />
               </div>
             )}
 
@@ -424,112 +424,130 @@ const buttonId = `${menuId}-button`;
           aria-label="Mobile navigation"
         >
           <div class={cn(
-            'mobile-menu-body py-3',
+            'mobile-menu-body',
             isFloating ? 'px-3' : cn('mx-auto px-4', maxWidthClass)
           )}>
-            <section class="mobile-menu-section">
-              <p class="mobile-menu-label">{ui.navigate}</p>
-              <ul class="space-y-0.5">
-                {navItems.map(({ label, href }, idx) => {
-                  const active = isActive(href);
-                  const resolvedHref = href.startsWith('#') && !isLandingPage ? `/${href}` : href;
-                  return (
-                    <li>
-                      <a
-                        href={resolvedHref}
-                        class={cn(
-                          'mobile-menu-row mobile-menu-stagger group flex items-center gap-3 rounded-xl px-3 py-3 text-base transition-colors',
-                          active ? 'mobile-menu-row-active' : 'mobile-menu-row-inactive'
-                        )}
-                        style={`--stagger-index: ${idx}`}
-                        aria-current={active ? 'page' : undefined}
-                      >
-                        <span class="mobile-menu-tile">
-                          <Icon name={getNavIcon(href)} size="sm" />
-                        </span>
-                        <span class="flex-1">{label}</span>
-                        <Icon name="chevron-right" size="sm" class="mobile-menu-chevron" />
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
 
-            {showThemeToggle && (
-              <section class="mobile-menu-section">
-                <p class="mobile-menu-label">{ui.appearance}</p>
-                <div
-                  class="mobile-menu-stagger flex items-center justify-between rounded-xl px-3 py-2.5"
-                  style={`--stagger-index: ${navItems.length}`}
-                >
-                  <span class="text-sm text-foreground-muted">{ui.themeMode}</span>
-                  <ThemeModeDropdown />
-                </div>
-              </section>
-            )}
+            {/* ── Área com scroll: Redes Sociais + Navegar + CTA ── */}
+            <div class="mobile-menu-scroll py-3">
 
-            {showThemeSelector && (
-              <section class="mobile-menu-section">
-                <p class="mobile-menu-label">{ui.theme}</p>
-                <div
-                  class="mobile-menu-stagger flex items-center justify-between rounded-xl px-3 py-2.5"
-                  style={`--stagger-index: ${navItems.length + (showThemeToggle ? 1 : 0)}`}
-                >
-                  <span class="text-sm text-foreground-muted">{ui.colourTheme}</span>
-                  <ThemeSelector />
-                </div>
-              </section>
-            )}
+              {/* REDES SOCIAIS — topo, label sr-only */}
+              {mobileSocialLinks.length > 0 && (
+                <section class="mobile-menu-section mobile-social-top">
+                  <p class="sr-only">{ui.socialLinks}</p>
+                  <div class="flex flex-wrap items-center gap-2 px-2 pt-1 pb-2">
+                    {mobileSocialLinks.map((url, sIdx) => {
+                      const { icon, label } = getSocialIconData(url);
+                      return (
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={label}
+                          title={label}
+                          class="mobile-menu-social mobile-menu-stagger inline-flex h-11 w-11 items-center justify-center rounded-full border border-border-strong text-foreground-muted transition-colors"
+                          style={`--stagger-index: ${sIdx}`}
+                        >
+                          <Icon name={icon} size="md" />
+                        </a>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
 
-            {showLanguageSwitcher && (
+              {/* NAVEGAR */}
               <section class="mobile-menu-section">
-                <p class="mobile-menu-label">{ui.language}</p>
-                <div
-                  class="mobile-menu-stagger flex items-center justify-between rounded-xl px-3 py-2.5"
-                  style={`--stagger-index: ${navItems.length + (showThemeToggle ? 1 : 0) + (showThemeSelector ? 1 : 0)}`}
-                >
-                  <span class="text-sm text-foreground-muted">{ui.language}</span>
-                  <LanguageSwitcher />
-                </div>
-              </section>
-            )}
-
-            {mobileSocialLinks.length > 0 && (
-              <section class="mobile-menu-section">
-                <p class="mobile-menu-label">Connect</p>
-                <div class="flex flex-wrap items-center gap-2 px-2 pt-1 pb-2">
-                  {mobileSocialLinks.map((url, sIdx) => {
-                    const { icon, label } = getSocialIconData(url);
+                <p class="sr-only">{ui.navigate}</p>
+                <ul class="space-y-0.5">
+                  {navItems.map(({ label, href }, idx) => {
+                    const active = isActive(href);
+                    const resolvedHref = href.startsWith('#') && !isLandingPage ? `/${href}` : href;
                     return (
-                      <a
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={label}
-                        title={label}
-                        class="mobile-menu-social mobile-menu-stagger inline-flex h-11 w-11 items-center justify-center rounded-full border border-border-strong text-foreground-muted transition-colors"
-                        style={`--stagger-index: ${navItems.length + (showThemeToggle ? 1 : 0) + (showThemeSelector ? 1 : 0) + (showLanguageSwitcher ? 1 : 0) + sIdx}`}
-                      >
-                        <Icon name={icon} size="md" />
-                      </a>
+                      <li>
+                        <a
+                          href={resolvedHref}
+                          class={cn(
+                            'mobile-menu-row mobile-menu-stagger group flex items-center gap-3 rounded-xl px-3 py-3 text-base transition-colors',
+                            active ? 'mobile-menu-row-active' : 'mobile-menu-row-inactive'
+                          )}
+                          style={`--stagger-index: ${mobileSocialLinks.length + idx}`}
+                          aria-current={active ? 'page' : undefined}
+                        >
+                          <span class="mobile-menu-tile">
+                            <Icon name={getNavIcon(href)} size="sm" />
+                          </span>
+                          <span class="flex-1">{label}</span>
+                          <Icon name="chevron-right" size="sm" class="mobile-menu-chevron" />
+                        </a>
+                      </li>
                     );
                   })}
+                </ul>
+              </section>
+
+              {showCta && (
+                <div
+                  class="mobile-menu-stagger mobile-menu-cta-wrap pt-2"
+                  style={`--stagger-index: ${mobileSocialLinks.length + navItems.length}`}
+                >
+                  <Button fullWidth href={ctaHref} target={ctaHref?.startsWith('http') ? '_blank' : undefined}>
+                    {cta.icon && <Icon name={cta.icon} size="sm" />}
+                    {cta.label}
+                    {cta.trailingIcon && <Icon name={cta.trailingIcon} size="sm" />}
+                  </Button>
+                </div>
+              )}
+
+            </div>
+
+            {/* ── Configurações: Modo | Cor | Idioma — fora do scroll, dropdowns sem clipping ── */}
+            {(showThemeToggle || showThemeSelector || showLanguageSwitcher) && (
+              <section class="mobile-settings-row">
+                <div
+                  class="mobile-settings-grid mobile-menu-stagger"
+                  style={`--stagger-index: ${mobileSocialLinks.length + navItems.length + 1}`}
+                >
+                  {showThemeToggle && (
+                    <div class="mobile-settings-col">
+                      <span class="mobile-settings-label">{ui.modo}</span>
+                      <ThemeModeDropdown />
+                    </div>
+                  )}
+                  {showThemeSelector && (
+                    <div class="mobile-settings-col">
+                      <span class="mobile-settings-label">{ui.cor}</span>
+                      <div class="relative mobile-color-picker">
+                        <button
+                          type="button"
+                          class="mobile-color-trigger inline-flex items-center gap-1.5 rounded-full border border-border-strong px-2.5 py-1.5 text-foreground-muted hover:text-foreground hover:bg-secondary transition-colors duration-(--transition-fast) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                          aria-expanded="false"
+                          aria-haspopup="dialog"
+                          aria-label={isPt ? 'Cor do tema' : 'Colour theme'}
+                        >
+                          <span class="h-3.5 w-3.5 rounded-full flex-shrink-0 block" style="background-color: var(--color-brand-500)" aria-hidden="true" />
+                          <svg class="mobile-color-chevron h-3 w-3 flex-shrink-0 transition-transform duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="m6 9 6 6 6-6"/>
+                          </svg>
+                        </button>
+                        <div
+                          class="mobile-color-panel hidden p-2 rounded-xl border border-border bg-background shadow-lg w-max"
+                          role="dialog"
+                          aria-label={isPt ? 'Cor do tema' : 'Colour theme'}
+                        >
+                          <ThemeSelector />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {showLanguageSwitcher && (
+                    <div class="mobile-settings-col">
+                      <span class="mobile-settings-label">{ui.language}</span>
+                      <LanguageSwitcher compact />
+                    </div>
+                  )}
                 </div>
               </section>
-            )}
-
-            {showCta && (
-              <div
-                class="mobile-menu-stagger mobile-menu-cta-wrap pt-2"
-                style={`--stagger-index: ${navItems.length + (showThemeToggle ? 1 : 0) + (showThemeSelector ? 1 : 0) + (showLanguageSwitcher ? 1 : 0) + mobileSocialLinks.length}`}
-              >
-                <Button fullWidth href={ctaHref} target={ctaHref?.startsWith('http') ? '_blank' : undefined}>
-                  {cta.icon && <Icon name={cta.icon} size="sm" />}
-                  {cta.label}
-                  {cta.trailingIcon && <Icon name={cta.trailingIcon} size="sm" />}
-                </Button>
-              </div>
             )}
           </div>
         </div>
@@ -668,6 +686,202 @@ const buttonId = `${menuId}-button`;
   initMobileMenu();
   document.addEventListener('astro:page-load', initMobileMenu);
   document.addEventListener('astro:after-swap', initMobileMenu);
+</script>
+
+<script>
+  function initMobileColorPicker() {
+    // Settings row agora fica fora do scroll container — dropdowns abrem via CSS (sem JS de posição)
+
+    function closeAllSettingsPanels() {
+      document.querySelectorAll<HTMLElement>('.ttg-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll<HTMLButtonElement>('.ttg-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
+      document.querySelectorAll<HTMLElement>('.lang-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll<HTMLButtonElement>('.lang-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
+      document.querySelectorAll<HTMLElement>('.mobile-color-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll<HTMLButtonElement>('.mobile-color-trigger').forEach(t => {
+        t.setAttribute('aria-expanded', 'false');
+        t.querySelector('.mobile-color-chevron')?.classList.remove('rotate-180');
+      });
+    }
+
+    // Cross-close: cada trigger fecha os outros dois (capture phase → antes do handler nativo)
+    function initCrossClose() {
+      const row = document.querySelector<HTMLElement>('.mobile-settings-row');
+      if (!row || row.dataset.panelWatchInit) return;
+      row.dataset.panelWatchInit = 'true';
+
+      const closeLang = () => {
+        document.querySelectorAll<HTMLElement>('.lang-panel').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll<HTMLButtonElement>('.lang-trigger').forEach(t => {
+          t.setAttribute('aria-expanded', 'false');
+          t.querySelector('.lang-chevron')?.classList.remove('rotate-180');
+        });
+      };
+      const closeTtg = () => {
+        document.querySelectorAll<HTMLElement>('.ttg-panel').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll<HTMLButtonElement>('.ttg-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
+      };
+      const closeColor = () => {
+        document.querySelectorAll<HTMLElement>('.mobile-color-panel').forEach(p => p.classList.add('hidden'));
+        document.querySelectorAll<HTMLButtonElement>('.mobile-color-trigger').forEach(t => {
+          t.setAttribute('aria-expanded', 'false');
+          t.querySelector('.mobile-color-chevron')?.classList.remove('rotate-180');
+        });
+      };
+
+      const ttgTrigger = row.querySelector<HTMLButtonElement>('.ttg-trigger');
+      const langTrigger = row.querySelector<HTMLButtonElement>('.lang-trigger');
+
+      ttgTrigger?.addEventListener('click', () => { closeLang(); closeColor(); }, true);
+      langTrigger?.addEventListener('click', () => { closeTtg(); closeColor(); }, true);
+    }
+
+    // Color picker mobile
+    document.querySelectorAll<HTMLElement>('.mobile-color-picker').forEach(picker => {
+      if (picker.dataset.colorPickerInit) return;
+      picker.dataset.colorPickerInit = 'true';
+
+      const trigger = picker.querySelector<HTMLButtonElement>('.mobile-color-trigger');
+      const panel = picker.querySelector<HTMLElement>('.mobile-color-panel');
+      if (!trigger || !panel) return;
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const willOpen = panel.classList.contains('hidden');
+        closeAllSettingsPanels();
+        if (willOpen) {
+          panel.classList.remove('hidden');
+          trigger.setAttribute('aria-expanded', 'true');
+          trigger.querySelector('.mobile-color-chevron')?.classList.add('rotate-180');
+        }
+      });
+
+      panel.querySelectorAll<HTMLButtonElement>('.theme-swatch').forEach(swatch => {
+        swatch.addEventListener('click', () => {
+          panel.classList.add('hidden');
+          trigger.setAttribute('aria-expanded', 'false');
+          trigger.querySelector('.mobile-color-chevron')?.classList.remove('rotate-180');
+        });
+      });
+    });
+
+    initCrossClose();
+
+    // Handlers globais (único registro via flag)
+    if (!(window as unknown as { __mobileColorPickerGlobalInit?: boolean }).__mobileColorPickerGlobalInit) {
+      (window as unknown as { __mobileColorPickerGlobalInit?: boolean }).__mobileColorPickerGlobalInit = true;
+
+      document.addEventListener('click', (e) => {
+        const openPanel = document.querySelector<HTMLElement>('.mobile-color-panel:not(.hidden)');
+        if (!openPanel) return;
+        const picker = openPanel.closest('.mobile-color-picker');
+        if (picker && !picker.contains(e.target as Node)) {
+          openPanel.classList.add('hidden');
+          const t = picker.querySelector<HTMLButtonElement>('.mobile-color-trigger');
+          if (t) {
+            t.setAttribute('aria-expanded', 'false');
+            t.querySelector('.mobile-color-chevron')?.classList.remove('rotate-180');
+          }
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAllSettingsPanels();
+      });
+
+      document.addEventListener('click', (e) => {
+        if ((e.target as Element)?.closest('.hdr-hamburger')) closeAllSettingsPanels();
+      }, true);
+    }
+  }
+
+  initMobileColorPicker();
+  document.addEventListener('astro:page-load', initMobileColorPicker);
+  document.addEventListener('astro:after-swap', initMobileColorPicker);
+
+  // ── Cross-close desktop: ThemeSelector, TTG e LanguageSwitcher não ficam abertos juntos ──
+  function initDesktopCrossClose() {
+    if ((window as unknown as { __desktopCrossCloseInit?: boolean }).__desktopCrossCloseInit) return;
+    (window as unknown as { __desktopCrossCloseInit?: boolean }).__desktopCrossCloseInit = true;
+
+    const closeThemeDd = () => {
+      const p = document.getElementById('theme-dropdown-panel');
+      const t = document.getElementById('theme-dropdown-trigger');
+      p?.classList.add('hidden');
+      t?.setAttribute('aria-expanded', 'false');
+      t?.querySelector('.theme-chevron')?.classList.remove('rotate-180');
+    };
+    const closeTtg = () => {
+      document.querySelectorAll<HTMLElement>('.ttg-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll<HTMLButtonElement>('.ttg-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
+    };
+    const closeLang = () => {
+      document.querySelectorAll<HTMLElement>('.lang-panel').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll<HTMLButtonElement>('.lang-trigger').forEach(t => {
+        t.setAttribute('aria-expanded', 'false');
+        t.querySelector('.lang-chevron')?.classList.remove('rotate-180');
+      });
+    };
+
+    // Seleciona somente os triggers do desktop (fora da .mobile-settings-row)
+    const desktopTtg = [...document.querySelectorAll<HTMLButtonElement>('.ttg-trigger')]
+      .find(el => !el.closest('.mobile-settings-row'));
+    const desktopLang = [...document.querySelectorAll<HTMLButtonElement>('.lang-trigger')]
+      .find(el => !el.closest('.mobile-settings-row'));
+
+    // Capture phase: dispara ANTES dos handlers nativos de cada componente
+    document.getElementById('theme-dropdown-trigger')?.addEventListener('click', () => { closeTtg(); closeLang(); }, true);
+    desktopTtg?.addEventListener('click', () => { closeThemeDd(); closeLang(); }, true);
+    desktopLang?.addEventListener('click', () => { closeThemeDd(); closeTtg(); }, true);
+  }
+
+  initDesktopCrossClose();
+  document.addEventListener('astro:page-load', initDesktopCrossClose);
+  document.addEventListener('astro:after-swap', initDesktopCrossClose);
+
+  // ── Elastic pill: efeito de hover no nav desktop (apenas bar header) ──
+  function initNavElasticPill() {
+    const header = document.querySelector<HTMLElement>('[data-header-shape]');
+    if (!header || header.dataset.headerShape !== 'bar') return;
+
+    document.querySelectorAll<HTMLElement>('nav[aria-label="Main navigation"]').forEach(nav => {
+      if (nav.dataset.pillInit) return;
+      nav.dataset.pillInit = 'true';
+
+      const pill = nav.querySelector<HTMLElement>('.nav-elastic-pill');
+      if (!pill) return;
+
+      const links = [...nav.querySelectorAll<HTMLElement>('.nav-link')];
+      if (!links.length) return;
+
+      let active = links.find(l =>
+        l.classList.contains('nav-link-active') || l.classList.contains('hdr-nav-active')
+      ) || links[0];
+
+      function moveTo(el: HTMLElement) {
+        pill!.style.width = el.offsetWidth + 'px';
+        pill!.style.transform = `translateX(${el.offsetLeft}px)`;
+      }
+
+      // Posição inicial instantânea (sem transição)
+      pill.style.transition = 'none';
+      pill.style.opacity = '1';
+      moveTo(active);
+      nav.classList.add('hdr-nav-pill-active');
+      requestAnimationFrame(() => { pill.style.transition = ''; });
+
+      links.forEach(link => {
+        link.addEventListener('mouseenter', () => moveTo(link));
+        link.addEventListener('click', () => { active = link; });
+      });
+
+      nav.addEventListener('mouseleave', () => moveTo(active));
+    });
+  }
+
+  initNavElasticPill();
+  document.addEventListener('astro:page-load', initNavElasticPill);
+  document.addEventListener('astro:after-swap', initNavElasticPill);
 </script>
 
 <script>
@@ -1185,8 +1399,137 @@ const buttonId = `${menuId}-button`;
     }
   }
 
-  .mobile-menu-stagger:has(.ttg-panel:not(.hidden)) {
+  .mobile-menu-stagger:has(.ttg-panel:not(.hidden)),
+  .mobile-menu-stagger:has(.lang-panel:not(.hidden)),
+  .mobile-menu-stagger:has(.mobile-color-panel:not(.hidden)) {
     position: relative;
     z-index: 60;
+  }
+
+  /* ── Layout flex: scroll area + settings row fixa no fundo ── */
+  .mobile-menu-body {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100svh - 4.5rem);
+  }
+
+  /* Área de scroll: social + nav */
+  .mobile-menu-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+  .mobile-menu-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ── Settings row: sempre visível no fundo, fora do scroll ── */
+  .mobile-settings-row {
+    flex-shrink: 0;
+    border-top: 1px solid color-mix(in oklch, var(--color-border) 60%, transparent);
+    padding-top: 0.5rem;
+  }
+
+  /* ── Grid de configurações: Modo | Cor | Idioma ── */
+  .mobile-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.25rem;
+    padding: 0.5rem 0;
+  }
+
+  .mobile-settings-col {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.25rem;
+  }
+
+  .mobile-settings-label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-foreground-subtle);
+  }
+
+  /* Botões nas settings não quebram linha */
+  .mobile-settings-row button {
+    white-space: nowrap;
+  }
+
+  /* ── Dropdowns abrem para CIMA (sem clipping de overflow) ── */
+
+  /* Modo (coluna esquerda): alinha à esquerda */
+  .mobile-settings-col:first-child .ttg-panel {
+    top: auto;
+    bottom: calc(100% + 0.5rem);
+    left: 0;
+    right: auto;
+    transform: none;
+    margin-top: 0;
+  }
+
+  /* Cor (coluna central): color panel via CSS absolute, centralizado */
+  .mobile-settings-col:nth-child(2) .mobile-color-panel {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    top: auto;
+    z-index: 50; /* acima do rótulo IDIOMA e outros irmãos */
+    width: max-content; /* garante tamanho pelo conteúdo independente do contexto */
+  }
+
+  /* Idioma (coluna direita): alinha à direita */
+  .mobile-settings-col:last-child .lang-panel {
+    top: auto;
+    bottom: calc(100% + 0.5rem);
+    right: 0;
+    left: auto;
+    transform: none;
+    margin-top: 0;
+  }
+
+  /* Espaçamento entre itens de TODOS os dropdowns (desktop e mobile) */
+  .ttg-row + .ttg-row,
+  .lang-row + .lang-row {
+    margin-top: 2px;
+  }
+
+  /* ── Elastic pill — hover nav desktop (somente bar header) ── */
+  .nav-elastic-pill {
+    position: absolute;
+    top: 2px;
+    height: calc(100% - 4px);
+    width: 0;
+    border-radius: 0.375rem;
+    background: var(--color-secondary);
+    pointer-events: none;
+    opacity: 0;
+    z-index: 0;
+    transition:
+      transform 180ms cubic-bezier(0.25, 0.1, 0.25, 1),
+      width 260ms cubic-bezier(0.34, 1.4, 0.64, 1),
+      opacity 150ms ease;
+  }
+
+  /* Links ficam acima do pill e perdem o fundo próprio quando pill está ativo */
+  .hdr-nav-pill-active .nav-link {
+    z-index: 1;
+  }
+  .hdr-nav-pill-active .nav-link-active,
+  .hdr-nav-pill-active .nav-link-inactive,
+  .hdr-nav-pill-active .nav-link-inactive:hover {
+    background: transparent;
+  }
+
+  /* Color picker: dots centralizados */
+  .mobile-color-panel .theme-selector {
+    justify-content: center;
   }
 </style>

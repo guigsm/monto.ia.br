@@ -3,37 +3,45 @@
  * ConsentBanner Component
  *
  * Cookie consent UI with Google Consent Mode v2 integration.
- * Shows a banner with Accept/Decline + Customize settings panel using Dialog.
+ * Shows a glassmorphism popup card with Accept/Decline + Customize settings panel.
+ * Animation uses AstroAnimate ScaleIn spring easing: cubic-bezier(0.34, 1.56, 0.64, 1).
  * Only renders when PUBLIC_CONSENT_ENABLED is true.
  */
-import { PUBLIC_CONSENT_ENABLED, PUBLIC_PRIVACY_POLICY_URL } from 'astro:env/client';
+import { PUBLIC_CONSENT_ENABLED } from 'astro:env/client';
 import consentConfig from '@/config/consent.config';
 import Dialog from '@/components/ui/overlay/Dialog';
 import Button from '@/components/ui/form/Button';
 import Switch from '@/components/ui/form/Switch';
-import type { ConsentUIText } from '@/lib/consent.types';
+import { t, localizedPath, defaultLocale } from '@/i18n';
 
 interface Props {
   position?: 'top' | 'bottom';
-  ui?: Partial<ConsentUIText>;
-  alwaysOnLabel?: string;
+  locale?: string;
   class?: string;
 }
 
 const {
   position = 'bottom',
-  ui: uiOverrides,
-  alwaysOnLabel: alwaysOnLabelProp,
+  locale = defaultLocale,
   class: className,
 } = Astro.props;
 
 const consentEnabled = PUBLIC_CONSENT_ENABLED;
-const privacyPolicyUrl = PUBLIC_PRIVACY_POLICY_URL;
 
-// Merge UI text: props override config defaults
-const ui = { ...consentConfig.ui, ...uiOverrides };
-const alwaysOnLabel = alwaysOnLabelProp ?? ui.alwaysOnLabel ?? 'Always on';
-const privacyPolicyLabel = ui.privacyPolicyLabel ?? 'Privacy Policy';
+// URL da política de privacidade derivada do locale atual
+const privacyPolicyUrl = localizedPath('/politica-de-privacidade', locale);
+
+// Textos via i18n — sensíveis ao idioma da página
+const heading         = t('consent.heading', locale);
+const description     = t('consent.description', locale);
+const acceptAll       = t('consent.acceptAll', locale);
+const declineAll      = t('consent.declineAll', locale);
+const customize       = t('consent.customize', locale);
+const savePreferences = t('consent.savePreferences', locale);
+const settingsHeading = t('consent.settingsHeading', locale);
+const alwaysOnLabel   = t('consent.alwaysOn', locale);
+const privacyPolicyLabel = t('consent.privacyPolicy', locale);
+const reopenerLabel   = t('consent.reopener', locale);
 
 const isTop = position === 'top';
 
@@ -50,60 +58,71 @@ const configJson = JSON.stringify(consentConfig);
 
 {consentEnabled && (
   <>
-    <!-- Bottom/Top Bar Banner -->
+    <!-- Popup Overlay -->
     <div
       id="consent-banner"
-      class:list={[
-        'consent-banner',
-        isTop ? 'consent-banner--top' : 'consent-banner--bottom',
-        className,
-      ]}
+      class:list={['consent-banner', className]}
       role="dialog"
-      aria-modal="false"
-      aria-label="Cookie consent"
+      aria-modal="true"
+      aria-labelledby="consent-banner-heading"
     >
-      <div class="consent-banner-inner">
+      <!-- Glassmorphism Popup Card -->
+      <div class="consent-popup-card">
+
+        <!-- Cookie icon -->
+        <div class="consent-popup-icon" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
+            <path d="M8.5 8.5v.01"/>
+            <path d="M16 15.5v.01"/>
+            <path d="M12 12v.01"/>
+            <path d="M11 17v.01"/>
+            <path d="M7 14v.01"/>
+          </svg>
+        </div>
+
         <div class="consent-banner-content">
           <p class="consent-banner-heading" id="consent-banner-heading">
-            {ui.heading}
+            {heading}
           </p>
           <p class="consent-banner-description">
-            {ui.description}
+            {description}
             {privacyPolicyUrl && (
               <>
                 {' '}
                 <a href={privacyPolicyUrl} class="consent-privacy-link">
                   {privacyPolicyLabel}
-                </a>
+                </a>.
               </>
             )}
           </p>
         </div>
+
         <div class="consent-banner-actions">
           <Button variant="primary" size="sm" id="consent-accept-all">
-            {ui.acceptAll}
+            {acceptAll}
           </Button>
           <Button variant="secondary" size="sm" id="consent-decline-all">
-            {ui.declineAll}
+            {declineAll}
           </Button>
           <Button variant="link" size="sm" id="consent-customize">
-            {ui.customize}
+            {customize}
           </Button>
         </div>
       </div>
     </div>
 
     <!-- Settings Panel via Dialog -->
-    <Dialog id="consent-settings" title={ui.settingsHeading} size="md">
+    <Dialog id="consent-settings" title={settingsHeading} size="md">
       <div class="consent-settings-body">
         {Object.entries(consentConfig.categories).map(([key, cat]) => (
           <div class="consent-category" data-category={key}>
             <div class="consent-category-info">
-              <span class="consent-category-label">{cat.label}</span>
+              <span class="consent-category-label">{t(`consent.categories.${key}.label`, locale)}</span>
               {cat.required && (
                 <span class="consent-category-badge">{alwaysOnLabel}</span>
               )}
-              <p class="consent-category-description">{cat.description}</p>
+              <p class="consent-category-description">{t(`consent.categories.${key}.description`, locale)}</p>
             </div>
             <Switch
               id={`consent-${key}`}
@@ -118,7 +137,7 @@ const configJson = JSON.stringify(consentConfig);
 
       <div slot="footer" class="consent-settings-footer">
         <Button variant="primary" size="sm" fullWidth id="consent-save-preferences">
-          {ui.savePreferences}
+          {savePreferences}
         </Button>
       </div>
     </Dialog>
@@ -131,7 +150,7 @@ const configJson = JSON.stringify(consentConfig);
         'consent-reopener',
         isTop ? 'consent-reopener--top' : 'consent-reopener--bottom',
       ]}
-      aria-label="Open cookie settings"
+      aria-label={reopenerLabel}
     >
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
@@ -452,67 +471,107 @@ const configJson = JSON.stringify(consentConfig);
 )}
 
 <style>
-  /* ─── Banner ─── */
+  /* ─── Overlay backdrop ─── */
   .consent-banner {
     position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0);
+    transition: background-color 280ms ease;
+    pointer-events: none;
+  }
+
+  .consent-banner--visible {
+    background: rgba(0, 0, 0, 0.48);
+    pointer-events: auto;
+  }
+
+  /* ─── Glassmorphism popup card ─── */
+  .consent-popup-card {
+    position: relative;
+    width: 100%;
+    max-width: 25rem;
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    overflow: hidden;
+
+    background: var(--background-elevated);
+    border: 1px solid var(--border);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+      0 24px 48px -8px rgba(0, 0, 0, 0.32),
+      0 8px 16px -4px rgba(0, 0, 0, 0.16);
+
+    /* AstroAnimate ScaleIn spring easing */
+    opacity: 0;
+    transform: scale(0.92) translateY(14px);
+    transition:
+      opacity 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Glare line top (GlassCard inspired) */
+  .consent-popup-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
     left: 0;
     right: 0;
-    z-index: 50;
-    transition: transform var(--transition-slow) cubic-bezier(0.16, 1, 0.3, 1);
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 50%, transparent 100%);
+    pointer-events: none;
   }
 
-  .consent-banner--bottom {
-    bottom: 0;
-    transform: translateY(100%);
+  /* Subtle brand glow top-right */
+  .consent-popup-card::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -15%;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, color-mix(in oklch, var(--brand-500, #6366f1) 12%, transparent) 0%, transparent 70%);
+    pointer-events: none;
   }
 
-  .consent-banner--top {
-    top: 0;
-    transform: translateY(-100%);
+  .consent-banner--visible .consent-popup-card {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 
-  .consent-banner--visible.consent-banner--bottom,
-  .consent-banner--visible.consent-banner--top {
-    transform: translateY(0);
-  }
-
-  .consent-banner-inner {
+  /* ─── Cookie icon ─── */
+  .consent-popup-icon {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 1rem;
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: 1.25rem 1.5rem;
-    background: var(--background-elevated);
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    background: color-mix(in oklch, var(--brand-500, #6366f1) 15%, transparent);
+    color: var(--brand-500, #6366f1);
+    margin-bottom: 1rem;
   }
 
-  .consent-banner--bottom .consent-banner-inner {
-    border-top: 1px solid var(--border);
-  }
-
-  .consent-banner--top .consent-banner-inner {
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  }
-
+  /* ─── Content ─── */
   .consent-banner-content {
-    flex: 1 1 0%;
-    min-width: 280px;
+    margin-bottom: 1.25rem;
   }
 
   .consent-banner-heading {
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     line-height: 1.4;
     color: var(--foreground);
-    margin: 0 0 0.25rem 0;
+    margin: 0 0 0.5rem 0;
   }
 
   .consent-banner-description {
     font-size: 0.8125rem;
-    line-height: 1.5;
+    line-height: 1.6;
     color: var(--foreground-muted);
     margin: 0;
   }
@@ -529,11 +588,12 @@ const configJson = JSON.stringify(consentConfig);
     color: var(--primary-hover);
   }
 
+  /* ─── Actions ─── */
   .consent-banner-actions {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
-    flex-shrink: 0;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   /* ─── Settings (inside Dialog) ─── */
@@ -641,22 +701,14 @@ const configJson = JSON.stringify(consentConfig);
     box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
   }
 
-  /* ─── Responsive ─── */
-  @media (max-width: 640px) {
-    .consent-banner-inner {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .consent-banner-actions {
-      flex-wrap: wrap;
-    }
-  }
-
   /* ─── Reduced Motion ─── */
   @media (prefers-reduced-motion: reduce) {
-    .consent-banner,
+    .consent-popup-card,
     .consent-reopener {
+      transition: none;
+    }
+
+    .consent-banner {
       transition: none;
     }
   }

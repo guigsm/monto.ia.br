@@ -33,7 +33,6 @@ export function createPersonSchema(): WithContext<Person> {
     name: 'Astro Rocket',
     jobTitle: 'Web Designer & Developer',
     url: siteConfig.url,
-    email: siteConfig.email,
     ...(siteConfig.authorImage ? { image: `${siteConfig.url}${siteConfig.authorImage}` } : {}),
     address: {
       '@type': 'PostalAddress',
@@ -54,7 +53,6 @@ export function createProfessionalServiceSchema(): WithContext<LocalBusiness> {
     '@type': 'ProfessionalService' as 'LocalBusiness',
     name: siteConfig.name,
     url: siteConfig.url,
-    email: siteConfig.email,
     ...(siteConfig.phone ? { telephone: siteConfig.phone } : {}),
     ...(siteConfig.authorImage ? { image: `${siteConfig.url}${siteConfig.authorImage}` } : {}),
     address: {
