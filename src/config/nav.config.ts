@@ -16,13 +16,21 @@
 import { defaultLocale, isBlogTranslated } from '@/i18n';
 import contactPage from '../content/pages/contact.json';
 import testimonialsPage from '../content/pages/testimonials.json';
+import blogPageData from '../content/pages/blog-page.json';
+import sobreData from '../content/pages/sobre.json';
+import servicosPageData from '../content/pages/servicos-page.json';
+import localizacaoData from '../content/pages/localizacao.json';
 
-// Visibilidade das páginas blindadas controlada pelo campo showInMenu no Keystatic.
-// Undefined (campo ausente) trata como true para não quebrar ambientes sem o campo.
-type WithShowInMenu = { showInMenu?: boolean };
+// Visibilidade e metadados de nav das blindadas vêm do Keystatic (JSON).
+// Undefined trata como valor padrão para não quebrar ambientes sem o campo.
+type WithMenuCore = { showInMenu?: boolean; menuLabel?: string; menuOrder?: number };
 const blindadaVisible: Record<string, boolean> = {
-  '/contato': (contactPage as WithShowInMenu).showInMenu !== false,
-  '/depoimentos': (testimonialsPage as WithShowInMenu).showInMenu !== false,
+  '/blog': (blogPageData as WithMenuCore).showInMenu !== false,
+  '/servicos': (servicosPageData as WithMenuCore).showInMenu !== false,
+  '/sobre': (sobreData as WithMenuCore).showInMenu !== false,
+  '/contato': (contactPage as WithMenuCore).showInMenu !== false,
+  '/depoimentos': (testimonialsPage as WithMenuCore).showInMenu !== false,
+  '/localizacao': (localizacaoData as WithMenuCore).showInMenu !== false,
 };
 
 export interface NavItem {
@@ -73,12 +81,38 @@ export interface LegalLink {
  * `history.pushState` (ver script `data-scroll-spy` em index.astro).
  */
 export const navItems: NavItem[] = [
-  { label: 'Blog', href: '/blog', order: 1, key: 'blog' },
+  {
+    label: (blogPageData as WithMenuCore).menuLabel || 'Blog',
+    href: '/blog',
+    order: (blogPageData as WithMenuCore).menuOrder ?? 1,
+    key: 'blog',
+  },
   { label: 'Portfólio', href: '/portfolio', order: 2 },
-  { label: 'Serviços', href: '/servicos', order: 3 },
-  { label: 'Sobre', href: '/sobre', order: 4 },
-  { label: 'Depoimentos', href: '/depoimentos', order: 5 },
-  { label: 'Contato', href: '/contato', order: 6 },
+  {
+    label: (servicosPageData as WithMenuCore).menuLabel || 'Serviços',
+    href: '/servicos',
+    order: (servicosPageData as WithMenuCore).menuOrder ?? 3,
+  },
+  {
+    label: (sobreData as WithMenuCore).menuLabel || 'Sobre',
+    href: '/sobre',
+    order: (sobreData as WithMenuCore).menuOrder ?? 4,
+  },
+  {
+    label: (testimonialsPage as WithMenuCore).menuLabel || 'Depoimentos',
+    href: '/depoimentos',
+    order: (testimonialsPage as WithMenuCore).menuOrder ?? 5,
+  },
+  {
+    label: (contactPage as WithMenuCore).menuLabel || 'Contato',
+    href: '/contato',
+    order: (contactPage as WithMenuCore).menuOrder ?? 6,
+  },
+  {
+    label: (localizacaoData as WithMenuCore).menuLabel || 'Localização',
+    href: '/localizacao',
+    order: (localizacaoData as WithMenuCore).menuOrder ?? 99,
+  },
 ];
 
 /**
@@ -95,12 +129,38 @@ const navItemsEn: NavItem[] = [
 ];
 
 export const footerNavItems: NavItem[] = [
-  { label: 'Blog', href: '/blog', order: 1, key: 'blog' },
+  {
+    label: (blogPageData as WithMenuCore).menuLabel || 'Blog',
+    href: '/blog',
+    order: (blogPageData as WithMenuCore).menuOrder ?? 1,
+    key: 'blog',
+  },
   { label: 'Portfólio', href: '/portfolio', order: 2 },
-  { label: 'Serviços', href: '/servicos', order: 3 },
-  { label: 'Sobre', href: '/sobre', order: 4 },
-  { label: 'Depoimentos', href: '/depoimentos', order: 5 },
-  { label: 'Contato', href: '/contato', order: 6 },
+  {
+    label: (servicosPageData as WithMenuCore).menuLabel || 'Serviços',
+    href: '/servicos',
+    order: (servicosPageData as WithMenuCore).menuOrder ?? 3,
+  },
+  {
+    label: (sobreData as WithMenuCore).menuLabel || 'Sobre',
+    href: '/sobre',
+    order: (sobreData as WithMenuCore).menuOrder ?? 4,
+  },
+  {
+    label: (testimonialsPage as WithMenuCore).menuLabel || 'Depoimentos',
+    href: '/depoimentos',
+    order: (testimonialsPage as WithMenuCore).menuOrder ?? 5,
+  },
+  {
+    label: (contactPage as WithMenuCore).menuLabel || 'Contato',
+    href: '/contato',
+    order: (contactPage as WithMenuCore).menuOrder ?? 6,
+  },
+  {
+    label: (localizacaoData as WithMenuCore).menuLabel || 'Localização',
+    href: '/localizacao',
+    order: (localizacaoData as WithMenuCore).menuOrder ?? 99,
+  },
 ];
 
 const footerNavItemsEn: NavItem[] = [

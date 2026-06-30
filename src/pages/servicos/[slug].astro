@@ -1,0 +1,181 @@
+---
+/**
+ * Service detail page
+ * URL: /servicos/<slug>
+ *
+ * Renders individual service pages from src/content/services/*.mdx
+ * Each service page follows the "Section Vitrine" pattern:
+ * the full content lives here; a summary variant will be used on the home.
+ */
+import { getCollection, render } from 'astro:content';
+import type { ImageMetadata } from 'astro';
+import PageLayout from '@/layouts/PageLayout.astro';
+import { Hero } from '@/components/hero';
+import Button from '@/components/ui/form/Button/Button.astro';
+import Badge from '@/components/ui/data-display/Badge/Badge.astro';
+import Card from '@/components/ui/data-display/Card/Card.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+import CardThumb from '@/components/ui/CardThumb.astro';
+import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
+
+export async function getStaticPaths() {
+  const services = await getCollection('services', ({ data }) => !data.draft);
+  return services.map((service) => ({
+    params: { slug: service.id },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+const { data } = service;
+const { Content } = await render(service);
+
+const relatedServices = (
+  await getCollection('services', ({ data: d }) => !d.draft)
+)
+  .filter((s) => s.id !== service.id)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+---
+
+<PageLayout
+  title={`${data.title} — Monto IA`}
+  description={data.description}
+  noindex={data.noIndex}
+>
+  <!-- Hero com thumb do serviço -->
+  <Hero layout="centered" size="sm">
+    <Badge slot="badge" variant="brand" pill>
+      <Icon name={data.icon} size="sm" />
+      Serviços
+    </Badge>
+
+    <h1 slot="title">{data.title}</h1>
+
+    <p slot="description">{data.description}</p>
+
+    {(data.ctaText || data.ctaHref) && (
+      <Fragment slot="actions">
+        <Button size="lg" href={data.ctaHref}>
+          {data.ctaText || 'Falar com a Monto IA'}
+          <Icon name="arrow-right" size="sm" />
+        </Button>
+        <Button size="lg" variant="outline" href="/servicos">
+          <Icon name="arrow-left" size="sm" />
+          Todos os serviços
+        </Button>
+      </Fragment>
+    )}
+  </Hero>
+
+  <!-- Thumb (imagem ou SVG gerado) -->
+  <div class="relative z-[1] mx-auto max-w-5xl px-6 pb-[var(--space-section-md)]">
+    <div
+      class="relative overflow-hidden rounded-xl border border-border shadow-lg"
+      style="color: var(--brand-500);"
+    >
+      <CardThumb
+        image={data.image as ImageMetadata | undefined}
+        imageAlt={data.imageAlt || data.title}
+        title={data.title}
+        tags={data.tags}
+        section="service"
+        loading="eager"
+        widths={[640, 960, 1280]}
+        sizes="(max-width: 1280px) 100vw, 1280px"
+      />
+    </div>
+  </div>
+
+  <!-- Conteúdo MDX -->
+  <section class="py-[var(--space-section-md)] bg-background border-t border-border">
+    <div class="mx-auto max-w-4xl px-6">
+      <div class="prose prose-brand dark:prose-invert max-w-none">
+        <Content />
+      </div>
+
+      {data.ctaText && (
+        <div class="mt-12 flex flex-col sm:flex-row gap-4">
+          <Button size="lg" href={data.ctaHref} class="cta-btn-brand">
+            {data.ctaText}
+            <Icon name="arrow-right" size="sm" />
+          </Button>
+          <Button size="lg" variant="outline" href="/portfolio">
+            Ver projetos entregues
+            <Icon name="layers" size="sm" />
+          </Button>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Outros serviços -->
+  {relatedServices.length > 0 && (
+    <section class="py-[var(--space-section-md)] bg-background-secondary border-t border-border">
+      <div class="mx-auto max-w-6xl px-6">
+        <h2 class="font-display text-2xl font-bold text-foreground mb-[var(--space-stack-lg)]">
+          Outros serviços
+        </h2>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {relatedServices.map((s) => (
+            <Card
+              variant="elevated"
+              hover
+              padding="none"
+              href={`/servicos/${s.id}`}
+              class="group overflow-hidden flex flex-col"
+              data-reveal
+            >
+              <div
+                class="overflow-hidden"
+                style="color: var(--brand-500);"
+              >
+                <CardThumb
+                  image={s.data.image as ImageMetadata | undefined}
+                  imageAlt={s.data.imageAlt || s.data.title}
+                  title={s.data.title}
+                  tags={s.data.tags}
+                  section="service"
+                  class="transition-transform duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+              <div class="flex flex-1 flex-col p-6">
+                <h3 class="font-display text-lg font-bold text-foreground mb-2 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">
+                  {s.data.title}
+                </h3>
+                <p class="text-sm text-foreground-muted leading-relaxed line-clamp-2 mb-4">
+                  {s.data.description}
+                </p>
+                <span class="inline-flex items-center gap-1.5 text-sm font-medium text-brand-500 mt-auto">
+                  Saiba mais
+                  <Icon name="arrow-right" size="sm" />
+                </span>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- CTA -->
+  <LetterGlitchBand>
+    <h2 class="font-display text-4xl font-bold text-foreground mb-4 text-balance">
+      Pronto para começar?
+    </h2>
+    <p class="text-lg text-foreground-muted mb-8 text-balance">
+      Conta sobre o seu projeto e a gente vê o que faz mais sentido para o seu momento.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <Button size="lg" href="/contato" class="hero-btn-brand">
+        Falar com a Monto IA
+        <Icon name="arrow-right" size="sm" />
+      </Button>
+      <Button size="lg" variant="outline" href="/servicos">
+        Ver todos os serviços
+        <Icon name="layers" size="sm" />
+      </Button>
+    </div>
+  </LetterGlitchBand>
+</PageLayout>

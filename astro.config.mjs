@@ -61,8 +61,10 @@ export default defineConfig({
   output: 'static',
   adapter: isBuild ? cloudflare() : undefined,
 
+  server: { port: Number(process.env.PORT) || 4321 },
+
   redirects: {},
-  
+
   site: calculatedSiteUrl,
   ...(astroI18nOptions ? { i18n: astroI18nOptions } : {}),
 

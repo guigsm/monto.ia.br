@@ -1,0 +1,70 @@
+---
+/**
+ * CardSVG — auto-generated themed SVG card thumbnail.
+ *
+ * On first render (DEV or build) the SVG is generated from title + tags +
+ * section and written to `src/assets/card-svg/<key>.svg`. Subsequent renders
+ * read the cached file instead of regenerating. The cache directory is
+ * gitignored; Cloudflare Pages regenerates all files on each deploy.
+ *
+ * Theme colours are applied via CSS custom properties at runtime (.bg, .ico,
+ * .txt, .ln, .pil, .ptx, .cor, .num) — same system as manually curated SVGs.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { generateCardSVGContent, cardSVGCacheKey } from '@/lib/generateCardSVG';
+
+interface Props {
+  title: string;
+  tags?: string[];
+  /** Open string — 'blog', 'portfolio', 'service', 'seo', 'geo', etc. */
+  section?: string;
+  class?: string;
+}
+
+const { title, tags = [], section = 'default', class: className } = Astro.props;
+
+const key = cardSVGCacheKey(section, title, tags[0] ?? '');
+const cacheDir = path.join(process.cwd(), 'src', 'assets', 'card-svg');
+const cacheFile = path.join(cacheDir, `${key}.svg`);
+
+let svgContent: string;
+
+if (fs.existsSync(cacheFile)) {
+  svgContent = fs.readFileSync(cacheFile, 'utf-8');
+} else {
+  svgContent = generateCardSVGContent({ title, tags, section });
+  fs.mkdirSync(cacheDir, { recursive: true });
+  fs.writeFileSync(cacheFile, svgContent, 'utf-8');
+}
+---
+
+<div class:list={['card-svg-host', className]} role="img" aria-label={title} set:html={svgContent} />
+
+<style>
+  .card-svg-host :global(svg) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ── Light mode ──────────────────────────────────────────────────────────── */
+  .card-svg-host :global(.bg)  { fill: var(--brand-600); }
+  .card-svg-host :global(.ico) { stroke: var(--brand-50); }
+  .card-svg-host :global(.txt) { fill: var(--brand-50); }
+  .card-svg-host :global(.ln)  { stroke: var(--brand-200); stroke-opacity: 0.5; }
+  .card-svg-host :global(.pil) { fill: var(--brand-300); fill-opacity: 0.35; stroke: var(--brand-100); stroke-opacity: 0.8; }
+  .card-svg-host :global(.ptx) { fill: var(--brand-50); }
+  .card-svg-host :global(.cor) { stroke: var(--brand-200); stroke-opacity: 0.7; }
+  .card-svg-host :global(.num) { fill: var(--brand-100); fill-opacity: 0.18; }
+
+  /* ── Dark mode ───────────────────────────────────────────────────────────── */
+  :global(html.dark) .card-svg-host :global(.bg)  { fill: var(--brand-600); }
+  :global(html.dark) .card-svg-host :global(.ico) { stroke: var(--brand-200); }
+  :global(html.dark) .card-svg-host :global(.txt) { fill: var(--brand-50); }
+  :global(html.dark) .card-svg-host :global(.ln)  { stroke: var(--brand-300); stroke-opacity: 0.5; }
+  :global(html.dark) .card-svg-host :global(.pil) { fill: var(--brand-600); fill-opacity: 0.4; stroke: var(--brand-300); stroke-opacity: 0.7; }
+  :global(html.dark) .card-svg-host :global(.ptx) { fill: var(--brand-100); }
+  :global(html.dark) .card-svg-host :global(.cor) { stroke: var(--brand-300); stroke-opacity: 0.6; }
+  :global(html.dark) .card-svg-host :global(.num) { fill: var(--brand-50); fill-opacity: 0.18; }
+</style>

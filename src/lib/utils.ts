@@ -1,8 +1,21 @@
+/** Maps project locale codes to BCP 47 tags accepted by Intl.DateTimeFormat. */
+const LOCALE_TO_INTL: Record<string, string> = {
+  'pt-br': 'pt-BR',
+  en: 'en-US',
+};
+
+/** Converts a project locale code (e.g. `pt-br`) to an Intl-compatible tag (e.g. `pt-BR`). */
+export function localeToIntl(locale: string): string {
+  return LOCALE_TO_INTL[locale] ?? locale;
+}
+
 /**
- * Format a date for display
+ * Format a date for display.
+ * Accepts either a project locale code (e.g. `pt-br`) or an Intl tag (e.g. `pt-BR`).
  */
-export function formatDate(date: Date, locale = 'en-US'): string {
-  return new Intl.DateTimeFormat(locale, {
+export function formatDate(date: Date, locale = 'pt-BR'): string {
+  const intlLocale = localeToIntl(locale);
+  return new Intl.DateTimeFormat(intlLocale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

@@ -27,17 +27,32 @@ import { getCollection } from 'astro:content';
 const currentLocale = getLocaleFromPath(Astro.url.pathname);
 const rawNavConfigItems = getNavItems(currentLocale);
 
-// 3. PÁGINAS LIVRES — só no locale padrão (PT-BR); sem versão EN por ora
+// 3. PÁGINAS LIVRES — PT no locale padrão, EN quando página tiver conteúdo EN
 const isDefaultLocale = !currentLocale || currentLocale === defaultLocale;
-const customPageEntries = isDefaultLocale
+const customPagesPt = isDefaultLocale
   ? await getCollection('customPages', ({ data }) => data.showInMenu && !data.draft)
   : [];
-const customNavItems = customPageEntries
-  .sort((a, b) => (a.data.menuOrder ?? 99) - (b.data.menuOrder ?? 99))
-  .map((entry) => ({
+const customPagesEn = !isDefaultLocale
+  ? await getCollection('customPages', ({ data }) => data.showInMenuEn && !data.draft && !!data.enContent)
+  : [];
+const customNavItems = [
+  ...customPagesPt.map((entry) => ({
     label: entry.data.menuLabel || entry.data.title,
     href: `/paginas/${entry.id}`,
-  }));
+    order: entry.data.menuOrder ?? 99,
+  })),
+  ...customPagesEn.map((entry) => ({
+    label: entry.data.enMenuLabel || entry.data.enTitle || entry.data.title,
+    href: `/en/paginas/${entry.id}`,
+    order: entry.data.menuOrder ?? 99,
+  })),
+];
+
+// 4. SUBMENU DE SERVIÇOS — carrega serviços publicados com showInNav
+const servicesForMenu = isDefaultLocale
+  ? (await getCollection('services', ({ data }) => !data.draft && data.showInNav))
+      .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  : [];
 
 // TEMP-HOME-OVERRIDE: ver comentário em src/config/nav.config.ts
 const homeHref = localizedPath(HOME_PATH, currentLocale);
@@ -48,6 +63,7 @@ import { getSocialIconData } from '@/utils/icons';
 export interface NavItem {
   label: string;
   href: string;
+  children?: NavItem[];
 }
 
 export interface HeaderAction {
@@ -124,13 +140,17 @@ const maxWidthClass = {
 }[maxWidth];
 const effectiveShowScrollProgress = showScrollProgress || (isFloating && !autoHide);
 const isInvert = colorScheme === 'invert';
-const defaultNav = [
+const defaultNav: NavItem[] = (([
   ...getNavItems(currentLocale).map((item: NavConfigItem) => ({
     label: item.label,
     href: localizedPath(item.href, currentLocale),
+    order: item.order,
+    children: item.href === '/servicos' && servicesForMenu.length > 0
+      ? servicesForMenu.map((s) => ({ label: s.data.title, href: `/servicos/${s.id}` }))
+      : undefined,
   })),
   ...customNavItems,
-];
+]) as any[]).sort((a, b) => (a.order ?? 99) - (b.order ?? 99)).map(({ order, ...item }) => item as NavItem);
 const navItems: NavItem[] = nav ? nav.map(item => ({ ...item, href: localizedPath(item.href, currentLocale) })) : [...extraNav, ...defaultNav];
 
 const currentPath = Astro.url.pathname;
@@ -143,6 +163,7 @@ const ui = {
   modo: isPt ? 'Modo' : 'Mode',
   cor: isPt ? 'Cor' : 'Colour',
   language: isPt ? 'Idioma' : 'Language',
+  busca: isPt ? 'Busca' : 'Search',
   socialLinks: isPt ? 'Redes Sociais' : 'Social links',
 };
 const isLandingPage = currentPath === '/';
@@ -171,14 +192,15 @@ function isActive(href: string): boolean {
 
 function getNavIcon(href: string): string {
   if (href === '/' || href === '') return 'home';
-  if (href.startsWith('/blog'))                        return 'pen-line';
-  if (href.includes('/projects') || href.includes('/portfolio')) return 'layers';
-  if (href.includes('/about') || href.includes('/sobre'))        return 'user';
-  if (href.includes('/contact') || href.includes('/contato'))    return 'mail';
-  if (href.includes('#servicos') || href.includes('#services'))     return 'workflow';
-  if (href.includes('#depoimentos') || href.includes('#testimonials')) return 'star';
-  if (href.startsWith('#') || href.includes('/#'))     return 'hash';
-  if (href.startsWith('http'))                         return 'arrow-up-right';
+  if (href.startsWith('/blog'))                                       return 'pen-line';
+  if (href.includes('/projects') || href.includes('/portfolio'))      return 'layers';
+  if (href.includes('/servicos') || href.includes('/services'))       return 'workflow';
+  if (href.includes('/about') || href.includes('/sobre'))             return 'user';
+  if (href.includes('/contact') || href.includes('/contato'))         return 'mail';
+  if (href.includes('/depoimentos') || href.includes('/testimonials')) return 'star';
+  if (href.includes('/paginas'))                                      return 'file-text';
+  if (href.startsWith('#') || href.includes('/#'))                   return 'hash';
+  if (href.startsWith('http'))                                        return 'arrow-up-right';
   return 'chevron-right';
 }
 
@@ -218,31 +240,47 @@ const buttonId = `${menuId}-button`;
         (hasNavSlot ? (
         <nav class="hidden items-center gap-1 md:flex relative" aria-label="Main navigation">
           <div class="nav-elastic-pill" aria-hidden="true"></div>
-          {navItems.map(({ label, href }) => (
-            <a
-              href={href}
-              class={cn(
-                'nav-link relative rounded-md px-3 py-2 text-sm',
-                'transition-colors duration-(--transition-fast)',
-                isFloating && 'hdr-invert-text',
-                isFloating
-                  ? (isActive(href) ? 'hdr-nav-active font-semibold' : 'font-medium')
-                  : (isActive(href)
-                      ? 'nav-link-active font-semibold text-foreground'
-                      : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground')
-              )}
-              aria-current={isActive(href) ? 'page' : undefined}
-            >
-              {label}
-            </a>
-          ))}
-        </nav>
-        ) : (
-          <nav class="hidden items-center gap-1 md:flex relative" aria-label="Main navigation">
-            <div class="nav-elastic-pill" aria-hidden="true"></div>
-            {navItems.map(({ label, href }) => (
+          {navItems.map(({ label, href, children }) => (
+            children?.length ? (
+              <div class="nav-dropdown-wrapper relative">
+                <a
+                  href={href}
+                  class={cn(
+                    'nav-link relative rounded-md px-3 py-2 text-sm inline-flex items-center gap-1',
+                    'transition-colors duration-(--transition-fast)',
+                    isFloating && 'hdr-invert-text',
+                    isFloating
+                      ? (isActive(href) ? 'hdr-nav-active font-semibold' : 'font-medium')
+                      : (isActive(href)
+                          ? 'nav-link-active font-semibold text-foreground'
+                          : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground')
+                  )}
+                  aria-current={isActive(href) ? 'page' : undefined}
+                >
+                  {label}
+                  <svg class="nav-dropdown-chevron h-3 w-3 opacity-50 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </a>
+                <div class="nav-dropdown-panel absolute left-0 top-full z-50 mt-1 invisible opacity-0 pointer-events-none transition-all duration-150">
+                  <div class="rounded-xl border border-border bg-background p-1.5 shadow-xl min-w-52">
+                    {children.map((child) => (
+                      <a
+                        href={child.href}
+                        class={cn(
+                          'flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors whitespace-nowrap',
+                          isActive(child.href)
+                            ? 'bg-brand-50 text-brand-700 font-medium dark:bg-brand-950/40 dark:text-brand-300'
+                            : 'text-foreground-muted hover:text-foreground hover:bg-secondary'
+                        )}
+                      >
+                        {child.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
               <a
-                href={href.startsWith('#') && !isLandingPage ? `/${href}` : href}
+                href={href}
                 class={cn(
                   'nav-link relative rounded-md px-3 py-2 text-sm',
                   'transition-colors duration-(--transition-fast)',
@@ -257,7 +295,90 @@ const buttonId = `${menuId}-button`;
               >
                 {label}
               </a>
+            )
+          ))}
+        </nav>
+        ) : (
+          <nav class="hidden items-center gap-1 md:flex relative" aria-label="Main navigation">
+            <div class="nav-elastic-pill" aria-hidden="true"></div>
+            {navItems.map(({ label, href, children }) => (
+              children?.length ? (
+                <div class="nav-link-item nav-dropdown-wrapper relative">
+                  <a
+                    href={href.startsWith('#') && !isLandingPage ? `/${href}` : href}
+                    data-nav-label={label}
+                    class={cn(
+                      'nav-link relative rounded-md px-3 py-2 text-sm inline-flex items-center gap-1',
+                      'transition-colors duration-(--transition-fast)',
+                      isFloating && 'hdr-invert-text',
+                      isFloating
+                        ? (isActive(href) ? 'hdr-nav-active font-semibold' : 'font-medium')
+                        : (isActive(href)
+                            ? 'nav-link-active font-semibold text-foreground'
+                            : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground')
+                    )}
+                    aria-current={isActive(href) ? 'page' : undefined}
+                  >
+                    {label}
+                    <svg class="nav-dropdown-chevron h-3 w-3 opacity-50 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                  </a>
+                  <div class="nav-dropdown-panel absolute left-0 top-full z-50 mt-1">
+                    <div class="rounded-xl border border-border bg-background p-1.5 shadow-xl min-w-52">
+                      {children.map((child) => (
+                        <a
+                          href={child.href}
+                          class={cn(
+                            'flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors whitespace-nowrap',
+                            isActive(child.href)
+                              ? 'bg-brand-50 text-brand-700 font-medium dark:bg-brand-950/40 dark:text-brand-300'
+                              : 'text-foreground-muted hover:text-foreground hover:bg-secondary'
+                          )}
+                        >
+                          {child.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div class="nav-link-item">
+                  <a
+                    href={href.startsWith('#') && !isLandingPage ? `/${href}` : href}
+                    data-nav-label={label}
+                    class={cn(
+                      'nav-link relative rounded-md px-3 py-2 text-sm',
+                      'transition-colors duration-(--transition-fast)',
+                      isFloating && 'hdr-invert-text',
+                      isFloating
+                        ? (isActive(href) ? 'hdr-nav-active font-semibold' : 'font-medium')
+                        : (isActive(href)
+                            ? 'nav-link-active font-semibold text-foreground'
+                            : 'nav-link-inactive font-medium text-foreground-muted hover:text-foreground')
+                    )}
+                    aria-current={isActive(href) ? 'page' : undefined}
+                  >
+                    {label}
+                  </a>
+                </div>
+              )
             ))}
+            {/* Overflow button — oculto por padrão, mostrado pelo JS quando itens não cabem */}
+            <div class="nav-overflow-wrapper relative" style="display:none" aria-hidden="true">
+              <button
+                type="button"
+                class="nav-overflow-trigger nav-link nav-link-inactive relative rounded-md px-2 py-2 text-sm font-medium text-foreground-muted hover:text-foreground inline-flex items-center transition-colors duration-(--transition-fast)"
+                aria-label={isPt ? 'Mais páginas' : 'More pages'}
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+              <div
+                class="nav-overflow-panel absolute right-0 top-full z-50 mt-1 rounded-xl border border-border bg-background p-1.5 shadow-xl min-w-40"
+                style="display:none"
+                role="menu"
+              />
+            </div>
           </nav>
         ))
     }
@@ -268,23 +389,18 @@ const buttonId = `${menuId}-button`;
           <slot name="actions" />
         ) : (
           <>
-            {showThemeToggle && (
-              <div class="hidden md:flex">
+            <div class="hdr-toolbar hidden md:flex items-center">
+              {showThemeToggle && (
                 <ThemeModeDropdown class={isFloating ? 'hdr-invert-text' : undefined} />
-              </div>
-            )}
-
-            {showThemeSelector && (
-              <div class="hidden md:flex">
+              )}
+              {showThemeSelector && (
                 <ThemeSelectorDropdown class={isFloating ? 'hdr-invert-text' : undefined} />
-              </div>
-            )}
-
-            {showLanguageSwitcher && (
-              <div class="hidden md:flex lang-switcher-wrapper">
+              )}
+              {showLanguageSwitcher && (
                 <LanguageSwitcher compact class={isFloating ? 'hdr-invert-text' : undefined} />
-              </div>
-            )}
+              )}
+              <Search class={isFloating ? 'hdr-invert-text' : undefined} />
+            </div>
 
             {showSocialLinks && siteConfig.socialLinks.length > 0 && (
               <div class="hidden md:flex items-center gap-0.5">
@@ -343,8 +459,6 @@ const buttonId = `${menuId}-button`;
           </>
         )
       }
-
-      <Search class={isFloating ? 'hdr-invert-text' : undefined} />
 
       {
         showMobileMenu && layout !== 'minimal' && (
@@ -460,9 +574,11 @@ const buttonId = `${menuId}-button`;
               <section class="mobile-menu-section">
                 <p class="sr-only">{ui.navigate}</p>
                 <ul class="space-y-0.5">
-                  {navItems.map(({ label, href }, idx) => {
+                  {navItems.map(({ label, href, children }, idx) => {
                     const active = isActive(href);
                     const resolvedHref = href.startsWith('#') && !isLandingPage ? `/${href}` : href;
+                    const hasChildren = Boolean(children?.length);
+                    const submenuOpen = hasChildren && (active || currentPath.startsWith(href + '/'));
                     return (
                       <li>
                         <a
@@ -478,8 +594,44 @@ const buttonId = `${menuId}-button`;
                             <Icon name={getNavIcon(href)} size="sm" />
                           </span>
                           <span class="flex-1">{label}</span>
-                          <Icon name="chevron-right" size="sm" class="mobile-menu-chevron" />
+                          {hasChildren ? (
+                            <button
+                              type="button"
+                              class={cn('mobile-submenu-toggle', submenuOpen && 'mobile-submenu-open')}
+                              aria-expanded={String(submenuOpen)}
+                              aria-label={isPt ? 'Expandir submenu' : 'Expand submenu'}
+                              data-submenu-toggle
+                            >
+                              <svg class={cn('mobile-submenu-icon-plus', submenuOpen && 'hidden')} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                              <svg class={cn('mobile-submenu-icon-minus', !submenuOpen && 'hidden')} xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            </button>
+                          ) : (
+                            <Icon name="chevron-right" size="sm" class="mobile-menu-chevron" />
+                          )}
                         </a>
+                        {hasChildren && (
+                          <ul class={cn('mobile-submenu mt-0.5 space-y-0.5', !submenuOpen && 'hidden')}>
+                            {children!.map((child) => (
+                              <li>
+                                <a
+                                  href={child.href}
+                                  class={cn(
+                                    'flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm transition-colors',
+                                    isActive(child.href)
+                                      ? 'mobile-menu-row-active'
+                                      : 'mobile-menu-row-inactive text-foreground-muted'
+                                  )}
+                                  aria-current={isActive(child.href) ? 'page' : undefined}
+                                >
+                                  <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center opacity-50">
+                                    <Icon name="chevron-right" size="xs" />
+                                  </span>
+                                  <span class="flex-1">{child.label}</span>
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </li>
                     );
                   })}
@@ -546,6 +698,10 @@ const buttonId = `${menuId}-button`;
                       <LanguageSwitcher compact />
                     </div>
                   )}
+                  <div class="mobile-settings-col">
+                    <span class="mobile-settings-label">{ui.busca}</span>
+                    <Search />
+                  </div>
                 </div>
               </section>
             )}
@@ -607,6 +763,8 @@ const buttonId = `${menuId}-button`;
         const footer = document.querySelector('footer');
         if (mainContent) mainContent.classList.add('mobile-menu-blur');
         if (footer) footer.classList.add('mobile-menu-blur');
+        const backToTop = document.getElementById('back-to-top');
+        if (backToTop) backToTop.style.display = 'none';
 
         menu!.classList.remove('hidden', 'animate-menu-up', 'opacity-0', 'scale-y-0');
         menu!.classList.add('animate-menu-down');
@@ -637,6 +795,8 @@ const buttonId = `${menuId}-button`;
         const footer = document.querySelector('footer');
         if (mainContent) mainContent.classList.remove('mobile-menu-blur');
         if (footer) footer.classList.remove('mobile-menu-blur');
+        const backToTop = document.getElementById('back-to-top');
+        if (backToTop) backToTop.style.display = '';
 
         setTimeout(() => {
           menu!.classList.add('hidden', 'opacity-0', 'scale-y-0');
@@ -680,6 +840,9 @@ const buttonId = `${menuId}-button`;
       menu.querySelectorAll('a').forEach((link) => {
         link.addEventListener('click', close);
       });
+
+      const mql = window.matchMedia('(min-width: 768px)');
+      mql.addEventListener('change', (e) => { if (e.matches) close(); });
     });
   }
 
@@ -694,9 +857,15 @@ const buttonId = `${menuId}-button`;
 
     function closeAllSettingsPanels() {
       document.querySelectorAll<HTMLElement>('.ttg-panel').forEach(p => p.classList.add('hidden'));
-      document.querySelectorAll<HTMLButtonElement>('.ttg-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
+      document.querySelectorAll<HTMLButtonElement>('.ttg-trigger').forEach(t => {
+        t.setAttribute('aria-expanded', 'false');
+        t.querySelector('.ttg-chevron')?.classList.remove('rotate-180');
+      });
       document.querySelectorAll<HTMLElement>('.lang-panel').forEach(p => p.classList.add('hidden'));
-      document.querySelectorAll<HTMLButtonElement>('.lang-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
+      document.querySelectorAll<HTMLButtonElement>('.lang-trigger').forEach(t => {
+        t.setAttribute('aria-expanded', 'false');
+        t.querySelector('.lang-chevron')?.classList.remove('rotate-180');
+      });
       document.querySelectorAll<HTMLElement>('.mobile-color-panel').forEach(p => p.classList.add('hidden'));
       document.querySelectorAll<HTMLButtonElement>('.mobile-color-trigger').forEach(t => {
         t.setAttribute('aria-expanded', 'false');
@@ -719,7 +888,10 @@ const buttonId = `${menuId}-button`;
       };
       const closeTtg = () => {
         document.querySelectorAll<HTMLElement>('.ttg-panel').forEach(p => p.classList.add('hidden'));
-        document.querySelectorAll<HTMLButtonElement>('.ttg-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
+        document.querySelectorAll<HTMLButtonElement>('.ttg-trigger').forEach(t => {
+          t.setAttribute('aria-expanded', 'false');
+          t.querySelector('.ttg-chevron')?.classList.remove('rotate-180');
+        });
       };
       const closeColor = () => {
         document.querySelectorAll<HTMLElement>('.mobile-color-panel').forEach(p => p.classList.add('hidden'));
@@ -839,6 +1011,145 @@ const buttonId = `${menuId}-button`;
   document.addEventListener('astro:page-load', initDesktopCrossClose);
   document.addEventListener('astro:after-swap', initDesktopCrossClose);
 
+  // ── Mobile submenu toggle (+/−) ──
+  function initMobileSubmenu() {
+    document.querySelectorAll<HTMLButtonElement>('[data-submenu-toggle]').forEach(btn => {
+      if (btn.dataset.submenuInit) return;
+      btn.dataset.submenuInit = 'true';
+
+      const li = btn.closest('li');
+      const submenu = li?.querySelector<HTMLElement>('.mobile-submenu');
+      const plusIcon = btn.querySelector<SVGElement>('.mobile-submenu-icon-plus');
+      const minusIcon = btn.querySelector<SVGElement>('.mobile-submenu-icon-minus');
+      if (!submenu) return;
+
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        const next = !expanded;
+        btn.setAttribute('aria-expanded', String(next));
+        btn.classList.toggle('mobile-submenu-open', next);
+        submenu.classList.toggle('hidden', !next);
+        plusIcon?.classList.toggle('hidden', next);
+        minusIcon?.classList.toggle('hidden', !next);
+      });
+    });
+  }
+
+  initMobileSubmenu();
+  document.addEventListener('astro:page-load', initMobileSubmenu);
+  document.addEventListener('astro:after-swap', initMobileSubmenu);
+
+  // ── Nav overflow: oculta itens que não cabem → mostra botão com seta ──
+  function initNavOverflow() {
+    document.querySelectorAll<HTMLElement>('nav[aria-label="Main navigation"]').forEach(nav => {
+      if (nav.dataset.overflowInit) return;
+      nav.dataset.overflowInit = 'true';
+
+      const overflowWrapper = nav.querySelector<HTMLElement>('.nav-overflow-wrapper');
+      const overflowPanel = nav.querySelector<HTMLElement>('.nav-overflow-panel');
+      const overflowTrigger = nav.querySelector<HTMLButtonElement>('.nav-overflow-trigger');
+      if (!overflowWrapper || !overflowPanel || !overflowTrigger) return;
+
+      const items = [...nav.querySelectorAll<HTMLElement>('.nav-link-item')];
+      let panelOpen = false;
+
+      function update() {
+        // Reset: todos visíveis, botão oculto
+        items.forEach(item => (item.style.display = ''));
+        overflowWrapper.style.display = 'none';
+        overflowWrapper.setAttribute('aria-hidden', 'true');
+
+        // Em mobile o menu mobile cuida da nav — overflow desktop não se aplica
+        if (window.innerWidth < 768) {
+          requestAnimationFrame(() => nav.dispatchEvent(new CustomEvent('nav-layout-change')));
+          return;
+        }
+
+        void nav.offsetWidth; // force reflow
+
+        // Com grid auto/minmax(0,1fr)/auto, o nav ocupa exatamente o espaço disponível
+        const navW = nav.getBoundingClientRect().width;
+        const overflowBtnW = 40;
+        const itemGap = parseFloat(window.getComputedStyle(nav).gap || '4');
+
+        const widths = items.map(item => item.getBoundingClientRect().width + itemGap);
+        const totalW = widths.reduce((s, w) => s + w, 0);
+        if (totalW <= navW) {
+          // Todos cabem: notifica pill para reposicionar no ativo
+          requestAnimationFrame(() => nav.dispatchEvent(new CustomEvent('nav-layout-change')));
+          return;
+        }
+
+        // Encontra índice do primeiro item oculto
+        let used = overflowBtnW;
+        let firstHidden = items.length;
+        for (let i = 0; i < widths.length; i++) {
+          if (used + widths[i] > navW) { firstHidden = i; break; }
+          used += widths[i];
+        }
+        if (firstHidden >= items.length) {
+          requestAnimationFrame(() => nav.dispatchEvent(new CustomEvent('nav-layout-change')));
+          return;
+        }
+
+        overflowWrapper.style.display = '';
+        overflowWrapper.removeAttribute('aria-hidden');
+        items.forEach((item, i) => { item.style.display = i >= firstHidden ? 'none' : ''; });
+
+        // Preenche painel com os itens ocultos
+        overflowPanel.innerHTML = '';
+        items.slice(firstHidden).forEach(item => {
+          const navLink = item.querySelector<HTMLAnchorElement>('.nav-link');
+          if (!navLink) return;
+          const href = navLink.getAttribute('href') || '#';
+          const label = navLink.dataset.navLabel || navLink.textContent?.trim().replace(/[›▸▾▼]/g, '').trim() || '';
+          const a = document.createElement('a');
+          a.href = href;
+          a.textContent = label;
+          a.setAttribute('role', 'menuitem');
+          overflowPanel.appendChild(a);
+        });
+
+        // Notifica pill para reposicionar (itens podem ter mudado de visibilidade)
+        requestAnimationFrame(() => nav.dispatchEvent(new CustomEvent('nav-layout-change')));
+      }
+
+      // ResizeObserver no container + listener de resize como fallback
+      const hdrInner = nav.closest<HTMLElement>('.hdr-inner') || nav.parentElement;
+      if (hdrInner) new ResizeObserver(update).observe(hdrInner);
+      window.addEventListener('resize', update, { passive: true });
+      update();
+
+      function closeOverflow() {
+        panelOpen = false;
+        overflowPanel.style.display = 'none';
+        overflowTrigger.setAttribute('aria-expanded', 'false');
+      }
+
+      overflowTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panelOpen = !panelOpen;
+        overflowPanel.style.display = panelOpen ? 'flex' : 'none';
+        overflowTrigger.setAttribute('aria-expanded', String(panelOpen));
+      });
+
+      // Fecha overflow ao entrar no dropdown de Serviços (um submenu por vez)
+      nav.querySelectorAll<HTMLElement>('.nav-dropdown-wrapper').forEach(wrapper => {
+        wrapper.addEventListener('mouseenter', () => { if (panelOpen) closeOverflow(); });
+      });
+
+      document.addEventListener('click', (e) => {
+        if (panelOpen && !overflowWrapper.contains(e.target as Node)) closeOverflow();
+      });
+    });
+  }
+
+  initNavOverflow();
+  document.addEventListener('astro:page-load', initNavOverflow);
+  document.addEventListener('astro:after-swap', initNavOverflow);
+
   // ── Elastic pill: efeito de hover no nav desktop (apenas bar header) ──
   function initNavElasticPill() {
     const header = document.querySelector<HTMLElement>('[data-header-shape]');
@@ -859,8 +1170,10 @@ const buttonId = `${menuId}-button`;
       ) || links[0];
 
       function moveTo(el: HTMLElement) {
-        pill!.style.width = el.offsetWidth + 'px';
-        pill!.style.transform = `translateX(${el.offsetLeft}px)`;
+        const navRect = nav.getBoundingClientRect();
+        const elRect = el.getBoundingClientRect();
+        pill!.style.width = elRect.width + 'px';
+        pill!.style.transform = `translateX(${elRect.left - navRect.left}px)`;
       }
 
       // Posição inicial instantânea (sem transição)
@@ -870,12 +1183,56 @@ const buttonId = `${menuId}-button`;
       nav.classList.add('hdr-nav-pill-active');
       requestAnimationFrame(() => { pill.style.transition = ''; });
 
+      let pillReturnTimer: ReturnType<typeof setTimeout> | null = null;
+
       links.forEach(link => {
-        link.addEventListener('mouseenter', () => moveTo(link));
+        link.addEventListener('mouseenter', () => {
+          // Hover: cancelar retorno pendente e usar transição padrão (rápida)
+          if (pillReturnTimer) { clearTimeout(pillReturnTimer); pillReturnTimer = null; }
+          pill!.style.transition = '';
+          moveTo(link);
+        });
         link.addEventListener('click', () => { active = link; });
       });
 
-      nav.addEventListener('mouseleave', () => moveTo(active));
+      nav.addEventListener('mouseleave', () => {
+        // Retorno ao ativo: duração proporcional à distância percorrida
+        const navRect = nav.getBoundingClientRect();
+        const currentX = parseFloat(
+          pill!.style.transform.match(/translateX\((-?\d+(?:\.\d+)?)px\)/)?.[1] ?? '0'
+        );
+        const targetX = active.getBoundingClientRect().left - navRect.left;
+        const dist = Math.abs(targetX - currentX);
+        const dur = Math.min(380, Math.max(180, dist * 0.85));
+        pill!.style.transition =
+          `transform ${dur}ms cubic-bezier(0.25,0.1,0.25,1),` +
+          ` width ${Math.round(dur * 1.4)}ms cubic-bezier(0.34,1.4,0.64,1),` +
+          ` opacity 150ms ease`;
+        moveTo(active);
+        if (pillReturnTimer) clearTimeout(pillReturnTimer);
+        pillReturnTimer = setTimeout(() => {
+          pill!.style.transition = '';
+          pillReturnTimer = null;
+        }, dur + 30);
+      });
+
+      // Reposiciona pill quando itens mudam de visibilidade (overflow resize)
+      nav.addEventListener('nav-layout-change', () => {
+        // Se o item ativo está oculto, usa o primeiro link visível
+        const activeItem = active.closest<HTMLElement>('.nav-link-item');
+        if (activeItem && activeItem.style.display === 'none') {
+          const firstVisible = links.find(l => {
+            const item = l.closest<HTMLElement>('.nav-link-item');
+            return !item || item.style.display !== 'none';
+          });
+          if (firstVisible) active = firstVisible;
+        }
+        // Snap instantâneo sem transição
+        if (pillReturnTimer) { clearTimeout(pillReturnTimer); pillReturnTimer = null; }
+        pill!.style.transition = 'none';
+        moveTo(active);
+        requestAnimationFrame(() => { pill!.style.transition = ''; });
+      });
     });
   }
 
@@ -1435,7 +1792,7 @@ const buttonId = `${menuId}-button`;
   /* ── Grid de configurações: Modo | Cor | Idioma ── */
   .mobile-settings-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 0.25rem;
     padding: 0.5rem 0;
   }
@@ -1485,8 +1842,8 @@ const buttonId = `${menuId}-button`;
     width: max-content; /* garante tamanho pelo conteúdo independente do contexto */
   }
 
-  /* Idioma (coluna direita): alinha à direita */
-  .mobile-settings-col:last-child .lang-panel {
+  /* Idioma (3ª coluna): alinha à direita */
+  .mobile-settings-col:nth-child(3) .lang-panel {
     top: auto;
     bottom: calc(100% + 0.5rem);
     right: 0;
@@ -1495,10 +1852,47 @@ const buttonId = `${menuId}-button`;
     margin-top: 0;
   }
 
+  /* Busca (4ª coluna mobile): normaliza botão para o mesmo visual das outras colunas */
+  .mobile-settings-col:last-child [data-search-trigger] {
+    border-radius: 9999px;
+    border: 1px solid var(--color-border-strong);
+    padding: 0.375rem 0.625rem;
+    background: transparent;
+  }
+  .mobile-settings-col:last-child [data-search-trigger] svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
   /* Espaçamento entre itens de TODOS os dropdowns (desktop e mobile) */
   .ttg-row + .ttg-row,
   .lang-row + .lang-row {
     margin-top: 2px;
+  }
+
+  /* ── Toolbar (Modo + Cor + Idioma + Busca) — desktop, ícone puro ── */
+  /* Sem chevron, sem borda, padding mínimo: largura total < logo (equilíbrio visual) */
+  .hdr-toolbar {
+    gap: 0;
+  }
+  .hdr-toolbar .ttg-trigger,
+  .hdr-toolbar #theme-dropdown-trigger,
+  .hdr-toolbar .lang-trigger,
+  .hdr-toolbar [data-search-trigger] {
+    border-color: transparent;
+    border-radius: 9999px;
+    padding: 0.375rem;
+    gap: 0;
+  }
+  .hdr-toolbar .ttg-chevron,
+  .hdr-toolbar .theme-chevron,
+  .hdr-toolbar .lang-chevron {
+    display: none;
+  }
+  /* Normaliza o ícone de busca para o mesmo tamanho dos outros (h-4 w-4) */
+  .hdr-toolbar [data-search-trigger] svg {
+    width: 1rem;
+    height: 1rem;
   }
 
   /* ── Elastic pill — hover nav desktop (somente bar header) ── */
@@ -1518,11 +1912,16 @@ const buttonId = `${menuId}-button`;
       opacity 150ms ease;
   }
 
-  /* Links ficam acima do pill e perdem o fundo próprio quando pill está ativo */
+  /* Links ficam acima do pill (z:1), pill fica abaixo (z:0) */
   .hdr-nav-pill-active .nav-link {
     z-index: 1;
   }
-  .hdr-nav-pill-active .nav-link-active,
+  /* Ativo: fundo brand, texto sempre branco — pill se esconde atrás */
+  .hdr-nav-pill-active .nav-link-active {
+    background: var(--color-brand-500);
+    color: white;
+  }
+  /* Inativo: transparente — pill secundário aparece por baixo ao hover */
   .hdr-nav-pill-active .nav-link-inactive,
   .hdr-nav-pill-active .nav-link-inactive:hover {
     background: transparent;
@@ -1531,5 +1930,93 @@ const buttonId = `${menuId}-button`;
   /* Color picker: dots centralizados */
   .mobile-color-panel .theme-selector {
     justify-content: center;
+  }
+
+  /* ── Dropdown de Serviços (desktop) ── */
+  .nav-dropdown-wrapper .nav-dropdown-panel {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 150ms ease, visibility 150ms ease, transform 150ms ease;
+  }
+  /* Bridge transparente: preenche o gap entre o link e o painel para não perder o hover */
+  .nav-dropdown-wrapper .nav-dropdown-panel::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -8px;
+    right: -8px;
+    height: 10px;
+  }
+  .nav-dropdown-wrapper:hover .nav-dropdown-panel,
+  .nav-dropdown-wrapper:focus-within .nav-dropdown-panel {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .nav-dropdown-wrapper:hover .nav-dropdown-chevron,
+  .nav-dropdown-wrapper:focus-within .nav-dropdown-chevron {
+    transform: rotate(180deg);
+  }
+  /* Hover nos links do dropdown (light e dark) */
+  .nav-dropdown-panel a:not([class*="bg-brand"]):hover {
+    background-color: var(--color-secondary);
+    color: var(--color-foreground);
+  }
+  .dark .nav-dropdown-panel a:not([class*="bg-brand"]):hover {
+    background-color: color-mix(in oklch, var(--color-secondary) 80%, transparent);
+    color: var(--color-foreground);
+  }
+
+  /* ── Mobile submenu toggle (+/−): no fim do link, substitui o chevron ── */
+  .mobile-submenu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    opacity: 0.45;
+    transition: opacity 200ms ease, color 200ms ease;
+  }
+  .mobile-menu-row:hover .mobile-submenu-toggle,
+  .mobile-menu-row-active .mobile-submenu-toggle {
+    opacity: 0.85;
+  }
+  .mobile-submenu-open {
+    opacity: 1 !important;
+    color: var(--color-brand-600);
+  }
+  html.dark .mobile-submenu-open {
+    color: var(--color-brand-400);
+  }
+  .mobile-submenu-toggle:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+
+  /* ── Nav overflow (desktop) ── */
+  .nav-overflow-panel {
+    display: flex;
+    flex-direction: column;
+  }
+  .nav-overflow-panel a {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+    color: var(--color-foreground-muted);
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .nav-overflow-panel a:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-foreground);
   }
 </style>

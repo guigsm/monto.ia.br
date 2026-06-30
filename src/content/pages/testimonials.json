@@ -1,5 +1,7 @@
 {
-  "showInMenu": true,
+  "showInMenu": false,
+  "menuOrder": 5,
+  "noIndex": false,
   "ptBadge": "Resultados reais",
   "ptHeroTitle": "O que dizem os clientes dos",
   "ptHeroTitleBrand": "nossos projetos",

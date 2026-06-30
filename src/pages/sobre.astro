@@ -12,10 +12,12 @@ import { Hero } from '@/components/hero';
 import TypingEffect from '@/components/ui/TypingEffect.astro';
 import TechStack from '@/components/landing/TechStack.astro';
 import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
+import sobreData from '../content/pages/sobre.json';
 ---
 <PageLayout
-  title="Sobre a Monto IA — Sites, SEO, Ads e Automações com IA na medida"
-  description="Conheça a Monto IA: desenvolvimento de sites como produto principal, com SEO, Ads, blog com produção por IA e automações com IA conversacional como diferenciais — na medida do seu negócio."
+  title={sobreData.ptMetaTitle}
+  description={sobreData.ptDescription}
+  noindex={sobreData.noIndex}
 >
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>
@@ -30,7 +32,7 @@ import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
     </h1>
 
     <p slot="description">
-      Desenvolvemos sites profissionais e cuidamos do que vem depois: SEO, Ads, blog com produção por IA, boas práticas (Lighthouse) e automações — cada peça entra no projeto pelo motivo certo.
+      {sobreData.ptHeroDescription}
     </p>
   </Hero>
 

@@ -1,0 +1,18 @@
+{
+  "showInMenu": false,
+  "menuLabel": "Localização",
+  "menuOrder": 99,
+  "noIndex": false,
+  "ptTitle": "Localização",
+  "ptDescription": "Estamos em São Paulo, SP, e atendemos clientes remotamente em todo o Brasil.",
+  "ptHeroTitle": "São Paulo, SP.",
+  "ptHeroDescription": "Atendimento remoto para todo o Brasil.",
+  "ptAddress": "São Paulo, SP",
+  "ptServiceArea": "Atendemos clientes de forma remota em todo o território nacional.",
+  "enTitle": "Location",
+  "enDescription": "We're based in São Paulo, Brazil, and serve clients remotely throughout the country.",
+  "enHeroTitle": "São Paulo, Brazil.",
+  "enHeroDescription": "Remote service worldwide.",
+  "enAddress": "São Paulo, SP, Brazil",
+  "enServiceArea": "We serve clients remotely anywhere in Brazil and internationally."
+}

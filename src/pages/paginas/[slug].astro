@@ -16,7 +16,7 @@ const { page } = Astro.props;
 const { Content } = await render(page);
 ---
 
-<PageLayout title={page.data.title} description={page.data.description}>
+<PageLayout title={page.data.title} description={page.data.description} noindex={page.data.noIndex}>
   <main class="mx-auto max-w-3xl px-4 py-16">
     <article class="prose prose-lg dark:prose-invert mx-auto">
       <Content />

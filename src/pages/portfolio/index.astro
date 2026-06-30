@@ -6,6 +6,7 @@
 import { Image } from 'astro:assets';
 import PageLayout from '@/layouts/PageLayout.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+import CardSVG from '@/components/ui/CardSVG.astro';
 import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
 import Button from '@/components/ui/form/Button/Button.astro';
@@ -50,8 +51,9 @@ const projects = items.sort((a, b) => a.data.order - b.data.order);
               class="group overflow-hidden flex flex-col lg:grid lg:grid-cols-2"
               data-reveal
             >
-              {project.data.image && (
-                <div class="overflow-hidden p-6 pb-0 lg:bg-background-secondary lg:p-6 lg:aspect-auto lg:h-full lg:flex lg:items-center lg:justify-center">
+              <div class="overflow-hidden p-6 pb-0 lg:bg-background-secondary lg:p-6 lg:aspect-auto lg:h-full lg:flex lg:items-center lg:justify-center"
+                   style="color: var(--brand-500);">
+                {project.data.image ? (
                   <Image
                     src={project.data.image}
                     alt={project.data.imageAlt || project.data.title}
@@ -60,14 +62,16 @@ const projects = items.sort((a, b) => a.data.order - b.data.order);
                     class="block w-full h-auto rounded-md shadow-md ring-1 ring-border/60 lg:max-h-full lg:max-w-full lg:w-auto lg:rounded-lg lg:ring-0 lg:shadow-none lg:object-contain transition-transform duration-300 group-hover:scale-[1.02]"
                     loading="lazy"
                   />
-                </div>
-              )}
-              <div class="flex flex-1 flex-col p-6">
-                {!project.data.image && (
-                  <div class="mb-3 w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-500/5 flex items-center justify-center text-brand-500 shrink-0">
-                    <Icon name="layers" size="sm" />
-                  </div>
+                ) : (
+                  <CardSVG
+                    title={project.data.title}
+                    tags={project.data.tags}
+                    section="portfolio"
+                    class="w-full rounded-md shadow-md ring-1 ring-border/60 lg:rounded-lg lg:ring-0 lg:shadow-none transition-transform duration-300 group-hover:scale-[1.02]"
+                  />
                 )}
+              </div>
+              <div class="flex flex-1 flex-col p-6">
                 <div class="mb-2 flex items-baseline gap-2">
                   <h3 class="font-display text-lg font-bold text-foreground">{project.data.title}</h3>
                   {project.data.year && (

@@ -28,6 +28,9 @@ www/api/data/tokens.json
 # build output
 dist/
 
+# auto-generated card SVG thumbnails (regenerated on each build / dev first render)
+src/assets/card-svg/
+
 # generated types
 .astro/
 

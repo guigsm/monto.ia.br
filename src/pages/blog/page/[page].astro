@@ -10,6 +10,7 @@ import { Hero } from '@/components/hero';
 import siteConfig from '@/config/site.config';
 import { resolveSocialLinks } from '@/lib/utils';
 import { t } from '@/i18n';
+import blogPageData from '../../../content/pages/blog-page.json';
 import {
   BLOG_POSTS_PER_PAGE,
   collectTopTags,
@@ -60,9 +61,9 @@ const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
       {t('pagination.page', 'pt-br', { current: page, total: totalPages })}
     </Badge>
 
-    <h1 slot="title">{t('blog.title', 'pt-br')}</h1>
+    <h1 slot="title">{blogPageData.ptTitle}</h1>
 
-    <p slot="description">{t('blog.heroDescription', 'pt-br')}</p>
+    <p slot="description">{blogPageData.ptDescription}</p>
   </Hero>
 
   <section class="bg-background-secondary py-[var(--space-section-md)] border-t border-border">
@@ -127,13 +128,6 @@ const socialLinks = resolveSocialLinks(siteConfig.socialLinks);
           {link.label}
         </a>
       ))}
-      <a
-        href={`mailto:${siteConfig.email}`}
-        class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
-      >
-        <Icon name="mail" size="sm" />
-        {t('contact.email', 'pt-br')}
-      </a>
     </div>
   </CTA>
 </PageLayout>

@@ -1,5 +1,8 @@
 {
   "showInMenu": true,
+  "menuLabel": "",
+  "menuOrder": 6,
+  "noIndex": false,
   "ptBadge": "Vamos conversar",
   "ptHeroTitle": "Tirando suas",
   "ptHeroTitleBrand": "ideias do papel",

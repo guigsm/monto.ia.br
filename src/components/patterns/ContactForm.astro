@@ -1,4 +1,4 @@
----
+﻿---
 import Button from '@/components/ui/form/Button/Button.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import { cn } from '@/lib/cn';
@@ -148,7 +148,7 @@ const labels = {
     <input type="text" name="_honeypot" tabindex="-1" autocomplete="off" />
   </div>
 
-  <!-- Cloudflare Turnstile — só renderiza quando a site key está configurada -->
+  <!-- Cloudflare Turnstile â€” sÃ³ renderiza quando a site key estÃ¡ configurada -->
   {turnstileSiteKey && (
     <div
       id="cf-turnstile"
@@ -161,7 +161,7 @@ const labels = {
     ></div>
   )}
 
-  <input type="hidden" name="subject" value={isEn ? 'Contact — monto.ia.br' : 'Contato — monto.ia.br'} />
+  <input type=”hidden” name=”subject” value={isEn ? 'Contact — monto.ia.br' : 'Contato — monto.ia.br'} />
 
   <div id="cf-status" role="alert" aria-live="polite" class="hidden text-sm rounded-md px-4 py-3"></div>
 
@@ -174,7 +174,7 @@ const labels = {
 
 </form>
 
-<!-- Turnstile SDK — só carrega quando a site key está configurada -->
+<!-- Turnstile SDK â€” sÃ³ carrega quando a site key estÃ¡ configurada -->
 {turnstileSiteKey && (
   <>
     <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -197,7 +197,7 @@ const labels = {
   </>
 )}
 
-<!-- Form logic — Vite-bundled (enables static import of intl-tel-input) -->
+<!-- Form logic â€” Vite-bundled (enables static import of intl-tel-input) -->
 <script>
   import intlTelInput from 'intl-tel-input';
 
@@ -208,7 +208,7 @@ const labels = {
 
   // Per-country format map. Each entry has one or more templates ordered by maxDigits ascending.
   // applyMask() picks the first template whose maxDigits >= digit count; the last is the fallback.
-  // placeholder is the example shown to the user — applyMask(example_digits) must produce it.
+  // placeholder is the example shown to the user â€” applyMask(example_digits) must produce it.
   const phoneFormats = {
     br: { templates: [
       { maxDigits: 10, mask: 'XX XXXX-XXXX',  placeholder: '11 1234-5678'  },
@@ -233,7 +233,7 @@ const labels = {
     nz: { templates: [{ maxDigits: 10, mask: 'XXX XXX XXXX',    placeholder: '021 234 5678'  }] },
   };
 
-  // Generic mask application — no country-specific IFs inside.
+  // Generic mask application â€” no country-specific IFs inside.
   // Picks the template whose maxDigits fits the current digit count.
   function applyMask(rawDigits, templates) {
     const tmpl = templates.find(t => rawDigits.length <= t.maxDigits) ?? templates.at(-1);
@@ -245,7 +245,7 @@ const labels = {
         if (di < digits.length) out += digits[di++];
         else break;
       } else if (di > 0) {
-        out += ch; // separador só após ao menos um dígito
+        out += ch; // separador sÃ³ apÃ³s ao menos um dÃ­gito
       }
     }
     return out.replace(/[\s\-]+$/, ''); // remove separadores finais pendentes
@@ -297,7 +297,10 @@ const labels = {
       separateDialCode: true,
       strictMode: false,
       countrySearch: true,
-      formatAsYouType: false, // we apply our own template-based mask
+      formatAsYouType: false,     // we apply our own template-based mask
+      countrySelectorMode: window.innerWidth < 768 ? 'FULLSCREEN' : 'DROPDOWN',
+      dropdownParent: document.getElementById('cf-ring-phone'),  // ignored in FULLSCREEN mode
+      matchDropdownWidth: true,
       countryNameLocale: locale === 'en' ? 'en' : 'pt-BR',
       uiTranslations: { searchPlaceholder: labels.searchCountry || 'Buscar país' },
       loadUtils: () => import('intl-tel-input/dist/js/utils.js'),
@@ -310,7 +313,7 @@ const labels = {
 
     // Returns the format for the selected country.
     // If the country is in phoneFormats, use our curated entry.
-    // Otherwise auto-derive mask and maxDigits from the library's own placeholder —
+    // Otherwise auto-derive mask and maxDigits from the library's own placeholder â€”
     // this guarantees placeholder === applyMask(digits) for every country universally.
     function getFormat() {
       const iso2 = _iti?.getSelectedCountry?.()?.iso2;
@@ -333,9 +336,9 @@ const labels = {
     // Block non-digit keystrokes before they reach the input value.
     phoneInput.addEventListener('keydown', (e) => {
       if (
-        e.key.length > 1 || // control keys (Backspace, Delete, Tab, ArrowLeft…)
+        e.key.length > 1 || // control keys (Backspace, Delete, Tab, ArrowLeftâ€¦)
         e.ctrlKey || e.metaKey || // Ctrl/Cmd combos (copy, paste, select-all)
-        /^\d$/.test(e.key)  // digit — allow
+        /^\d$/.test(e.key)  // digit â€” allow
       ) return;
       e.preventDefault();
     });
@@ -375,7 +378,7 @@ const labels = {
     document.addEventListener('click', _countryClickHandler, true);
 
     phoneInput.addEventListener('countrychange', () => {
-      // Guard: we called setSelectedCountry() ourselves to undo an auto-switch — skip processing.
+      // Guard: we called setSelectedCountry() ourselves to undo an auto-switch â€” skip processing.
       if (_isRestoringCountry) { _isRestoringCountry = false; return; }
 
       const newIso2 = _iti?.getSelectedCountry?.()?.iso2;
@@ -385,7 +388,7 @@ const labels = {
         phoneInput.value = '';
         requestAnimationFrame(updatePhoneIndent);
       } else {
-        // Library auto-switched country (e.g. Canada → USA via formatAsYouType).
+        // Library auto-switched country (e.g. Canada â†’ USA via formatAsYouType).
         // Lock back to what the user explicitly chose.
         _isRestoringCountry = true;
         try { _iti.setSelectedCountry(_selectedCountry); } catch (_) { _isRestoringCountry = false; }
@@ -414,7 +417,7 @@ const labels = {
     }
 
     // Blur: validate if field has content or is already marked
-    // Input: re-validate if already marked (update error→valid in real time)
+    // Input: re-validate if already marked (update errorâ†’valid in real time)
     form.querySelectorAll('.cf-ring').forEach((ring) => {
       const field = /** @type {HTMLInputElement|HTMLTextAreaElement|null} */ (ring.querySelector('input, textarea'));
       if (!field) return;
@@ -448,7 +451,7 @@ const labels = {
 
       if (/** @type {HTMLInputElement} */ (form.elements.namedItem('_honeypot'))?.value) return;
 
-      // Validate all — show ! on every invalid field, focus the first one
+      // Validate all â€” show ! on every invalid field, focus the first one
       let allOk = true;
       let firstInvalid = null;
       form.querySelectorAll('.cf-ring').forEach((ring) => {
@@ -517,23 +520,23 @@ const labels = {
 </script>
 
 <style is:global>
-  /* ─── intl-tel-input base CSS (provides dropdown hide/show + flag sprite rules) ─── */
+  /* â”€â”€â”€ intl-tel-input base CSS (provides dropdown hide/show + flag sprite rules) â”€â”€â”€ */
   @import 'intl-tel-input/dist/css/intlTelInput-no-assets.css';
 
-  /* ─── Flag sprite path (override defaults; files copied to public/ for reliable serving) ─── */
+  /* â”€â”€â”€ Flag sprite path (override defaults; files copied to public/ for reliable serving) â”€â”€â”€ */
   :root {
     --iti-path-flags-1x: url('/flags.webp');
     --iti-path-flags-2x: url('/flags@2x.webp');
   }
 
-  /* ─── @property for animatable angle ─── */
+  /* â”€â”€â”€ @property for animatable angle â”€â”€â”€ */
   @property --cf-spin {
     syntax: '<angle>';
     initial-value: 0deg;
     inherits: false;
   }
 
-  /* ─── Keyframes ─── */
+  /* â”€â”€â”€ Keyframes â”€â”€â”€ */
   @keyframes cf-border-run {
     to { --cf-spin: 360deg; }
   }
@@ -548,14 +551,14 @@ const labels = {
     }
   }
 
-  /* ─── Field container ─── */
+  /* â”€â”€â”€ Field container â”€â”€â”€ */
   .cf-field {
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
   }
 
-  /* ─── Label ─── */
+  /* â”€â”€â”€ Label â”€â”€â”€ */
   .cf-label {
     font-size: 0.875rem;
     font-weight: 500;
@@ -573,7 +576,7 @@ const labels = {
     color: var(--brand-500);
   }
 
-  /* ─── Border ring wrapper ─── */
+  /* â”€â”€â”€ Border ring wrapper â”€â”€â”€ */
   .cf-ring {
     position: relative;
     border-radius: 0.5rem;
@@ -608,7 +611,7 @@ const labels = {
     background: color-mix(in oklch, var(--brand-500) 10%, var(--input-bg, var(--background))) !important;
   }
 
-  /* ─── Validation icon — absolute in ring, zero layout impact ─── */
+  /* â”€â”€â”€ Validation icon â€” absolute in ring, zero layout impact â”€â”€â”€ */
   .cf-vi {
     position: absolute;
     right: 0.5rem;
@@ -629,10 +632,10 @@ const labels = {
   }
   .cf-ring.cf-valid .cf-vi,
   .cf-ring.cf-error .cf-vi { display: block; }
-  .cf-ring.cf-valid .cf-vi::before { content: '✓'; }
-  .cf-ring.cf-error .cf-vi::before { content: '✕'; }
+  .cf-ring.cf-valid .cf-vi::before { content: '\2713'; }
+  .cf-ring.cf-error .cf-vi::before { content: '\2715'; }
 
-  /* ─── Input / textarea inside the ring ─── */
+  /* â”€â”€â”€ Input / textarea inside the ring â”€â”€â”€ */
   .cf-ring > input,
   .cf-ring > textarea {
     display: block;
@@ -661,46 +664,47 @@ const labels = {
     resize: none !important;
   }
 
-  /* ─── intl-tel-input: fit inside .cf-ring ─── */
+  /* â”€â”€â”€ intl-tel-input: fit inside .cf-ring â”€â”€â”€ */
   /* border-radius matches the inner arc of cf-ring (concentric = uniform 1.5px border).
-     No overflow clipping needed — each child clips its own background via its own border-radius. */
-  .cf-ring-phone .iti {
+     No overflow clipping needed â€” each child clips its own background via its own border-radius. */
+  /* :not excludes the detached dropdown container (.iti--detached-country-selector) which is also
+     a child of #cf-ring-phone via dropdownParent — without this, width:100% would apply to it
+     as position:fixed giving it full-viewport width instead of phone-field width. */
+  .cf-ring-phone .iti:not(.iti--detached-country-selector) {
     display: flex !important;
     width: 100% !important;
     background: var(--input-bg, var(--background)) !important;
     border-radius: calc(0.5rem - 1.5px) !important;
   }
-  /* padding-left: 0 !important overrides the library's inline style; text-indent and border-radius set dynamically by JS.
-     outline/box-shadow must be none — the phone input is a grandchild of .cf-ring (.cf-ring > .iti > input),
+  /* text-indent overrides the library's computed inline value (which mirrors the button width).
+     outline/box-shadow must be none â€” the phone input is a grandchild of .cf-ring (.cf-ring > .iti > input),
      so the generic .cf-ring > input rule does not apply here; without this the browser's focus ring leaks
-     outside the .iti (overflow:visible) and creates a fixed solid border on top of the animated ring. */
+     outside the .iti and creates a fixed solid border on top of the animated ring. */
   .cf-ring-phone .iti input[type=tel] {
     height: 2.375rem !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    padding-right: 1.75rem !important;
-    padding-left: 0 !important;
+    text-indent: 0 !important;
     background: var(--input-bg, var(--background)) !important;
     color: var(--foreground) !important;
     outline: none !important;
     box-shadow: none !important;
     border: none !important;
-    flex: 1 !important;
     min-width: 0 !important;
   }
-  /* Country container: needs its own left border-radius so its rectangular background
-     doesn't overlap the ring's animated border at the top-left / bottom-left corners. */
+  /* Country container: overflow:visible lets the dropdown escape without clipping.
+     Border-radius is cosmetic — actual clipping is done on the button below. */
   .cf-ring-phone .iti__country-container {
     border-radius: calc(0.5rem - 1.5px) 0 0 calc(0.5rem - 1.5px) !important;
-    overflow: hidden !important;
+    overflow: visible !important;
   }
-  /* Bring flag closer to the left border */
+  /* Bring flag closer to the left border. overflow:hidden clips the button's background
+     to the border-radius without affecting the sibling dropdown that escapes the container. */
   .cf-ring-phone .iti__selected-country {
     background: var(--input-bg, var(--background)) !important;
     border-right: 1px solid color-mix(in oklch, var(--foreground) 12%, transparent) !important;
     padding: 0 0.5rem 0 0.375rem !important;
     gap: 0.375rem !important;
     border-radius: calc(0.5rem - 1.5px) 0 0 calc(0.5rem - 1.5px) !important;
+    overflow: hidden !important;
   }
   .cf-ring-phone .iti__selected-country:hover,
   .cf-ring-phone .iti__selected-country[aria-expanded="true"] {
@@ -717,7 +721,7 @@ const labels = {
     font-size: 0.8125rem !important;
   }
 
-  /* ─── Override iti CSS variables for dark-mode theming ─── */
+  /* â”€â”€â”€ Override iti CSS variables for dark-mode theming â”€â”€â”€ */
   .cf-ring-phone .iti,
   .iti__country-selector {
     --iti-country-selector-bg: var(--card, var(--background));
@@ -726,16 +730,57 @@ const labels = {
     --iti-icon-color: var(--foreground-muted, #888);
   }
 
-  /* ─── Dropdown: rounded corners + shadow ─── */
+  /* #cf-ring-phone is position:relative (.cf-ring rule) — dropdown appended here via
+     dropdownParent so left:0/right:0/width:100% anchor to the full field width. */
+  #cf-ring-phone {
+    overflow: visible !important;
+  }
+  /* ─── Dropdown positioning ─── */
+  /* dropdownParent anchors the detached container to #cf-ring-phone.
+     left:0 aligns it to the ring's left edge; width is handled by matchDropdownWidth. */
+  .cf-ring-phone .iti__country-selector {
+    left: 0 !important;
+  }
+  /* ─── Dropdown (desktop) ─── */
   .iti__country-selector {
     border-radius: 0.5rem !important;
+    max-height: 10rem !important;
+    height: auto !important;
     overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
     border: 1px solid color-mix(in oklch, var(--foreground) 14%, transparent) !important;
     box-shadow: 0 8px 24px rgba(0,0,0,.25) !important;
     background: var(--card, var(--background)) !important;
   }
+  .iti__country-list {
+    flex: 1 !important;
+    overflow-y: auto !important;
+  }
 
-  /* ─── Search input ─── */
+  /* ─── Fullscreen overlay (mobile) ─── */
+  /* Backdrop opaco: cobre a página inteira e impede que o anel do campo
+     apareça visível através do overlay. */
+  .iti--fullscreen-popup {
+    background: oklch(0 0 0 / 0.72) !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    padding: 1rem !important;
+    box-sizing: border-box !important;
+  }
+  /* height fixo preenche o espaço disponível (1rem topo + 1rem rodapé = proporcionais).
+     flex:1 no country-list só funciona quando o pai tem altura definida. */
+  .iti--fullscreen-popup .iti__country-selector {
+    position: static !important;
+    width: 100% !important;
+    height: calc(100dvh - 2rem) !important;
+    max-height: calc(100dvh - 2rem) !important;
+    margin: 0 !important;
+    top: unset !important;
+    left: unset !important;
+  }
+
+  /* â”€â”€â”€ Search input â”€â”€â”€ */
   .iti__search-input {
     background: var(--input-bg, var(--background)) !important;
     color: var(--foreground) !important;
@@ -771,3 +816,4 @@ const labels = {
     background: var(--card, var(--background)) !important;
   }
 </style>
+

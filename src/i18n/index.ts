@@ -93,6 +93,7 @@ export const routeSlugs: Record<string, Partial<Record<Locale, string>>> = {
   services:     { 'pt-br': '/servicos',                   en: '/services' },
   testimonials: { 'pt-br': '/depoimentos',                en: '/testimonials' },
   privacy:      { 'pt-br': '/politica-de-privacidade',    en: '/privacy-policy' },
+  location:     { 'pt-br': '/localizacao',                en: '/location' },
 };
 
 /**

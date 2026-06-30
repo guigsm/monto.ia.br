@@ -44,6 +44,7 @@
     "rssFeed": "RSS Feed",
     "tableOfContents": "Table of contents",
     "shareThisPost": "Share this post",
+    "relatedPosts": "Related posts",
     "notTranslated": {
       "title": "Blog available in Portuguese",
       "description": "Our blog doesn't have posts naturally translated into this language yet. You can read it in Portuguese, or use Google Translate to view it in {language} right now.",
@@ -105,7 +106,7 @@
   },
   "footer": {
     "copyright": "© {year} {name}. All rights reserved.",
-    "builtWith": "Built with Astro Rocket"
+    "builtWith": "Built with Astro and Tailwind CSS"
   },
   "search": {
     "open": "Search",

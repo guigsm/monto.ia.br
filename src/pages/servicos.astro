@@ -19,21 +19,23 @@ import Badge from '@/components/ui/data-display/Badge/Badge.astro';
 import Card from '@/components/ui/data-display/Card/Card.astro';
 import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 import LetterGlitchBand from '@/components/patterns/LetterGlitchBand.astro';
+import servicosPageData from '../content/pages/servicos-page.json';
 ---
 
 <PageLayout
-  title="Serviços — Sites, SEO, Ads, Blog com IA e Automações | Monto IA"
-  description="Desenvolvemos sites profissionais com SEO técnico, campanhas de Ads, blog com produção por IA e automações com N8N e IA conversacional. Tudo integrado, na medida do seu negócio."
+  title={servicosPageData.ptMetaTitle}
+  description={servicosPageData.ptDescription}
+  noindex={servicosPageData.noIndex}
 >
   <!-- Hero -->
   <Hero layout="centered" size="sm">
     <Badge slot="badge" variant="brand" pill>O que fazemos</Badge>
     <h1 slot="title">
-      Tudo o que um negócio digital precisa,
-      <span class="text-brand-500"> integrado.</span>
+      {servicosPageData.ptHeroTitle}
+      <span class="text-brand-500"> {servicosPageData.ptHeroHighlight}</span>
     </h1>
     <p slot="description">
-      O site é o ponto de partida — o resto é o que faz ele gerar resultado de verdade. SEO, Ads, conteúdo e automação trabalhando juntos, não em silos.
+      {servicosPageData.ptHeroDescription}
     </p>
     <Fragment slot="actions">
       <Button size="lg" href="/contato">

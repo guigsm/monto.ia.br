@@ -1,0 +1,41 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('customPages', ({ data }) => {
+    const hasEn = !!data.enContent;
+    return hasEn && (import.meta.env.PROD ? !data.draft : true);
+  });
+  return pages.map((page) => ({
+    params: { slug: page.id },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+
+const enHtml = String(
+  await unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkRehype)
+    .use(rehypeStringify)
+    .process(page.data.enContent || '')
+);
+---
+
+<PageLayout
+  title={page.data.enTitle || page.data.title}
+  description={page.data.enDescription || page.data.description}
+  noindex={page.data.noIndex}
+>
+  <main class="mx-auto max-w-3xl px-4 py-16">
+    <article class="prose prose-lg dark:prose-invert mx-auto" set:html={enHtml} />
+  </main>
+</PageLayout>

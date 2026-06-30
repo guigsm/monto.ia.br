@@ -44,6 +44,7 @@
     "rssFeed": "Feed RSS",
     "tableOfContents": "Sumário",
     "shareThisPost": "Compartilhar este artigo",
+    "relatedPosts": "Posts relacionados",
     "notTranslated": {
       "title": "Blog disponível em português",
       "description": "Nosso blog ainda não possui postagens traduzidas naturalmente para este idioma. Você pode ler em português, ou usar o Google Tradutor para ver em {language} agora mesmo.",
@@ -117,7 +118,7 @@
   },
   "footer": {
     "copyright": "© {year} {name}. Todos os direitos reservados.",
-    "builtWith": "Desenvolvido com Astro Rocket"
+    "builtWith": "Desenvolvido com Astro e Tailwind CSS"
   },
   "consent": {
     "heading": "Sua Privacidade",

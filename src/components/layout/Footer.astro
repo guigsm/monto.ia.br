@@ -36,17 +36,22 @@ import { getCollection } from 'astro:content';
 const currentLocale = getLocaleFromPath(Astro.url.pathname);
 const isPt = !currentLocale || currentLocale.startsWith('pt');
 
-// Páginas livres — só no locale padrão (PT-BR)
+// Páginas livres — PT no locale padrão, EN quando página tiver conteúdo EN
 const isDefaultLocale = !currentLocale || currentLocale === defaultLocale;
-const customPageEntries = isDefaultLocale
+const customPagesPt = isDefaultLocale
   ? await getCollection('customPages', ({ data }) => data.showInMenu && !data.draft)
   : [];
-const customNavItems: NavItem[] = customPageEntries
-  .sort((a, b) => (a.data.menuOrder ?? 99) - (b.data.menuOrder ?? 99))
-  .map((entry) => ({
-    label: entry.data.menuLabel || entry.data.title,
-    href: `/paginas/${entry.id}`,
-  }));
+const customPagesEn = !isDefaultLocale
+  ? await getCollection('customPages', ({ data }) => data.showInMenuEn && !data.draft && !!data.enContent)
+  : [];
+const customNavItems: NavItem[] = [
+  ...customPagesPt
+    .sort((a, b) => (a.data.menuOrder ?? 99) - (b.data.menuOrder ?? 99))
+    .map((entry) => ({ label: entry.data.menuLabel || entry.data.title, href: `/paginas/${entry.id}` })),
+  ...customPagesEn
+    .sort((a, b) => (a.data.menuOrder ?? 99) - (b.data.menuOrder ?? 99))
+    .map((entry) => ({ label: entry.data.enMenuLabel || entry.data.enTitle || entry.data.title, href: `/en/paginas/${entry.id}` })),
+];
 
 export interface NavItem {
   label: string;

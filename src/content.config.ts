@@ -45,12 +45,19 @@ const pages = defineCollection({
 const customPages = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/custom-pages' }),
   schema: z.object({
+    slug: z.string().optional(),
     title: z.string(),
     description: z.string(),
     showInMenu: z.boolean().default(true),
     menuLabel: z.string().optional(),
     menuOrder: z.number().default(99),
     draft: z.boolean().default(false),
+    noIndex: z.boolean().default(false),
+    showInMenuEn: z.boolean().default(false),
+    enTitle: z.string().optional(),
+    enMenuLabel: z.string().optional(),
+    enDescription: z.string().optional(),
+    enContent: z.string().optional(),
   }),
 });
 
@@ -120,6 +127,29 @@ const projects = defineCollection({
     }),
 });
 
+// Services collection — one MDX file per service offering
+const services = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/services' }),
+  schema: ({ image }) =>
+    z.object({
+      slug: z.string().optional(),
+      title: z.string(),
+      description: z.string().max(200),
+      icon: z.string().default('sparkles'),
+      tags: z.array(z.string()).default([]),
+      image: image().optional(),
+      imageAlt: z.string().optional(),
+      featured: z.boolean().default(false),
+      order: z.number().default(99),
+      draft: z.boolean().default(false),
+      noIndex: z.boolean().default(false),
+      showInNav: z.boolean().default(true),
+      locale: z.enum(['pt-br', 'en']).default('pt-br'),
+      ctaText: z.string().optional(),
+      ctaHref: z.string().default('/contato'),
+    }),
+});
+
 // Stack collection — one MDX file per tool, editable like blog posts
 const stack = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/stack' }),
@@ -142,4 +172,5 @@ export const collections = {
   faqs,
   stack,
   projects,
+  services,
 };

@@ -169,13 +169,6 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
             {link.label}
           </a>
         ))}
-        <a
-          href={`mailto:${siteConfig.email}`}
-          class="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-500 hover:text-brand-500"
-        >
-          <Icon name="mail" size="sm" />
-          {t('contact.email', 'en')}
-        </a>
       </div>
     </CTA>
 
@@ -203,13 +196,6 @@ const topTags = collectTopTags(posts, TAG_CLOUD_LIMIT);
               {link.label}
             </a>
           ))}
-          <a
-            href={`mailto:${siteConfig.email}`}
-            class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:border-brand-400 hover:bg-brand-500/20 hover:text-foreground"
-          >
-            <Icon name="mail" size="sm" />
-            {t('contact.email', 'en')}
-          </a>
         </div>
       </LetterGlitchBand>
     </section>

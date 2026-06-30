@@ -1,0 +1,72 @@
+---
+/**
+ * CardThumb — unified thumbnail for any card context (blog, portfolio, service, …).
+ *
+ * Priority:
+ *   1. image (uploaded photo)   → Astro <Image> (optimised WebP/AVIF)
+ *   2. svgSlug (legacy curated) → BlogImageSVG (manually created file)
+ *   3. auto-fallback            → CardSVG (generated from title + tags + section)
+ *
+ * The SVG fallback is always generated and cached on disk even when an image
+ * is provided, so a fallback is always ready if the image is removed later.
+ *
+ * Usage:
+ *   <CardThumb title="…" section="blog" tags={tags} image={image} svgSlug={svgSlug} />
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import BlogImageSVG from '@/components/blog/BlogImageSVG.astro';
+import CardSVG from '@/components/ui/CardSVG.astro';
+
+interface Props {
+  title: string;
+  /** Uploaded image (highest priority). */
+  image?: ImageMetadata;
+  imageAlt?: string;
+  /** Legacy: filename slug pointing to src/assets/blog/<slug>.svg */
+  svgSlug?: string;
+  /** Open string — 'blog' | 'portfolio' | 'service' | 'seo' | 'geo' | … */
+  section?: string;
+  tags?: string[];
+  loading?: 'lazy' | 'eager';
+  widths?: number[];
+  sizes?: string;
+  /** Extra classes forwarded to the rendered element or its wrapper. */
+  class?: string;
+}
+
+const {
+  title,
+  image,
+  imageAlt,
+  svgSlug,
+  section = 'default',
+  tags = [],
+  loading = 'lazy',
+  widths = [320, 640, 960],
+  sizes = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px',
+  class: className,
+} = Astro.props;
+---
+
+{image ? (
+  <Image
+    src={image}
+    alt={imageAlt || title}
+    widths={widths}
+    sizes={sizes}
+    class:list={['aspect-video w-full object-cover', className]}
+    loading={loading}
+  />
+) : svgSlug ? (
+  <div class:list={[className]}>
+    <BlogImageSVG slug={svgSlug} title={imageAlt || title} />
+  </div>
+) : (
+  <CardSVG
+    title={title}
+    tags={tags}
+    section={section}
+    class={className}
+  />
+)}

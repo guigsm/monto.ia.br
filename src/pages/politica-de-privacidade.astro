@@ -1,19 +1,27 @@
 ---
-import { getCollection, render } from 'astro:content';
 import PageLayout from '@/layouts/PageLayout.astro';
 import { localizedPath } from '@/i18n';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
+import privacyData from '../content/pages/privacy-policy.json';
 
-const allPages = await getCollection('customPages');
-const entry = allPages.find(e => e.id.replace(/\.mdx?$/, '') === 'politica-de-privacidade');
-if (!entry) return Astro.redirect('/404');
-
-const { Content } = await render(entry);
+const ptHtml = String(
+  await unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkRehype)
+    .use(rehypeStringify)
+    .process(privacyData.ptContent || '')
+);
 ---
 
 <PageLayout
-  title={entry.data.title}
-  description={entry.data.description}
-  noindex={true}
+  title={privacyData.ptTitle}
+  description={privacyData.ptDescription}
+  noindex={privacyData.noIndex}
 >
   <div class="mx-auto max-w-3xl px-6 py-16 md:py-24">
     <div class="mb-10">
@@ -28,13 +36,13 @@ const { Content } = await render(entry);
       </a>
     </div>
 
-    <article class="prose prose-lg max-w-none">
-      <Content />
-    </article>
+    <h1 class="text-3xl font-bold tracking-tight text-foreground mb-8">{privacyData.ptTitle}</h1>
+
+    <article class="prose prose-lg max-w-none" set:html={ptHtml} />
 
     <div class="mt-12 pt-8 border-t border-border">
       <p class="text-sm text-foreground-muted">
-        Versão em inglês: <a href="/en/privacy-policy" class="underline hover:text-foreground transition-colors">Privacy Policy</a>
+        English version: <a href="/en/privacy-policy" class="underline hover:text-foreground transition-colors">Privacy Policy</a>
       </p>
     </div>
   </div>
